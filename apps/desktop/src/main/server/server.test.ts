@@ -1,8 +1,31 @@
 import { afterEach, describe, expect, it } from "vitest"
 import { AppSettingsSchema, DEFAULT_APP_SETTINGS } from "@focus-ui/shared"
+import { createServer, type Server } from "node:http"
 import { getLocalServiceStatus, startLocalServer, stopLocalServer } from "./server"
 
 const healthAddress = "http://127.0.0.1:17321/health"
+
+const listenOnLocalServicePort = async (server: Server): Promise<void> => {
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject)
+    server.listen(17321, "127.0.0.1", () => {
+      server.off("error", reject)
+      resolve()
+    })
+  })
+}
+
+const closeServer = async (server: Server): Promise<void> => {
+  await new Promise<void>((resolve, reject) => {
+    server.close((error?: Error) => {
+      if (error) {
+        reject(error)
+        return
+      }
+      resolve()
+    })
+  })
+}
 
 afterEach(async () => {
   await stopLocalServer()
@@ -29,6 +52,19 @@ describe("local desktop service", () => {
     expect(stopped).toMatchObject({ state: "stopped", running: false })
     expect(getLocalServiceStatus().running).toBe(false)
     await expect(fetch(healthAddress)).rejects.toThrow()
+  })
+
+  it("reports a clear error when the local service port is already in use", async () => {
+    const occupiedServer = createServer()
+    await listenOnLocalServicePort(occupiedServer)
+
+    try {
+      const status = await startLocalServer()
+      expect(status).toMatchObject({ state: "error", running: false })
+      expect(status.error).toBe("端口 17321 已被占用。")
+    } finally {
+      await closeServer(occupiedServer)
+    }
   })
 })
 
