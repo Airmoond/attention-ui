@@ -1,4 +1,4 @@
-import type { AppInfo, ServiceStatus } from "@focus-ui/shared"
+import type { AppInfo, AppSettings, ServiceStatus } from "@focus-ui/shared"
 
 declare global {
   interface Window {
@@ -7,6 +7,9 @@ declare global {
       getServiceStatus: () => Promise<ServiceStatus>
       startService: () => Promise<ServiceStatus>
       stopService: () => Promise<ServiceStatus>
+      getSettings: () => Promise<AppSettings>
+      updateSettings: (settings: AppSettings) => Promise<AppSettings>
+      resetSettings: () => Promise<AppSettings>
     }
   }
 }

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest"
+import { AppSettingsSchema, DEFAULT_APP_SETTINGS } from "@focus-ui/shared"
 import { getLocalServiceStatus, startLocalServer, stopLocalServer } from "./server"
 
 const healthAddress = "http://127.0.0.1:17321/health"
@@ -28,5 +29,20 @@ describe("local desktop service", () => {
     expect(stopped).toMatchObject({ state: "stopped", running: false })
     expect(getLocalServiceStatus().running).toBe(false)
     await expect(fetch(healthAddress)).rejects.toThrow()
+  })
+})
+
+describe("application settings schema", () => {
+  it("accepts defaults and rejects invalid delay and boolean values", () => {
+    expect(AppSettingsSchema.safeParse(DEFAULT_APP_SETTINGS).success).toBe(true)
+    expect(
+      AppSettingsSchema.safeParse({ ...DEFAULT_APP_SETTINGS, attentionDelayMs: 299 }).success
+    ).toBe(false)
+    expect(
+      AppSettingsSchema.safeParse({ ...DEFAULT_APP_SETTINGS, attentionDelayMs: 3001 }).success
+    ).toBe(false)
+    expect(
+      AppSettingsSchema.safeParse({ ...DEFAULT_APP_SETTINGS, enableAI: "true" }).success
+    ).toBe(false)
   })
 })

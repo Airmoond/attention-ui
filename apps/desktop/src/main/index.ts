@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron"
 import { registerIpcHandlers } from "./ipc"
-import { startLocalServer, stopLocalServer } from "./server/server"
+import { configureLocalServer, startLocalServer, stopLocalServer } from "./server/server"
+import { isAiConfigured } from "./store/settings-store"
 import { createMainWindow } from "./window"
 
 const openMainWindow = (): void => {
@@ -8,6 +9,7 @@ const openMainWindow = (): void => {
 }
 
 app.whenReady().then(() => {
+  configureLocalServer({ getAiConfigured: isAiConfigured })
   registerIpcHandlers()
   openMainWindow()
   void startLocalServer()

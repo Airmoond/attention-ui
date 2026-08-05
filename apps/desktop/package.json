@@ -12,7 +12,7 @@
   "dependencies": {
     "@focus-ui/shared": "0.1.0",
     "cors": "^2.8.6",
-    "electron-store": "^11.0.2",
+    "electron-store": "^8.2.0",
     "express": "^5.2.1",
     "nanoid": "^6.0.1",
     "react": "^18.3.1",

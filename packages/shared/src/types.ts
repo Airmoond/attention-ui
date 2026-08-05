@@ -17,3 +17,14 @@ export type ServiceStatus = {
   address: string
   error: string | null
 }
+
+export type AppSettings = {
+  apiBaseUrl: string
+  apiKey: string
+  modelName: string
+  attentionDelayMs: number
+  enableAI: boolean
+  enableLocalTools: boolean
+  enableFocusMode: boolean
+  enableHabitLearning: boolean
+}

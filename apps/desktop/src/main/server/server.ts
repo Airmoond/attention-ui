@@ -9,6 +9,10 @@ const LOCAL_SERVICE_ADDRESS = `http://${LOCAL_SERVICE_HOST}:${LOCAL_SERVICE_PORT
 
 type StatusListener = (status: ServiceStatus) => void
 
+type LocalServerOptions = {
+  getAiConfigured: () => boolean
+}
+
 let localServer: Server | null = null
 let serviceStatus: ServiceStatus = {
   state: "stopped",
@@ -18,6 +22,7 @@ let serviceStatus: ServiceStatus = {
 }
 
 const statusListeners = new Set<StatusListener>()
+let getAiConfigured = (): boolean => false
 
 const updateServiceStatus = (nextStatus: ServiceStatus): void => {
   serviceStatus = nextStatus
@@ -40,6 +45,10 @@ const describeServerError = (error: unknown): string => {
 export const getLocalServiceStatus = (): ServiceStatus => serviceStatus
 
 export const isLocalServerRunning = (): boolean => serviceStatus.running
+
+export const configureLocalServer = ({ getAiConfigured: nextProvider }: LocalServerOptions): void => {
+  getAiConfigured = nextProvider
+}
 
 export const onLocalServiceStatusChange = (listener: StatusListener): (() => void) => {
   statusListeners.add(listener)
@@ -65,7 +74,7 @@ export const startLocalServer = async (): Promise<ServiceStatus> => {
     "/health",
     createHealthRoute({
       getVersion: () => "0.1.0",
-      getAiConfigured: () => false
+      getAiConfigured
     })
   )
 
