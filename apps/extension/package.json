@@ -1,5 +1,24 @@
 {
   "name": "@focus-ui/extension",
   "version": "0.1.0",
-  "private": true
+  "private": true,
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "typecheck": "wxt prepare && tsc --noEmit"
+  },
+  "dependencies": {
+    "@focus-ui/shared": "^0.1.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "wxt": "^0.21.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.2.5",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@wxt-dev/module-react": "^1.2.2",
+    "typescript": "^7.0.2"
+  }
 }

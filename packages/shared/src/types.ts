@@ -44,6 +44,24 @@ export type ApiError = {
   message: string
 }
 
+export type ExtensionSettings = {
+  desktopBaseUrl: "http://127.0.0.1:17321" | "http://localhost:17321"
+  clientToken: string | null
+  enabled: boolean
+}
+
+export type DesktopConnectionStatus =
+  | "unknown"
+  | "offline"
+  | "online_unpaired"
+  | "online_paired"
+  | "auth_expired"
+
+export type AuthCheckResponse = {
+  ok: true
+  authenticated: true
+}
+
 export type AuthState = {
   pairingToken: string
   clientToken: string | null

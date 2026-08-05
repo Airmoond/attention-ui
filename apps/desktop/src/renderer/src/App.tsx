@@ -62,6 +62,32 @@ const App = (): JSX.Element => {
     }
   }, [refreshData])
 
+  useEffect(() => {
+    let isActive = true
+
+    const refreshPairingStatus = async (): Promise<void> => {
+      try {
+        const nextPairingStatus = await window.focusUI.getPairingStatus()
+        if (isActive) {
+          setPairingStatus(nextPairingStatus)
+        }
+      } catch (_error: unknown) {
+        if (isActive) {
+          setErrorMessage("无法刷新插件配对状态，请稍后重试。")
+        }
+      }
+    }
+
+    const refreshIntervalId = window.setInterval(() => {
+      void refreshPairingStatus()
+    }, 2000)
+
+    return () => {
+      isActive = false
+      window.clearInterval(refreshIntervalId)
+    }
+  }, [])
+
   const updateSettings = async (nextSettings: AppSettings): Promise<void> => {
     setErrorMessage(null)
     const savedSettings = await window.focusUI.updateSettings(nextSettings)

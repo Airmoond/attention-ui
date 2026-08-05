@@ -13,12 +13,6 @@ export const AppSettingsSchema = z
   })
   .strict()
 
-export const PairRequestSchema = z
-  .object({
-    pairingToken: z.string().trim().min(1).max(64)
-  })
-  .strict()
-
 export const AuthStateSchema = z
   .object({
     pairingToken: z.string().min(1).max(64),
