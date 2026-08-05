@@ -1,0 +1,40 @@
+:root { color: #e9ecf5; background: #10131c; font-family: Inter, "Microsoft YaHei", sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, input { font: inherit; }
+button { border: 0; border-radius: 8px; background: #6f7cff; color: #fff; cursor: pointer; font-weight: 600; padding: 10px 14px; }
+button:hover:not(:disabled) { background: #8490ff; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+input { background: #151a26; border: 1px solid #3b4357; border-radius: 7px; color: #fff; padding: 10px; width: 100%; }
+input:focus { border-color: #8490ff; outline: 2px solid #8490ff44; }
+.app-shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100vh; }
+.sidebar { background: #171b28; border-right: 1px solid #2e3547; display: flex; flex-direction: column; gap: 36px; padding: 28px 18px; }
+.sidebar h1, .page-panel h2 { margin: 0; }
+.eyebrow { color: #9ca7c5; font-size: 12px; font-weight: 700; letter-spacing: .12em; margin: 0 0 8px; }
+.sidebar-copy, .page-intro { color: #aab3ca; line-height: 1.6; }
+.sidebar-copy { font-size: 14px; margin: 8px 0 0; }
+nav { display: grid; gap: 6px; }
+.nav-item { background: transparent; color: #bcc5da; text-align: left; }
+.nav-item:hover:not(:disabled), .nav-item.active { background: #2b3350; color: #fff; }
+.content-area { margin: 0 auto; max-width: 1040px; padding: 38px; width: 100%; }
+.page-panel { background: #1a1f2e; border: 1px solid #30384c; border-radius: 14px; padding: clamp(20px, 4vw, 36px); }
+.page-panel h2 { font-size: clamp(24px, 4vw, 32px); }
+.status-grid { display: grid; gap: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 30px 0; }
+.status-card, .empty-state { background: #121722; border: 1px solid #30384c; border-radius: 10px; padding: 16px; }
+.status-card span, .detail-list span { color: #9ca7c5; display: block; font-size: 13px; margin-bottom: 8px; }
+.status-card strong { display: block; font-size: 17px; }
+.status-card small { color: #ffb4b4; display: block; margin-top: 8px; }
+.status-good { color: #6fd2a5; }.status-muted { color: #c5cbda; }
+.detail-list { border-top: 1px solid #30384c; display: grid; margin: 20px 0; }
+.detail-list div { border-bottom: 1px solid #30384c; display: grid; gap: 8px; grid-template-columns: minmax(120px, .35fr) 1fr; padding: 13px 0; }
+.detail-list span { margin: 0; }.detail-list code { color: #c8d0ff; overflow-wrap: anywhere; }
+.button-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.secondary { background: #30394e; }.secondary:hover:not(:disabled) { background: #404b66; }.compact { padding: 8px 10px; white-space: nowrap; }
+.form-grid { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 28px; }
+.form-grid label { color: #cbd2e3; display: grid; font-weight: 600; gap: 8px; }.form-grid label:last-child { grid-column: 1 / -1; }
+.input-with-button { display: flex; gap: 8px; }.input-with-button input { min-width: 0; }
+.toggle-list { display: grid; gap: 14px; margin-top: 24px; }.toggle-list label { align-items: center; color: #d7dced; display: flex; gap: 10px; }.toggle-list input { accent-color: #6f7cff; height: 17px; width: 17px; }
+.notice { background: #252d43; border-radius: 8px; color: #dce2f6; margin: 20px 0 0; padding: 10px 12px; }.notice.error { background: #512a35; color: #ffc3c9; margin: 0 0 16px; }
+.empty-state { color: #b7c0d5; line-height: 1.6; margin-top: 26px; }
+@media (max-width: 780px) { .app-shell { grid-template-columns: 1fr; }.sidebar { border-bottom: 1px solid #2e3547; border-right: 0; gap: 18px; padding: 18px; } nav { display: flex; flex-wrap: wrap; }.nav-item { flex: 1 1 120px; text-align: center; }.content-area { padding: 18px; }.status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .status-grid, .form-grid { grid-template-columns: 1fr; }.form-grid label:last-child { grid-column: auto; }.detail-list div { grid-template-columns: 1fr; }.input-with-button { align-items: stretch; flex-direction: column; } }
