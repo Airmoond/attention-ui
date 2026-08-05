@@ -1,7 +1,10 @@
 import { createServer, type Server } from "node:http"
-import express from "express"
-import type { ServiceStatus } from "@focus-ui/shared"
+import express, { type ErrorRequestHandler } from "express"
+import type { ApiError, ServiceStatus } from "@focus-ui/shared"
+import type { AuthController } from "./auth"
+import { createAuthMiddleware, createCorsMiddleware } from "./middleware"
 import { createHealthRoute } from "./routes/health"
+import { createPairRoute } from "./routes/pair"
 
 const LOCAL_SERVICE_HOST = "127.0.0.1"
 const LOCAL_SERVICE_PORT = 17321
@@ -11,6 +14,7 @@ type StatusListener = (status: ServiceStatus) => void
 
 type LocalServerOptions = {
   getAiConfigured: () => boolean
+  authController: AuthController
 }
 
 let localServer: Server | null = null
@@ -23,6 +27,13 @@ let serviceStatus: ServiceStatus = {
 
 const statusListeners = new Set<StatusListener>()
 let getAiConfigured = (): boolean => false
+let authController: AuthController = {
+  pair: () => ({ ok: false, code: "AUTH_NOT_READY", message: "鉴权服务尚未就绪" }),
+  authorize: () => false,
+  getPairingStatus: () => ({ pairingToken: "", paired: false, lastConnectedAt: null }),
+  regeneratePairingToken: () => ({ pairingToken: "", paired: false, lastConnectedAt: null }),
+  disconnectPlugin: () => ({ pairingToken: "", paired: false, lastConnectedAt: null })
+}
 
 const updateServiceStatus = (nextStatus: ServiceStatus): void => {
   serviceStatus = nextStatus
@@ -46,8 +57,12 @@ export const getLocalServiceStatus = (): ServiceStatus => serviceStatus
 
 export const isLocalServerRunning = (): boolean => serviceStatus.running
 
-export const configureLocalServer = ({ getAiConfigured: nextProvider }: LocalServerOptions): void => {
+export const configureLocalServer = ({
+  getAiConfigured: nextProvider,
+  authController: nextAuthController
+}: LocalServerOptions): void => {
   getAiConfigured = nextProvider
+  authController = nextAuthController
 }
 
 export const onLocalServiceStatusChange = (listener: StatusListener): (() => void) => {
@@ -70,6 +85,8 @@ export const startLocalServer = async (): Promise<ServiceStatus> => {
   })
 
   const application = express()
+  application.use(createCorsMiddleware())
+  application.use(express.json({ limit: "16kb" }))
   application.get(
     "/health",
     createHealthRoute({
@@ -77,6 +94,19 @@ export const startLocalServer = async (): Promise<ServiceStatus> => {
       getAiConfigured
     })
   )
+  application.post("/v1/pair", createPairRoute(authController))
+  application.use("/v1", createAuthMiddleware(authController))
+  application.get("/v1/auth-check", (_request, response): void => {
+    response.status(200).json({ ok: true, authenticated: true })
+  })
+  const handleRequestError: ErrorRequestHandler = (error, _request, response, _next): void => {
+    const invalidJson = error instanceof SyntaxError
+    const apiError: ApiError = invalidJson
+      ? { ok: false, code: "INVALID_JSON", message: "请求 JSON 格式无效" }
+      : { ok: false, code: "REQUEST_FAILED", message: "请求处理失败" }
+    response.status(invalidJson ? 400 : 500).json(apiError)
+  }
+  application.use(handleRequestError)
 
   const nextServer = createServer(application)
 

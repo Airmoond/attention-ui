@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron"
 import { registerIpcHandlers } from "./ipc"
 import { configureLocalServer, startLocalServer, stopLocalServer } from "./server/server"
+import { getFocusAuthController } from "./store/auth-store"
 import { isAiConfigured } from "./store/settings-store"
 import { createMainWindow } from "./window"
 
@@ -9,7 +10,10 @@ const openMainWindow = (): void => {
 }
 
 app.whenReady().then(() => {
-  configureLocalServer({ getAiConfigured: isAiConfigured })
+  configureLocalServer({
+    getAiConfigured: isAiConfigured,
+    authController: getFocusAuthController()
+  })
   registerIpcHandlers()
   openMainWindow()
   void startLocalServer()

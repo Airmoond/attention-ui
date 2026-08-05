@@ -1,3 +1,13 @@
 export { DEFAULT_APP_SETTINGS } from "./constants"
-export { AppSettingsSchema } from "./schemas"
-export type { AppInfo, AppSettings, HealthResponse, ServiceStatus } from "./types"
+export { AppSettingsSchema, AuthStateSchema, PairRequestSchema } from "./schemas"
+export type {
+  ApiError,
+  AppInfo,
+  AppSettings,
+  AuthState,
+  HealthResponse,
+  PairingStatus,
+  PairRequest,
+  PairResponse,
+  ServiceStatus
+} from "./types"

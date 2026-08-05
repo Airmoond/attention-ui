@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import type { AppInfo, AppSettings, ServiceStatus } from "@focus-ui/shared"
+import type { AppInfo, AppSettings, PairingStatus, ServiceStatus } from "@focus-ui/shared"
 import AISettingsPage from "./pages/AISettingsPage"
 import BehaviorPage from "./pages/BehaviorPage"
 import LogsPage from "./pages/LogsPage"
@@ -19,20 +19,23 @@ const App = (): JSX.Element => {
   const [appInfo, setAppInfo] = useState<AppInfo | null>(null)
   const [serviceStatus, setServiceStatus] = useState<ServiceStatus | null>(null)
   const [settings, setSettings] = useState<AppSettings | null>(null)
+  const [pairingStatus, setPairingStatus] = useState<PairingStatus | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isServiceActionPending, setIsServiceActionPending] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const refreshData = useCallback(async (): Promise<void> => {
-    const [nextAppInfo, nextServiceStatus, nextSettings] = await Promise.all([
+    const [nextAppInfo, nextServiceStatus, nextSettings, nextPairingStatus] = await Promise.all([
       window.focusUI.getAppInfo(),
       window.focusUI.getServiceStatus(),
-      window.focusUI.getSettings()
+      window.focusUI.getSettings(),
+      window.focusUI.getPairingStatus()
     ])
 
     setAppInfo(nextAppInfo)
     setServiceStatus(nextServiceStatus)
     setSettings(nextSettings)
+    setPairingStatus(nextPairingStatus)
   }, [])
 
   useEffect(() => {
@@ -101,6 +104,31 @@ const App = (): JSX.Element => {
     }
   }
 
+  const copyPairingToken = async (): Promise<void> => {
+    if (!pairingStatus) {
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(pairingStatus.pairingToken)
+    } catch (_error: unknown) {
+      setErrorMessage("无法复制配对令牌，请手动复制。")
+    }
+  }
+
+  const runPairingAction = async (action: "regenerate" | "disconnect"): Promise<void> => {
+    setErrorMessage(null)
+    try {
+      const nextPairingStatus =
+        action === "regenerate"
+          ? await window.focusUI.regeneratePairingToken()
+          : await window.focusUI.disconnectPlugin()
+      setPairingStatus(nextPairingStatus)
+    } catch (_error: unknown) {
+      setErrorMessage(action === "regenerate" ? "无法重新生成配对令牌。" : "无法断开插件。")
+    }
+  }
+
   const renderPage = (): JSX.Element => {
     if (isLoading) {
       return <section className="page-panel">正在读取桌面端状态…</section>
@@ -112,10 +140,14 @@ const App = (): JSX.Element => {
           appInfo={appInfo}
           serviceStatus={serviceStatus}
           settings={settings}
+          pairingStatus={pairingStatus}
           isServiceActionPending={isServiceActionPending}
           onStartService={(): Promise<void> => runServiceAction("start")}
           onStopService={(): Promise<void> => runServiceAction("stop")}
           onCopyServiceAddress={copyServiceAddress}
+          onCopyPairingToken={copyPairingToken}
+          onRegeneratePairingToken={(): Promise<void> => runPairingAction("regenerate")}
+          onDisconnectPlugin={(): Promise<void> => runPairingAction("disconnect")}
         />
       )
     }

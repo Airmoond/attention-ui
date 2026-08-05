@@ -1,23 +1,31 @@
-import type { AppInfo, AppSettings, ServiceStatus } from "@focus-ui/shared"
+import type { AppInfo, AppSettings, PairingStatus, ServiceStatus } from "@focus-ui/shared"
 
 type StatusPageProps = {
   appInfo: AppInfo | null
   serviceStatus: ServiceStatus | null
   settings: AppSettings | null
+  pairingStatus: PairingStatus | null
   isServiceActionPending: boolean
   onStartService: () => Promise<void>
   onStopService: () => Promise<void>
   onCopyServiceAddress: () => Promise<void>
+  onCopyPairingToken: () => Promise<void>
+  onRegeneratePairingToken: () => Promise<void>
+  onDisconnectPlugin: () => Promise<void>
 }
 
 const StatusPage = ({
   appInfo,
   serviceStatus,
   settings,
+  pairingStatus,
   isServiceActionPending,
   onStartService,
   onStopService,
-  onCopyServiceAddress
+  onCopyServiceAddress,
+  onCopyPairingToken,
+  onRegeneratePairingToken,
+  onDisconnectPlugin
 }: StatusPageProps): JSX.Element => {
   const aiConfigured = Boolean(settings?.apiKey.trim() && settings?.modelName.trim())
   const isRunning = serviceStatus?.running ?? false
@@ -44,11 +52,17 @@ const StatusPage = ({
         </article>
         <article className="status-card">
           <span>插件状态</span>
-          <strong className="status-muted">尚未连接</strong>
+          <strong className={pairingStatus?.paired ? "status-good" : "status-muted"}>
+            {pairingStatus?.paired ? "已配对" : "尚未连接"}
+          </strong>
         </article>
         <article className="status-card">
           <span>最后连接时间</span>
-          <strong className="status-muted">无</strong>
+          <strong className="status-muted">
+            {pairingStatus?.lastConnectedAt
+              ? new Date(pairingStatus.lastConnectedAt).toLocaleString()
+              : "无"}
+          </strong>
         </article>
       </div>
 
@@ -69,6 +83,17 @@ const StatusPage = ({
           复制服务地址
         </button>
       </div>
+
+      <section className="pairing-section">
+        <h3>插件配对</h3>
+        <p>将此令牌复制到后续浏览器插件中。客户端令牌不会在桌面端显示。</p>
+        <code className="pairing-token">{pairingStatus?.pairingToken ?? "读取中"}</code>
+        <div className="button-row">
+          <button className="secondary" disabled={!pairingStatus} onClick={onCopyPairingToken} type="button">复制配对令牌</button>
+          <button className="secondary" disabled={!pairingStatus} onClick={onRegeneratePairingToken} type="button">重新生成配对令牌</button>
+          <button className="secondary" disabled={!pairingStatus?.paired} onClick={onDisconnectPlugin} type="button">断开插件</button>
+        </div>
+      </section>
     </section>
   )
 }
