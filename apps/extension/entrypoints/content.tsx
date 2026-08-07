@@ -1,4 +1,7 @@
 import { createRoot, type Root } from "react-dom/client"
+import { AttentionEngine, type AttentionCandidate } from "../src/attention/attention-engine"
+import { extractPageContext } from "../src/context/context-extractor"
+import { SemanticBlockDebugOutline, truncateText } from "../src/context/semantic-block"
 import { getExtensionSettings } from "../src/storage/extension-store"
 import { FocusUIRoot } from "../src/ui/FocusUIRoot"
 
@@ -9,12 +12,17 @@ type FocusUiHost = HTMLElement & {
   focusUiReactRoot?: Root
 }
 
+let attentionEngine: AttentionEngine | null = null
+let synchronizeVersion = 0
+
 const getHost = (): FocusUiHost | null => {
   const host = document.getElementById(HOST_ID)
   return host?.getAttribute(HOST_ATTRIBUTE) === "true" ? (host as FocusUiHost) : null
 }
 
 const removeFocusUiRoot = (): void => {
+  attentionEngine?.stop()
+  attentionEngine = null
   const host = getHost()
   if (!host) {
     return
@@ -24,9 +32,51 @@ const removeFocusUiRoot = (): void => {
   host.remove()
 }
 
+const reportAttentionCandidate = (candidate: AttentionCandidate): void => {
+  if (!import.meta.env.DEV) {
+    return
+  }
+
+  try {
+    const context = extractPageContext(candidate)
+    console.debug("FocusUI Attention Candidate", {
+      kind: candidate.kind,
+      textPreview: truncateText(candidate.text, 80),
+      rect: {
+        x: Math.round(candidate.rect.x),
+        y: Math.round(candidate.rect.y),
+        width: Math.round(candidate.rect.width),
+        height: Math.round(candidate.rect.height)
+      },
+      triggeredAt: Math.round(candidate.triggeredAt),
+      context: {
+        contextKind: context.contextKind,
+        textLength: context.text.length,
+        numericCandidateCount: context.numericCandidates.length,
+        nearbyHeading: context.nearbyHeading
+      }
+    })
+  } catch (_error: unknown) {
+    console.warn("FocusUI 上下文提取失败")
+  }
+}
+
+const startAttentionInference = (): void => {
+  if (attentionEngine) {
+    return
+  }
+
+  attentionEngine = new AttentionEngine({
+    onAttentionCandidate: reportAttentionCandidate,
+    debugOutline: import.meta.env.DEV ? new SemanticBlockDebugOutline() : undefined
+  })
+  attentionEngine.start()
+}
+
 const mountFocusUiRoot = (): void => {
   const existingHost = getHost()
   if (existingHost) {
+    startAttentionInference()
     return
   }
 
@@ -69,10 +119,15 @@ const mountFocusUiRoot = (): void => {
   document.documentElement.append(host)
   host.focusUiReactRoot = createRoot(mountElement)
   host.focusUiReactRoot.render(<FocusUIRoot />)
+  startAttentionInference()
 }
 
 const synchronizeFocusUiRoot = async (): Promise<void> => {
+  const version = ++synchronizeVersion
   const settings = await getExtensionSettings()
+  if (version !== synchronizeVersion) {
+    return
+  }
   if (settings.enabled) {
     mountFocusUiRoot()
     return
@@ -97,5 +152,7 @@ export default defineContentScript({
 
       void synchronizeFocusUiRoot().catch(reportSynchronizationFailure)
     })
+
+    window.addEventListener("pagehide", removeFocusUiRoot, { once: true })
   }
 })

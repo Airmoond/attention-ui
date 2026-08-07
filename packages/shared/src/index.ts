@@ -1,5 +1,11 @@
 export { DEFAULT_APP_SETTINGS } from "./constants"
-export { AppSettingsSchema, AuthStateSchema } from "./schemas"
+export {
+  AppSettingsSchema,
+  AuthStateSchema,
+  ContextKindSchema,
+  NumericCandidateSchema,
+  PageContextSchema
+} from "./schemas"
 export {
   ApiErrorSchema,
   AuthCheckResponseSchema,
@@ -17,9 +23,12 @@ export type {
   DesktopConnectionStatus,
   ExtensionSettings,
   AuthState,
+  ContextKind,
   HealthResponse,
+  NumericCandidate,
   PairingStatus,
   PairRequest,
   PairResponse,
+  PageContext,
   ServiceStatus
 } from "./types"

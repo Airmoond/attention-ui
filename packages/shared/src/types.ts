@@ -69,6 +69,24 @@ export type AuthState = {
   lastConnectedAt: string | null
 }
 
+export type ContextKind = "text" | "numbers" | "table" | "code" | "unknown"
+
+export type NumericCandidate = {
+  label: string
+  rawValue: string
+  value: number | null
+}
+
+export type PageContext = {
+  url: string
+  pageTitle: string
+  text: string
+  selectedText: string | null
+  nearbyHeading: string | null
+  contextKind: ContextKind
+  numericCandidates: NumericCandidate[]
+}
+
 export type PairingStatus = {
   pairingToken: string
   paired: boolean

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FocusUI 模块四临时验收页面</title>
+    <style>
+      :root { color: #172033; background: #f4f7fb; font-family: "Segoe UI", system-ui, sans-serif; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      header, footer, nav { padding: 16px max(24px, calc((100vw - 1100px) / 2)); }
+      header { background: #172033; color: white; }
+      nav { display: flex; gap: 20px; background: #263957; color: white; }
+      main { display: grid; grid-template-columns: minmax(0, 760px) 260px; gap: 28px; width: min(1100px, calc(100% - 48px)); margin: 28px auto; }
+      article, aside { background: white; border-radius: 12px; box-shadow: 0 8px 28px rgb(23 32 51 / 9%); }
+      article { padding: 36px; }
+      aside { align-self: start; padding: 20px; }
+      p, li { font-size: 16px; line-height: 1.85; }
+      section { margin-top: 34px; }
+      pre { overflow: auto; padding: 18px; border-radius: 8px; background: #172033; color: #dce7ff; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { padding: 12px; border: 1px solid #dbe3f0; text-align: left; }
+      th { background: #eef4ff; }
+      .number-highlight { border-left: 4px solid #275efe; padding-left: 16px; }
+      .form-area { display: grid; gap: 12px; padding: 18px; border: 1px dashed #9aa9c2; border-radius: 8px; }
+      input, textarea, [contenteditable] { width: 100%; padding: 10px; border: 1px solid #a8b6cc; border-radius: 6px; font: inherit; }
+      button { width: fit-content; padding: 9px 14px; border: 0; border-radius: 6px; color: white; background: #275efe; }
+      footer { margin-top: 32px; background: #172033; color: white; }
+      @media (max-width: 760px) { main { grid-template-columns: 1fr; width: calc(100% - 28px); } article { padding: 24px; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>FocusUI 模块四临时验收页面</strong>
+    </header>
+    <nav>
+      <span>首页导航（应排除）</span>
+      <span>报告导航（应排除）</span>
+      <span>设置导航（应排除）</span>
+    </nav>
+
+    <main>
+      <article>
+        <h1>年度技术与营收报告</h1>
+
+        <p>
+          这是一个普通文章段落，其中包含 <span>嵌套 span 的关键说明</span>；鼠标位于 span 上时，
+          FocusUI 应识别完整的父级段落，而不是只识别当前内联文本。
+        </p>
+
+        <section>
+          <h2>阅读要点</h2>
+          <ul>
+            <li>这是一个足够长的列表项，用于确认鼠标停留时应选择当前 li，而不是外层列表容器。</li>
+            <li>第二个列表项用于验证在不同语义块之间移动时，注意力推断会重新开始计时。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>代码示例</h2>
+          <pre><code>const desktopPort = 17321;
+const attentionDelayMs = 900;
+const visibleRatio = 0.6;</code></pre>
+        </section>
+
+        <section>
+          <h2>年度经营数据</h2>
+          <p class="number-highlight">
+            2024 年营收为 ¥1,200，增长 15.6%，调整后变化为 -32；该段应分类为 numbers，
+            同时保留千位分隔符、百分号、货币符号和负数原始值。
+          </p>
+
+          <table>
+            <thead>
+              <tr><th>年份</th><th>营收（万元）</th><th>增长率</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>2023</td><td>980</td><td>12.4%</td></tr>
+              <tr><td>2024</td><td>1,200</td><td>15.6%</td></tr>
+              <tr><td>2025</td><td>1,360</td><td>13.3%</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>年份与日期排除</h2>
+          <p>该报告发布于 2024 年；单独年份不应使本段被错误分类为 numbers。</p>
+          <p>2024-01-02</p>
+        </section>
+
+        <section class="form-area">
+          <h2>敏感输入区域（全部应排除）</h2>
+          <label>普通输入 <input value="绝不能读取的输入内容" /></label>
+          <label>密码输入 <input type="password" value="secret-not-readable" /></label>
+          <label>文本区域 <textarea>绝不能读取的文本区域内容</textarea></label>
+          <div contenteditable="true">绝不能读取的 contenteditable 内容</div>
+          <button type="button">原网页按钮（应排除）</button>
+        </section>
+      </article>
+
+      <aside>
+        <h2>侧栏说明</h2>
+        <p>这是较复杂布局中的侧栏文本，可用于确认正常段落仍能独立识别。</p>
+      </aside>
+    </main>
+
+    <footer>页脚导航和版权信息（应排除）</footer>
+  </body>
+</html>

@@ -21,3 +21,25 @@ export const AuthStateSchema = z
     lastConnectedAt: z.string().datetime().nullable()
   })
   .strict()
+
+export const ContextKindSchema = z.enum(["text", "numbers", "table", "code", "unknown"])
+
+export const NumericCandidateSchema = z
+  .object({
+    label: z.string().max(200),
+    rawValue: z.string().min(1).max(80),
+    value: z.number().finite().nullable()
+  })
+  .strict()
+
+export const PageContextSchema = z
+  .object({
+    url: z.string().min(1).max(2048),
+    pageTitle: z.string().max(200),
+    text: z.string().min(1).max(1500),
+    selectedText: z.string().min(1).max(1500).nullable(),
+    nearbyHeading: z.string().min(1).max(200).nullable(),
+    contextKind: ContextKindSchema,
+    numericCandidates: z.array(NumericCandidateSchema).max(20)
+  })
+  .strict()
