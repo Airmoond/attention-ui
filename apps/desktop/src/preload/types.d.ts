@@ -1,4 +1,10 @@
-import type { AppInfo, AppSettings, PairingStatus, ServiceStatus } from "@focus-ui/shared"
+import type {
+  AiConnectionTestResult,
+  AppInfo,
+  AppSettings,
+  PairingStatus,
+  ServiceStatus
+} from "@focus-ui/shared"
 
 declare global {
   interface Window {
@@ -13,6 +19,7 @@ declare global {
       getPairingStatus: () => Promise<PairingStatus>
       regeneratePairingToken: () => Promise<PairingStatus>
       disconnectPlugin: () => Promise<PairingStatus>
+      testAiConnection: (settings: AppSettings) => Promise<AiConnectionTestResult>
     }
   }
 }

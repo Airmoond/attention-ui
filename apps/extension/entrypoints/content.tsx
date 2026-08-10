@@ -182,6 +182,132 @@ const mountFocusUiRoot = (): void => {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       animation: focus-ui-fade-in 150ms ease-out both;
     }
+    .focus-ui-result-card {
+      width: min(460px, calc(100vw - 32px));
+      max-height: min(72vh, 680px);
+      overflow: hidden auto;
+      overscroll-behavior: contain;
+    }
+    .focus-ui-result-title {
+      margin: 0;
+      color: #172033;
+      font: 700 17px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .focus-ui-result-text {
+      display: grid;
+      gap: 8px;
+      color: #263957;
+      overflow-wrap: anywhere;
+    }
+    .focus-ui-result-text p,
+    .focus-ui-result-text h3 {
+      margin: 0;
+      font: 400 14px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      white-space: pre-wrap;
+    }
+    .focus-ui-result-text h3 {
+      color: #172033;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .focus-ui-result-list-item {
+      position: relative;
+      padding-left: 15px;
+    }
+    .focus-ui-result-list-item::before {
+      position: absolute;
+      left: 2px;
+      content: "•";
+      color: #275efe;
+    }
+    .focus-ui-structured-result {
+      display: grid;
+      gap: 9px;
+    }
+    .focus-ui-structured-result h3 {
+      margin: 0;
+      color: #263957;
+      font: 700 14px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .focus-ui-chart-list {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+    }
+    .focus-ui-chart-list > div {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #f1f5fb;
+    }
+    .focus-ui-chart-list dt,
+    .focus-ui-chart-list dd {
+      margin: 0;
+      color: #263957;
+      font: 500 13px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .focus-ui-chart-list dd {
+      color: #1749c7;
+      font-weight: 700;
+    }
+    .focus-ui-table-scroll {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    .focus-ui-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #263957;
+      background: #ffffff;
+      font: 13px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .focus-ui-data-table th,
+    .focus-ui-data-table td {
+      border: 1px solid #d8e1ef;
+      padding: 8px 10px;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+    .focus-ui-data-table th {
+      background: #f1f5fb;
+      font-weight: 700;
+    }
+    .focus-ui-ask-input {
+      box-sizing: border-box;
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      border: 1px solid #c9d5e6;
+      border-radius: 7px;
+      padding: 9px 10px;
+      color: #172033;
+      background: #ffffff;
+      font: 14px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .focus-ui-ask-input:focus {
+      border-color: #275efe;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(39, 94, 254, 0.18);
+    }
+    .focus-ui-input-hint {
+      margin: -4px 0 0;
+      color: #64748b;
+      font: 12px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .focus-ui-loading-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .focus-ui-loading-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #275efe;
+      animation: focus-ui-pulse 900ms ease-in-out infinite alternate;
+    }
     .focus-ui-message-text {
       margin: 0;
       color: #263957;
@@ -210,6 +336,13 @@ const mountFocusUiRoot = (): void => {
       color: #1749c7;
       outline: none;
       box-shadow: 0 0 0 2px rgba(39, 94, 254, 0.2);
+    }
+    .focus-ui-message-button:disabled {
+      border-color: #d8e1ef;
+      color: #94a3b8;
+      background: #f8fafc;
+      cursor: not-allowed;
+      box-shadow: none;
     }
     .focus-ui-reader-overlay {
       position: fixed;
@@ -340,6 +473,10 @@ const mountFocusUiRoot = (): void => {
     @keyframes focus-ui-fade-in {
       from { opacity: 0; transform: translateY(2px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes focus-ui-pulse {
+      from { opacity: 0.35; transform: scale(0.82); }
+      to { opacity: 1; transform: scale(1); }
     }
   `
   const mountElement = document.createElement("div")

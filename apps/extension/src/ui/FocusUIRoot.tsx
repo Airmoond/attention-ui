@@ -1,4 +1,9 @@
-import type { PageContext, ToolId } from "@focus-ui/shared"
+import type {
+  PageContext,
+  ToolId,
+  ToolPlan,
+  ToolResult
+} from "@focus-ui/shared"
 import { useEffect, useRef, useState } from "react"
 import type { AttentionCandidate } from "../attention/attention-engine"
 import {
@@ -9,10 +14,17 @@ import {
   extractFocusReaderContent,
   type FocusReaderContent
 } from "../context/focus-content-extractor"
-import type { LocalTool } from "../policy/local-policy"
+import {
+  getLocalToolById,
+  MAX_LOCAL_TOOLS,
+  type LocalTool
+} from "../policy/local-policy"
+import { AIResultCard } from "./AIResultCard"
+import { AskBox } from "./AskBox"
 import { AttentionToolbar } from "./AttentionToolbar"
 import { ErrorCard } from "./ErrorCard"
 import { FocusReader } from "./FocusReader"
+import { LoadingCard } from "./LoadingCard"
 
 export type ToolbarSession = {
   candidate: AttentionCandidate
@@ -32,6 +44,20 @@ type FocusUIState =
       session: ToolbarSession
     }
   | {
+      kind: "loading"
+      toolId: ToolId
+      session: ToolbarSession
+    }
+  | {
+      kind: "ask"
+      session: ToolbarSession
+    }
+  | {
+      kind: "result"
+      result: ToolResult
+      session: ToolbarSession
+    }
+  | {
       kind: "focus-reader"
       content: FocusReaderContent
     }
@@ -40,22 +66,27 @@ export type FocusUIRootProps = {
   session: ToolbarSession | null
 }
 
-export const getAiToolFallbackMessage = (result: BackgroundMessageResult): string => {
-  if (!result.ok || !("connectionStatus" in result)) {
-    return "FocusUI Desktop未连接"
+export const mergePlannedTool = (tools: LocalTool[], plan: ToolPlan): LocalTool[] => [
+  getLocalToolById(plan.toolId),
+  ...tools.filter((tool) => tool.id !== plan.toolId)
+].slice(0, MAX_LOCAL_TOOLS)
+
+export const getToolRequestErrorMessage = (result: BackgroundMessageResult): string => {
+  if (!("ok" in result) || result.ok) {
+    return "FocusUI暂时无法处理此操作"
   }
 
-  switch (result.connectionStatus) {
-    case "offline":
-    case "unknown":
+  switch (result.code) {
+    case "REQUEST_TIMEOUT":
+    case "DESKTOP_UNREACHABLE":
+    case "BACKGROUND_UNAVAILABLE":
+    case "BACKGROUND_REQUEST_FAILED":
       return "FocusUI Desktop未连接"
-    case "online_unpaired":
-    case "auth_expired":
+    case "MISSING_CLIENT_TOKEN":
+    case "INVALID_CLIENT_TOKEN":
       return "尚未与FocusUI Desktop配对"
-    case "online_paired":
-      return result.health?.aiConfigured
-        ? "该AI功能将在下一模块接入"
-        : "请先在桌面端配置AI服务"
+    default:
+      return "FocusUI暂时无法处理此操作"
   }
 }
 
@@ -67,10 +98,29 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
   const requestVersionRef = useRef(0)
 
   useEffect(() => {
-    if (session) {
-      requestVersionRef.current += 1
-      setState({ kind: "toolbar", session })
+    if (!session) {
+      return
     }
+
+    const requestVersion = ++requestVersionRef.current
+    setState({ kind: "toolbar", session })
+    void sendExtensionMessage({ type: "PLAN_TOOLS", pageContext: session.context }).then((result) => {
+      if (requestVersion !== requestVersionRef.current || !("source" in result)) {
+        return
+      }
+      if (result.source !== "ai") {
+        return
+      }
+      const plannedSession: ToolbarSession = {
+        ...session,
+        tools: mergePlannedTool(session.tools, result.plan)
+      }
+      setState((current) =>
+        current.kind === "toolbar" && current.session === session
+          ? { kind: "toolbar", session: plannedSession }
+          : current
+      )
+    })
   }, [session])
 
   useEffect(() => {
@@ -152,6 +202,41 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
     setState({ kind: "idle" })
   }
 
+  const executeAiTool = async (
+    toolId: ToolId,
+    currentSession: ToolbarSession,
+    question?: string
+  ): Promise<void> => {
+    const requestVersion = ++requestVersionRef.current
+    setState({ kind: "loading", toolId, session: currentSession })
+    const result = await sendExtensionMessage({
+      type: "EXECUTE_TOOL",
+      request: {
+        toolId,
+        pageContext: currentSession.context,
+        ...(question ? { question } : {})
+      }
+    })
+    if (requestVersion !== requestVersionRef.current) {
+      return
+    }
+
+    if ("toolId" in result && "success" in result && result.toolId === toolId) {
+      setState(
+        result.success
+          ? { kind: "result", result, session: currentSession }
+          : { kind: "message", message: result.content, session: currentSession }
+      )
+      return
+    }
+
+    setState({
+      kind: "message",
+      message: getToolRequestErrorMessage(result),
+      session: currentSession
+    })
+  }
+
   const handleToolSelect = async (toolId: ToolId, currentSession: ToolbarSession): Promise<void> => {
     if (toolId === "focus") {
       const content = extractFocusReaderContent(
@@ -167,18 +252,13 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
       return
     }
 
-    const requestVersion = ++requestVersionRef.current
-    setState({ kind: "message", message: "正在检查FocusUI Desktop…", session: currentSession })
-    try {
-      const result = await sendExtensionMessage({ type: "GET_CONNECTION_STATUS" })
-      if (requestVersion === requestVersionRef.current) {
-        setState({ kind: "message", message: getAiToolFallbackMessage(result), session: currentSession })
-      }
-    } catch (_error: unknown) {
-      if (requestVersion === requestVersionRef.current) {
-        setState({ kind: "message", message: "FocusUI Desktop未连接", session: currentSession })
-      }
+    if (toolId === "ask") {
+      requestVersionRef.current += 1
+      setState({ kind: "ask", session: currentSession })
+      return
     }
+
+    await executeAiTool(toolId, currentSession)
   }
 
   if (state.kind === "idle") {
@@ -190,6 +270,47 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
       <ErrorCard
         ref={toolbarRef}
         message={state.message}
+        onBack={() => {
+          requestVersionRef.current += 1
+          setState({ kind: "toolbar", session: state.session })
+        }}
+        onClose={dismiss}
+      />
+    )
+  }
+
+  if (state.kind === "loading") {
+    return <LoadingCard ref={toolbarRef} toolId={state.toolId} onClose={dismiss} />
+  }
+
+  if (state.kind === "ask") {
+    return (
+      <AskBox
+        ref={toolbarRef}
+        onSubmit={(question) => {
+          void executeAiTool("ask", state.session, question).catch((_error: unknown) => {
+            requestVersionRef.current += 1
+            setState({
+              kind: "message",
+              message: "FocusUI暂时无法处理此操作",
+              session: state.session
+            })
+          })
+        }}
+        onBack={() => {
+          requestVersionRef.current += 1
+          setState({ kind: "toolbar", session: state.session })
+        }}
+        onClose={dismiss}
+      />
+    )
+  }
+
+  if (state.kind === "result") {
+    return (
+      <AIResultCard
+        ref={toolbarRef}
+        result={state.result}
         onBack={() => {
           requestVersionRef.current += 1
           setState({ kind: "toolbar", session: state.session })

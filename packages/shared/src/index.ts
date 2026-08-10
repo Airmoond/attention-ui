@@ -2,11 +2,18 @@ export { DEFAULT_APP_SETTINGS } from "./constants"
 export {
   AppSettingsSchema,
   AuthStateSchema,
+  ChartDataSchema,
   ContextKindSchema,
+  ExecuteRequestSchema,
+  ExtractedDataSchema,
   NumericCandidateSchema,
   PageContextSchema,
+  PlanRequestSchema,
+  PlanResponseSchema,
   TOOL_IDS,
-  ToolIdSchema
+  ToolIdSchema,
+  ToolPlanSchema,
+  ToolResultSchema
 } from "./schemas"
 export {
   ApiErrorSchema,
@@ -19,10 +26,15 @@ export {
 } from "./extension"
 export type {
   ApiError,
+  AiConnectionTestResult,
   AuthCheckResponse,
   AppInfo,
   AppSettings,
+  ChartData,
   DesktopConnectionStatus,
+  ExecuteRequest,
+  ExtractedData,
+  ExtractedDataItem,
   ExtensionSettings,
   AuthState,
   ContextKind,
@@ -32,6 +44,10 @@ export type {
   PairRequest,
   PairResponse,
   PageContext,
+  PlanRequest,
+  PlanResponse,
   ServiceStatus,
-  ToolId
+  ToolId,
+  ToolPlan,
+  ToolResult
 } from "./types"

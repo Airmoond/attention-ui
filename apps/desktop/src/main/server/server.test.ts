@@ -4,10 +4,14 @@ import {
   DEFAULT_APP_SETTINGS,
   type ApiError,
   type AuthState,
+  type PageContext,
   type PairResponse
 } from "@focus-ui/shared"
 import { createServer, type Server } from "node:http"
 import { createAuthController } from "./auth"
+import { createAiPlanner } from "../ai/ai-planner"
+import { createOpenAiCompatibleProvider } from "../ai/ai-provider"
+import { createToolExecutor } from "../ai/tool-executor"
 import {
   configureLocalServer,
   getLocalServiceStatus,
@@ -109,7 +113,51 @@ describe("pairing and protected local API", () => {
         authState = nextState
       }
     })
-    configureLocalServer({ getAiConfigured: (): boolean => false, authController })
+    const provider = createOpenAiCompatibleProvider({
+      getSettings: () => ({
+        ...DEFAULT_APP_SETTINGS,
+        apiBaseUrl: "https://api.example.test/v1",
+        apiKey: "desktop-only-key",
+        modelName: "focus-model"
+      }),
+      fetchImplementation: async (_input, init) => {
+        const requestBody = JSON.parse(String(init?.body)) as {
+          messages: Array<{ role: string; content: string }>
+        }
+        const systemPrompt = requestBody.messages[0]?.content ?? ""
+        const userPrompt = requestBody.messages[1]?.content ?? ""
+        let content = "当前内容的简洁结果"
+        if (systemPrompt.includes("单次工具规划器")) {
+          const context = JSON.parse(userPrompt) as PageContext
+          content = JSON.stringify({
+            toolId:
+              context.contextKind === "numbers"
+                ? "chart"
+                : context.contextKind === "code"
+                  ? "explain"
+                  : "summarize",
+            reason: "根据当前内容类型选择",
+            confidence: 0.9
+          })
+        } else if (systemPrompt.includes("图表数据")) {
+          content = JSON.stringify({
+            title: "年度营收",
+            labels: ["2024", "2025"],
+            values: [100, 120],
+            unit: "亿元"
+          })
+        }
+        return Response.json({ choices: [{ message: { content } }] })
+      }
+    })
+    const planner = createAiPlanner({ provider })
+    const executor = createToolExecutor(provider)
+    configureLocalServer({
+      getAiConfigured: (): boolean => true,
+      authController,
+      planPageContext: planner.plan,
+      executeTool: executor.execute
+    })
     await startLocalServer()
 
     const wrongPairResponse = await fetch("http://127.0.0.1:17321/v1/pair", {
@@ -146,6 +194,67 @@ describe("pairing and protected local API", () => {
     expect(authenticatedResponse.status).toBe(200)
     await expect(authenticatedResponse.json()).resolves.toEqual({ ok: true, authenticated: true })
     expect(authState.lastConnectedAt).not.toBeNull()
+
+    const headers = {
+      Authorization: `Bearer ${pairResult.clientToken}`,
+      "Content-Type": "application/json"
+    }
+    const contextFor = (contextKind: PageContext["contextKind"]): PageContext => ({
+      url: "https://example.test",
+      pageTitle: "Example",
+      text:
+        contextKind === "numbers"
+          ? "2024年营收100亿元，2025年营收120亿元。"
+          : "当前关注内容包含足够的信息用于规划工具。",
+      selectedText: null,
+      nearbyHeading: null,
+      contextKind,
+      numericCandidates:
+        contextKind === "numbers"
+          ? [
+              { label: "年份", rawValue: "2024", value: 2024 },
+              { label: "营收", rawValue: "100", value: 100 },
+              { label: "年份", rawValue: "2025", value: 2025 },
+              { label: "营收", rawValue: "120", value: 120 }
+            ]
+          : []
+    })
+
+    for (const [contextKind, toolId] of [
+      ["numbers", "chart"],
+      ["text", "summarize"],
+      ["code", "explain"]
+    ] as const) {
+      const response = await fetch("http://127.0.0.1:17321/v1/plan", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ pageContext: contextFor(contextKind) })
+      })
+      expect(response.status).toBe(200)
+      await expect(response.json()).resolves.toMatchObject({
+        source: "ai",
+        plan: { toolId }
+      })
+    }
+
+    const chartResponse = await fetch("http://127.0.0.1:17321/v1/execute", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ toolId: "chart", pageContext: contextFor("numbers") })
+    })
+    expect(chartResponse.status).toBe(200)
+    await expect(chartResponse.json()).resolves.toMatchObject({
+      toolId: "chart",
+      success: true,
+      data: { labels: ["2024", "2025"], values: [100, 120] }
+    })
+
+    const illegalToolResponse = await fetch("http://127.0.0.1:17321/v1/execute", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ toolId: "run-script", pageContext: contextFor("text") })
+    })
+    expect(illegalToolResponse.status).toBe(400)
 
     const nextPairingStatus = authController.regeneratePairingToken()
     expect(nextPairingStatus.paired).toBe(false)

@@ -1,53 +1,67 @@
-import type { BackgroundMessageResult } from "../communication/messages"
 import { describe, expect, it } from "vitest"
-import { getAiToolFallbackMessage } from "./FocusUIRoot"
+import type { BackgroundMessageResult } from "../communication/messages"
+import type { LocalTool } from "../policy/local-policy"
+import {
+  getToolRequestErrorMessage,
+  mergePlannedTool
+} from "./FocusUIRoot"
 
-const connectionResult = (
-  connectionStatus: "offline" | "online_unpaired" | "online_paired" | "auth_expired",
-  aiConfigured: boolean | null = null
-): BackgroundMessageResult => ({
-  ok: true,
-  connectionStatus,
-  health:
-    aiConfigured === null
-      ? null
-      : { ok: true, service: "focusui-desktop", version: "0.1.0", aiConfigured },
-  message: null
+const errorResult = (code: string): BackgroundMessageResult => ({
+  ok: false,
+  code,
+  message: "safe message"
 })
 
-describe("AI tool fallback messages", () => {
+describe("AI request failure messages", () => {
   it("reports an offline desktop", () => {
-    expect(getAiToolFallbackMessage(connectionResult("offline"))).toBe("FocusUI Desktop未连接")
+    expect(getToolRequestErrorMessage(errorResult("DESKTOP_UNREACHABLE"))).toBe(
+      "FocusUI Desktop未连接"
+    )
+    expect(getToolRequestErrorMessage(errorResult("REQUEST_TIMEOUT"))).toBe(
+      "FocusUI Desktop未连接"
+    )
   })
 
   it("reports missing or expired pairing", () => {
-    expect(getAiToolFallbackMessage(connectionResult("online_unpaired", false))).toBe(
+    expect(getToolRequestErrorMessage(errorResult("MISSING_CLIENT_TOKEN"))).toBe(
       "尚未与FocusUI Desktop配对"
     )
-    expect(getAiToolFallbackMessage(connectionResult("auth_expired", false))).toBe(
+    expect(getToolRequestErrorMessage(errorResult("INVALID_CLIENT_TOKEN"))).toBe(
       "尚未与FocusUI Desktop配对"
     )
   })
 
-  it("reports missing AI configuration", () => {
-    expect(getAiToolFallbackMessage(connectionResult("online_paired", false))).toBe(
-      "请先在桌面端配置AI服务"
+  it("uses a generic safe message for other failures", () => {
+    expect(getToolRequestErrorMessage(errorResult("UNEXPECTED"))).toBe(
+      "FocusUI暂时无法处理此操作"
     )
   })
+})
 
-  it("does not pretend an AI feature is implemented", () => {
-    expect(getAiToolFallbackMessage(connectionResult("online_paired", true))).toBe(
-      "该AI功能将在下一模块接入"
-    )
-  })
+describe("AI planned tool merge", () => {
+  const tools: LocalTool[] = [
+    { id: "summarize", label: "总结", availableOffline: false },
+    { id: "explain", label: "解释", availableOffline: false },
+    { id: "ask", label: "提问", availableOffline: false }
+  ]
 
-  it("treats background communication failures as unavailable", () => {
+  it("moves a known suggestion first without duplicates", () => {
     expect(
-      getAiToolFallbackMessage({
-        ok: false,
-        code: "BACKGROUND_UNAVAILABLE",
-        message: "FocusUI 后台服务不可用"
-      })
-    ).toBe("FocusUI Desktop未连接")
+      mergePlannedTool(tools, {
+        toolId: "explain",
+        reason: "适合解释",
+        confidence: 0.9
+      }).map(({ id }) => id)
+    ).toEqual(["explain", "summarize", "ask"])
+  })
+
+  it("adds a schema-approved suggestion while keeping at most three tools", () => {
+    expect(
+      mergePlannedTool(tools, {
+        toolId: "chart",
+        reason: "适合图表",
+        confidence: 0.8
+      }).map(({ id }) => id)
+    ).toEqual(["chart", "summarize", "explain"])
   })
 })

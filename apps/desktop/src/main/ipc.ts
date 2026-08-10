@@ -1,5 +1,13 @@
 import { app, ipcMain } from "electron"
-import type { AppInfo, AppSettings, PairingStatus, ServiceStatus } from "@focus-ui/shared"
+import {
+  AppSettingsSchema,
+  type AiConnectionTestResult,
+  type AppInfo,
+  type AppSettings,
+  type PairingStatus,
+  type ServiceStatus
+} from "@focus-ui/shared"
+import { createOpenAiCompatibleProvider, AiProviderError } from "./ai/ai-provider"
 import {
   getLocalServiceStatus,
   isLocalServerRunning,
@@ -23,6 +31,7 @@ const RESET_SETTINGS_CHANNEL = "focus-ui:reset-settings"
 const GET_PAIRING_STATUS_CHANNEL = "focus-ui:get-pairing-status"
 const REGENERATE_PAIRING_TOKEN_CHANNEL = "focus-ui:regenerate-pairing-token"
 const DISCONNECT_PLUGIN_CHANNEL = "focus-ui:disconnect-plugin"
+const TEST_AI_CONNECTION_CHANNEL = "focus-ui:test-ai-connection"
 
 export const registerIpcHandlers = (): void => {
   ipcMain.handle(GET_APP_INFO_CHANNEL, (): AppInfo => ({
@@ -43,4 +52,32 @@ export const registerIpcHandlers = (): void => {
     regeneratePairingToken()
   )
   ipcMain.handle(DISCONNECT_PLUGIN_CHANNEL, (): PairingStatus => disconnectPlugin())
+  ipcMain.handle(
+    TEST_AI_CONNECTION_CHANNEL,
+    async (_event, input: unknown): Promise<AiConnectionTestResult> => {
+      const parsedSettings = AppSettingsSchema.safeParse(input)
+      if (!parsedSettings.success) {
+        return { ok: false, message: "AI配置无效" }
+      }
+
+      const provider = createOpenAiCompatibleProvider({
+        getSettings: () => parsedSettings.data
+      })
+      try {
+        await provider.complete({
+          systemPrompt: "这是FocusUI Desktop连接测试。只回复OK。",
+          userPrompt: "connection test"
+        })
+        return { ok: true, message: "AI服务连接成功" }
+      } catch (error: unknown) {
+        return {
+          ok: false,
+          message:
+            error instanceof AiProviderError && error.code === "AI_NOT_CONFIGURED"
+              ? "请填写完整的AI配置"
+              : "AI服务连接失败"
+        }
+      }
+    }
+  )
 }

@@ -29,6 +29,11 @@ export type AppSettings = {
   enableHabitLearning: boolean
 }
 
+export type AiConnectionTestResult = {
+  ok: boolean
+  message: string
+}
+
 export type PairRequest = {
   pairingToken: string
 }
@@ -73,6 +78,12 @@ export type ContextKind = "text" | "numbers" | "table" | "code" | "unknown"
 
 export type ToolId = "summarize" | "explain" | "ask" | "chart" | "extract" | "focus"
 
+export type ToolPlan = {
+  toolId: ToolId
+  reason: string
+  confidence: number
+}
+
 export type NumericCandidate = {
   label: string
   rawValue: string
@@ -87,6 +98,45 @@ export type PageContext = {
   nearbyHeading: string | null
   contextKind: ContextKind
   numericCandidates: NumericCandidate[]
+}
+
+export type PlanRequest = {
+  pageContext: PageContext
+}
+
+export type PlanResponse = {
+  source: "ai" | "local"
+  plan: ToolPlan
+}
+
+export type ChartData = {
+  title: string
+  labels: string[]
+  values: number[]
+  unit: string | null
+}
+
+export type ExtractedDataItem = {
+  label: string
+  value: string | number | null
+}
+
+export type ExtractedData = {
+  title: string
+  items: ExtractedDataItem[]
+}
+
+export type ExecuteRequest = {
+  toolId: ToolId
+  pageContext: PageContext
+  question?: string | null
+}
+
+export type ToolResult = {
+  toolId: ToolId
+  success: boolean
+  content: string
+  data?: unknown
 }
 
 export type PairingStatus = {

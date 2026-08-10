@@ -39,13 +39,27 @@ const AISettingsPage = ({ settings, onSave }: AISettingsPageProps): JSX.Element 
     }
   }
 
-  const testConnection = (): void => {
-    if (!apiKey.trim() || !modelName.trim()) {
-      setMessage("请先填写 API Key 和模型名称。")
+  const testConnection = async (): Promise<void> => {
+    if (!settings || !apiBaseUrl.trim() || !apiKey.trim() || !modelName.trim()) {
+      setMessage("请先填写 API 地址、API Key 和模型名称。")
       return
     }
 
-    setMessage("AI调用将在后续模块接入；当前未发起真实网络请求。")
+    setIsSaving(true)
+    setMessage(null)
+    try {
+      const result = await window.focusUI.testAiConnection({
+        ...settings,
+        apiBaseUrl,
+        apiKey,
+        modelName
+      })
+      setMessage(result.message)
+    } catch (_error: unknown) {
+      setMessage("AI服务连接失败")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -81,7 +95,7 @@ const AISettingsPage = ({ settings, onSave }: AISettingsPageProps): JSX.Element 
         <button disabled={!settings || isSaving} onClick={(): void => void save()} type="button">
           {isSaving ? "保存中…" : "保存设置"}
         </button>
-        <button className="secondary" disabled={isSaving} onClick={testConnection} type="button">
+        <button className="secondary" disabled={isSaving} onClick={(): void => void testConnection()} type="button">
           测试连接
         </button>
       </div>

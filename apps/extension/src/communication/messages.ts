@@ -2,8 +2,17 @@ import {
   ApiErrorSchema,
   ExtensionSettingsSchema,
   HealthResponseSchema,
+  type ApiError,
   type DesktopConnectionStatus
 } from "@focus-ui/shared/extension"
+import {
+  ExecuteRequestSchema,
+  PageContextSchema,
+  PlanResponseSchema,
+  ToolResultSchema,
+  type PlanResponse,
+  type ToolResult
+} from "@focus-ui/shared"
 import { z } from "zod"
 
 const ConnectionStatusSchema = z.enum([
@@ -29,7 +38,9 @@ export const ExtensionMessageSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("PAIR_DESKTOP"), pairingToken: z.string().trim().min(1).max(64) }).strict(),
   z.object({ type: z.literal("GET_EXTENSION_SETTINGS") }).strict(),
   z.object({ type: z.literal("UPDATE_EXTENSION_SETTINGS"), settings: SettingsUpdateSchema }).strict(),
-  z.object({ type: z.literal("CLEAR_LOCAL_PAIRING") }).strict()
+  z.object({ type: z.literal("CLEAR_LOCAL_PAIRING") }).strict(),
+  z.object({ type: z.literal("PLAN_TOOLS"), pageContext: PageContextSchema }).strict(),
+  z.object({ type: z.literal("EXECUTE_TOOL"), request: ExecuteRequestSchema }).strict()
 ])
 
 export type ExtensionMessage = z.infer<typeof ExtensionMessageSchema>
@@ -55,14 +66,38 @@ export const SettingsResultSchema = z
 export const BackgroundMessageResultSchema = z.union([
   ConnectionStatusResultSchema,
   SettingsResultSchema,
+  PlanResponseSchema,
+  ToolResultSchema,
   ApiErrorSchema
 ])
 
 export type BackgroundMessageResult = z.infer<typeof BackgroundMessageResultSchema>
 
-export const sendExtensionMessage = async (
+type ConnectionMessage = Extract<
+  ExtensionMessage,
+  { type: "CHECK_DESKTOP_HEALTH" | "GET_CONNECTION_STATUS" | "PAIR_DESKTOP" }
+>
+type SettingsMessage = Extract<
+  ExtensionMessage,
+  {
+    type:
+      | "GET_EXTENSION_SETTINGS"
+      | "UPDATE_EXTENSION_SETTINGS"
+      | "CLEAR_LOCAL_PAIRING"
+  }
+>
+type PlanMessage = Extract<ExtensionMessage, { type: "PLAN_TOOLS" }>
+type ExecuteMessage = Extract<ExtensionMessage, { type: "EXECUTE_TOOL" }>
+
+export function sendExtensionMessage(
+  message: ConnectionMessage
+): Promise<ConnectionStatusResult | ApiError>
+export function sendExtensionMessage(message: SettingsMessage): Promise<z.infer<typeof SettingsResultSchema> | ApiError>
+export function sendExtensionMessage(message: PlanMessage): Promise<PlanResponse | ApiError>
+export function sendExtensionMessage(message: ExecuteMessage): Promise<ToolResult | ApiError>
+export async function sendExtensionMessage(
   message: ExtensionMessage
-): Promise<BackgroundMessageResult> => {
+): Promise<BackgroundMessageResult> {
   try {
     const response: unknown = await chrome.runtime.sendMessage(message)
     const parsedResponse = BackgroundMessageResultSchema.safeParse(response)

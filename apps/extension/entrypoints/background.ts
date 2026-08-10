@@ -2,6 +2,8 @@ import type { ApiError, DesktopConnectionStatus } from "@focus-ui/shared/extensi
 import {
   checkDesktopAuthentication,
   checkDesktopHealth,
+  executeDesktopTool,
+  planDesktopTools,
   pairDesktop
 } from "../src/communication/desktop-client"
 import {
@@ -92,6 +94,16 @@ export default defineBackground(() => {
         case "CLEAR_LOCAL_PAIRING":
           result = { ok: true, settings: await clearClientToken() }
           break
+        case "PLAN_TOOLS": {
+          const planResult = await planDesktopTools(parsedMessage.data.pageContext)
+          result = planResult.ok ? planResult.data : planResult.error
+          break
+        }
+        case "EXECUTE_TOOL": {
+          const executeResult = await executeDesktopTool(parsedMessage.data.request)
+          result = executeResult.ok ? executeResult.data : executeResult.error
+          break
+        }
       }
       sendResponse(result)
     })().catch((_error: unknown) => {

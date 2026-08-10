@@ -8,6 +8,14 @@ import {
   type HealthResponse,
   type PairResponse
 } from "@focus-ui/shared/extension"
+import {
+  PlanResponseSchema,
+  ToolResultSchema,
+  type ExecuteRequest,
+  type PageContext,
+  type PlanResponse,
+  type ToolResult
+} from "@focus-ui/shared"
 import type { z } from "zod"
 import { getExtensionSettings } from "../storage/extension-store"
 
@@ -35,7 +43,7 @@ const requestFailure = (code: string, message: string, status: number | null): D
 })
 
 const requestDesktopJson = async <T>(
-  path: "/health" | "/v1/pair" | "/v1/auth-check",
+  path: "/health" | "/v1/pair" | "/v1/auth-check" | "/v1/plan" | "/v1/execute",
   schema: JsonSchema<T>,
   options: { method: "GET" } | { method: "POST"; body: unknown },
   requiresAuthentication: boolean
@@ -107,5 +115,25 @@ export const pairDesktop = async (
 export const checkDesktopAuthentication = async (): Promise<
   DesktopRequestResult<AuthCheckResponse>
 > => requestDesktopJson("/v1/auth-check", AuthCheckResponseSchema, { method: "GET" }, true)
+
+export const planDesktopTools = async (
+  pageContext: PageContext
+): Promise<DesktopRequestResult<PlanResponse>> =>
+  requestDesktopJson(
+    "/v1/plan",
+    PlanResponseSchema,
+    { method: "POST", body: { pageContext } },
+    true
+  )
+
+export const executeDesktopTool = async (
+  request: ExecuteRequest
+): Promise<DesktopRequestResult<ToolResult>> =>
+  requestDesktopJson(
+    "/v1/execute",
+    ToolResultSchema,
+    { method: "POST", body: request },
+    true
+  )
 
 export { REQUEST_TIMEOUT_MS }

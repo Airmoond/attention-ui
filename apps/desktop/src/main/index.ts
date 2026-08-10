@@ -1,8 +1,11 @@
 import { app, BrowserWindow } from "electron"
+import { createAiPlanner } from "./ai/ai-planner"
+import { createOpenAiCompatibleProvider } from "./ai/ai-provider"
+import { createToolExecutor } from "./ai/tool-executor"
 import { registerIpcHandlers } from "./ipc"
 import { configureLocalServer, startLocalServer, stopLocalServer } from "./server/server"
 import { getFocusAuthController } from "./store/auth-store"
-import { isAiConfigured } from "./store/settings-store"
+import { getSettings, isAiConfigured } from "./store/settings-store"
 import { createMainWindow } from "./window"
 
 const openMainWindow = (): void => {
@@ -10,9 +13,17 @@ const openMainWindow = (): void => {
 }
 
 app.whenReady().then(() => {
+  const aiProvider = createOpenAiCompatibleProvider({ getSettings })
+  const aiPlanner = createAiPlanner({
+    provider: aiProvider,
+    isAiEnabled: () => getSettings().enableAI
+  })
+  const toolExecutor = createToolExecutor(aiProvider)
   configureLocalServer({
     getAiConfigured: isAiConfigured,
-    authController: getFocusAuthController()
+    authController: getFocusAuthController(),
+    planPageContext: aiPlanner.plan,
+    executeTool: toolExecutor.execute
   })
   registerIpcHandlers()
   openMainWindow()

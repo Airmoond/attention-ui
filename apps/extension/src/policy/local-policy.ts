@@ -22,6 +22,10 @@ const TOOL_CATALOG: Readonly<Record<ToolId, LocalTool>> = {
   focus: { id: "focus", label: "专注", availableOffline: true }
 }
 
+export const getLocalToolById = (toolId: ToolId): LocalTool => ({
+  ...TOOL_CATALOG[toolId]
+})
+
 const DEFAULT_TOOL_IDS = {
   text: ["summarize", "explain", "ask"],
   numbers: ["chart", "explain", "extract"],

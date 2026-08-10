@@ -1,10 +1,20 @@
 import { createServer, type Server } from "node:http"
 import express, { type ErrorRequestHandler } from "express"
-import type { ApiError, ServiceStatus } from "@focus-ui/shared"
+import type {
+  ApiError,
+  ExecuteRequest,
+  PageContext,
+  PlanResponse,
+  ServiceStatus,
+  ToolResult
+} from "@focus-ui/shared"
+import { getLocalFallbackPlan } from "../ai/ai-planner"
 import type { AuthController } from "./auth"
 import { createAuthMiddleware, createCorsMiddleware } from "./middleware"
 import { createHealthRoute } from "./routes/health"
+import { createExecuteRoute, type ExecuteTool } from "./routes/execute"
 import { createPairRoute } from "./routes/pair"
+import { createPlanRoute, type PlanPageContext } from "./routes/plan"
 
 const LOCAL_SERVICE_HOST = "127.0.0.1"
 const LOCAL_SERVICE_PORT = 17321
@@ -15,6 +25,8 @@ type StatusListener = (status: ServiceStatus) => void
 type LocalServerOptions = {
   getAiConfigured: () => boolean
   authController: AuthController
+  planPageContext?: PlanPageContext
+  executeTool?: ExecuteTool
 }
 
 let localServer: Server | null = null
@@ -27,6 +39,17 @@ let serviceStatus: ServiceStatus = {
 
 const statusListeners = new Set<StatusListener>()
 let getAiConfigured = (): boolean => false
+const defaultPlanPageContext = async (pageContext: PageContext): Promise<PlanResponse> => ({
+  source: "local",
+  plan: getLocalFallbackPlan(pageContext)
+})
+const defaultExecuteTool = async (request: ExecuteRequest): Promise<ToolResult> => ({
+  toolId: request.toolId,
+  success: false,
+  content: "AI服务连接失败"
+})
+let planPageContext = defaultPlanPageContext
+let executeTool = defaultExecuteTool
 let authController: AuthController = {
   pair: () => ({ ok: false, code: "AUTH_NOT_READY", message: "鉴权服务尚未就绪" }),
   authorize: () => false,
@@ -59,10 +82,14 @@ export const isLocalServerRunning = (): boolean => serviceStatus.running
 
 export const configureLocalServer = ({
   getAiConfigured: nextProvider,
-  authController: nextAuthController
+  authController: nextAuthController,
+  planPageContext: nextPlanPageContext,
+  executeTool: nextExecuteTool
 }: LocalServerOptions): void => {
   getAiConfigured = nextProvider
   authController = nextAuthController
+  planPageContext = nextPlanPageContext ?? defaultPlanPageContext
+  executeTool = nextExecuteTool ?? defaultExecuteTool
 }
 
 export const onLocalServiceStatusChange = (listener: StatusListener): (() => void) => {
@@ -99,6 +126,8 @@ export const startLocalServer = async (): Promise<ServiceStatus> => {
   application.get("/v1/auth-check", (_request, response): void => {
     response.status(200).json({ ok: true, authenticated: true })
   })
+  application.post("/v1/plan", createPlanRoute(planPageContext))
+  application.post("/v1/execute", createExecuteRoute(executeTool))
   const handleRequestError: ErrorRequestHandler = (error, _request, response, _next): void => {
     const invalidJson = error instanceof SyntaxError
     const apiError: ApiError = invalidJson

@@ -54,5 +54,9 @@ export const resetSettings = (): AppSettings => {
 
 export const isAiConfigured = (): boolean => {
   const settings = getSettings()
-  return settings.apiKey.trim().length > 0 && settings.modelName.trim().length > 0
+  return (
+    settings.apiBaseUrl.trim().length > 0 &&
+    settings.apiKey.trim().length > 0 &&
+    settings.modelName.trim().length > 0
+  )
 }
