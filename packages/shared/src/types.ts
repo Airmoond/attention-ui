@@ -71,6 +71,8 @@ export type AuthState = {
 
 export type ContextKind = "text" | "numbers" | "table" | "code" | "unknown"
 
+export type ToolId = "summarize" | "explain" | "ask" | "chart" | "extract" | "focus"
+
 export type NumericCandidate = {
   label: string
   rawValue: string

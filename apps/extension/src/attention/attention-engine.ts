@@ -16,6 +16,8 @@ export type AttentionCandidate = {
   rect: DOMRect
   text: string
   kind: SemanticBlockKind
+  pointerX: number
+  pointerY: number
   triggeredAt: number
 }
 
@@ -220,6 +222,8 @@ export class AttentionEngine {
       rect: block.element.getBoundingClientRect(),
       text: block.text,
       kind: block.kind,
+      pointerX: pointer.x,
+      pointerY: pointer.y,
       triggeredAt: now
     })
   }

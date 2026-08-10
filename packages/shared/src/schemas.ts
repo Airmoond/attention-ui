@@ -1,4 +1,5 @@
 import { z } from "zod"
+import type { ToolId } from "./types"
 
 export const AppSettingsSchema = z
   .object({
@@ -23,6 +24,10 @@ export const AuthStateSchema = z
   .strict()
 
 export const ContextKindSchema = z.enum(["text", "numbers", "table", "code", "unknown"])
+
+export const TOOL_IDS = ["summarize", "explain", "ask", "chart", "extract", "focus"] as const satisfies readonly ToolId[]
+
+export const ToolIdSchema = z.enum(TOOL_IDS)
 
 export const NumericCandidateSchema = z
   .object({

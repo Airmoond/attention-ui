@@ -4,7 +4,9 @@ export {
   AuthStateSchema,
   ContextKindSchema,
   NumericCandidateSchema,
-  PageContextSchema
+  PageContextSchema,
+  TOOL_IDS,
+  ToolIdSchema
 } from "./schemas"
 export {
   ApiErrorSchema,
@@ -30,5 +32,6 @@ export type {
   PairRequest,
   PairResponse,
   PageContext,
-  ServiceStatus
+  ServiceStatus,
+  ToolId
 } from "./types"
