@@ -1,5 +1,6 @@
 import type { AppSettings } from "@focus-ui/shared"
 import { ChatCompletionResponseSchema } from "./ai-schema"
+import { appLogger } from "../logger/logger"
 
 export const DEFAULT_AI_TIMEOUT_MS = 15_000
 
@@ -80,12 +81,17 @@ export const createOpenAiCompatibleProvider = ({
   timeoutMs = DEFAULT_AI_TIMEOUT_MS
 }: AiProviderOptions): AiProvider => ({
   complete: async ({ systemPrompt, userPrompt, jsonMode = false }): Promise<string> => {
+    const startedAt = Date.now()
     const settings = getSettings()
     if (
       !settings.apiBaseUrl.trim() ||
       !settings.apiKey.trim() ||
       !settings.modelName.trim()
     ) {
+      appLogger.error("AI_REQUEST_FAILED", "AI请求失败", {
+        errorCode: "AI_NOT_CONFIGURED",
+        durationMs: Date.now() - startedAt
+      })
       throw new AiProviderError("AI_NOT_CONFIGURED")
     }
 
@@ -126,18 +132,38 @@ export const createOpenAiCompatibleProvider = ({
 
       const parsedResponse = ChatCompletionResponseSchema.safeParse(responseData)
       if (!parsedResponse.success) {
+        appLogger.warning("AI_SCHEMA_FAILED", "AI响应结构校验失败", {
+          errorCode: "AI_INVALID_RESPONSE",
+          providerStatus: response.status,
+          durationMs: Date.now() - startedAt
+        })
         throw new AiProviderError("AI_INVALID_RESPONSE")
       }
 
-      return parsedResponse.data.choices[0]?.message.content.trim() ?? ""
+      const content = parsedResponse.data.choices[0]?.message.content.trim() ?? ""
+      appLogger.info("AI_REQUEST_SUCCESS", "AI请求成功", {
+        providerStatus: response.status,
+        durationMs: Date.now() - startedAt
+      })
+      return content
     } catch (error: unknown) {
       if (error instanceof AiProviderError) {
+        appLogger.error("AI_REQUEST_FAILED", "AI请求失败", {
+          errorCode: error.code,
+          durationMs: Date.now() - startedAt
+        })
         throw error
       }
-      throw new AiProviderError(isAbortError(error) ? "AI_TIMEOUT" : "AI_PROVIDER_ERROR")
+      const providerError = new AiProviderError(
+        isAbortError(error) ? "AI_TIMEOUT" : "AI_PROVIDER_ERROR"
+      )
+      appLogger.error("AI_REQUEST_FAILED", "AI请求失败", {
+        errorCode: providerError.code,
+        durationMs: Date.now() - startedAt
+      })
+      throw providerError
     } finally {
       globalThis.clearTimeout(timeoutId)
     }
   }
 })
-

@@ -2,7 +2,9 @@ import type {
   AiConnectionTestResult,
   AppInfo,
   AppSettings,
+  LogEntry,
   PairingStatus,
+  PreferenceState,
   ServiceStatus
 } from "@focus-ui/shared"
 
@@ -19,6 +21,9 @@ declare global {
       getPairingStatus: () => Promise<PairingStatus>
       regeneratePairingToken: () => Promise<PairingStatus>
       disconnectPlugin: () => Promise<PairingStatus>
+      resetPreferences: () => Promise<PreferenceState>
+      getLogs: () => Promise<LogEntry[]>
+      clearLogs: () => Promise<void>
       testAiConnection: (settings: AppSettings) => Promise<AiConnectionTestResult>
     }
   }

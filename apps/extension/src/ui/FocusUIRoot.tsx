@@ -1,15 +1,14 @@
-import type {
-  PageContext,
-  ToolId,
-  ToolPlan,
-  ToolResult
+import {
+  getFocusUIErrorMessage,
+  type ContextKind,
+  type PageContext,
+  type ToolId,
+  type ToolPlan,
+  type ToolResult
 } from "@focus-ui/shared"
 import { useEffect, useRef, useState } from "react"
 import type { AttentionCandidate } from "../attention/attention-engine"
-import {
-  sendExtensionMessage,
-  type BackgroundMessageResult
-} from "../communication/messages"
+import { sendExtensionMessage } from "../communication/messages"
 import {
   extractFocusReaderContent,
   type FocusReaderContent
@@ -19,12 +18,20 @@ import {
   MAX_LOCAL_TOOLS,
   type LocalTool
 } from "../policy/local-policy"
+import { sortToolsByPreference } from "../policy/habit-sorter"
 import { AIResultCard } from "./AIResultCard"
 import { AskBox } from "./AskBox"
 import { AttentionToolbar } from "./AttentionToolbar"
 import { ErrorCard } from "./ErrorCard"
 import { FocusReader } from "./FocusReader"
 import { LoadingCard } from "./LoadingCard"
+import {
+  getToolRequestErrorCode,
+  getToolRequestErrorMessage,
+  isRetryableFocusUIError
+} from "./error-messages"
+
+export { getToolRequestErrorMessage } from "./error-messages"
 
 export type ToolbarSession = {
   candidate: AttentionCandidate
@@ -42,6 +49,7 @@ type FocusUIState =
       kind: "message"
       message: string
       session: ToolbarSession
+      retry?: { toolId: ToolId; question?: string }
     }
   | {
       kind: "loading"
@@ -66,28 +74,35 @@ export type FocusUIRootProps = {
   session: ToolbarSession | null
 }
 
-export const mergePlannedTool = (tools: LocalTool[], plan: ToolPlan): LocalTool[] => [
-  getLocalToolById(plan.toolId),
-  ...tools.filter((tool) => tool.id !== plan.toolId)
-].slice(0, MAX_LOCAL_TOOLS)
-
-export const getToolRequestErrorMessage = (result: BackgroundMessageResult): string => {
-  if (!("ok" in result) || result.ok) {
-    return "FocusUI暂时无法处理此操作"
+export const mergePlannedTool = (tools: LocalTool[], plan: ToolPlan): LocalTool[] => {
+  if (!tools.some((tool) => tool.id === plan.toolId)) {
+    return tools.map((tool) => ({ ...tool }))
   }
+  return [
+    getLocalToolById(plan.toolId),
+    ...tools.filter((tool) => tool.id !== plan.toolId)
+  ].slice(0, MAX_LOCAL_TOOLS)
+}
 
-  switch (result.code) {
-    case "REQUEST_TIMEOUT":
-    case "DESKTOP_UNREACHABLE":
-    case "BACKGROUND_UNAVAILABLE":
-    case "BACKGROUND_REQUEST_FAILED":
-      return "FocusUI Desktop未连接"
-    case "MISSING_CLIENT_TOKEN":
-    case "INVALID_CLIENT_TOKEN":
-      return "尚未与FocusUI Desktop配对"
-    default:
-      return "FocusUI暂时无法处理此操作"
-  }
+export const recordToolClick = (
+  toolId: ToolId,
+  contextType: ContextKind,
+  sendMessage: typeof sendExtensionMessage = sendExtensionMessage
+): void => {
+  void sendMessage({
+    type: "RECORD_TOOL_EVENT",
+    event: { eventType: "tool_clicked", contextType, toolId }
+  })
+    .then((result) => {
+      if ("ok" in result && !result.ok && import.meta.env.DEV) {
+        console.warn("FocusUI 工具使用记录失败", result.code)
+      }
+    })
+    .catch((_error: unknown) => {
+      if (import.meta.env.DEV) {
+        console.warn("FocusUI 工具使用记录失败")
+      }
+    })
 }
 
 export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | null => {
@@ -104,17 +119,27 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
 
     const requestVersion = ++requestVersionRef.current
     setState({ kind: "toolbar", session })
-    void sendExtensionMessage({ type: "PLAN_TOOLS", pageContext: session.context }).then((result) => {
-      if (requestVersion !== requestVersionRef.current || !("source" in result)) {
+    void Promise.all([
+      sendExtensionMessage({ type: "PLAN_TOOLS", pageContext: session.context }),
+      sendExtensionMessage({ type: "GET_PREFERENCES" })
+    ]).then(([planResult, preferencesResult]) => {
+      if (requestVersion !== requestVersionRef.current) {
         return
       }
-      if (result.source !== "ai") {
-        return
-      }
-      const plannedSession: ToolbarSession = {
-        ...session,
-        tools: mergePlannedTool(session.tools, result.plan)
-      }
+
+      const plannedTools =
+        "source" in planResult && planResult.source === "ai"
+          ? mergePlannedTool(session.tools, planResult.plan)
+          : session.tools
+      const finalTools =
+        "preferences" in preferencesResult
+          ? sortToolsByPreference(
+              plannedTools,
+              session.context.contextKind,
+              preferencesResult.preferences
+            )
+          : plannedTools
+      const plannedSession: ToolbarSession = { ...session, tools: finalTools }
       setState((current) =>
         current.kind === "toolbar" && current.session === session
           ? { kind: "toolbar", session: plannedSession }
@@ -222,22 +247,36 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
     }
 
     if ("toolId" in result && "success" in result && result.toolId === toolId) {
+      const errorCode = result.success ? null : getToolRequestErrorCode(result)
       setState(
         result.success
           ? { kind: "result", result, session: currentSession }
-          : { kind: "message", message: result.content, session: currentSession }
+          : {
+              kind: "message",
+              message: getFocusUIErrorMessage(errorCode ?? "UNKNOWN_ERROR"),
+              session: currentSession,
+              ...(errorCode && isRetryableFocusUIError(errorCode)
+                ? { retry: { toolId, ...(question ? { question } : {}) } }
+                : {})
+            }
       )
       return
     }
 
+    const errorCode = getToolRequestErrorCode(result)
     setState({
       kind: "message",
       message: getToolRequestErrorMessage(result),
-      session: currentSession
+      session: currentSession,
+      ...(isRetryableFocusUIError(errorCode)
+        ? { retry: { toolId, ...(question ? { question } : {}) } }
+        : {})
     })
   }
 
   const handleToolSelect = async (toolId: ToolId, currentSession: ToolbarSession): Promise<void> => {
+    recordToolClick(toolId, currentSession.context.contextKind)
+
     if (toolId === "focus") {
       const content = extractFocusReaderContent(
         currentSession.candidate.element,
@@ -266,10 +305,18 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
   }
 
   if (state.kind === "message") {
+    const retry = state.retry
     return (
       <ErrorCard
         ref={toolbarRef}
         message={state.message}
+        onRetry={
+          retry
+            ? () => {
+                void executeAiTool(retry.toolId, state.session, retry.question)
+              }
+            : undefined
+        }
         onBack={() => {
           requestVersionRef.current += 1
           setState({ kind: "toolbar", session: state.session })
@@ -292,8 +339,9 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
             requestVersionRef.current += 1
             setState({
               kind: "message",
-              message: "FocusUI暂时无法处理此操作",
-              session: state.session
+              message: getFocusUIErrorMessage("UNKNOWN_ERROR"),
+              session: state.session,
+              retry: { toolId: "ask", question }
             })
           })
         }}
@@ -336,8 +384,9 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
           requestVersionRef.current += 1
           setState({
             kind: "message",
-            message: "FocusUI暂时无法处理此操作",
-            session: currentSession
+            message: getFocusUIErrorMessage("UNKNOWN_ERROR"),
+            session: currentSession,
+            retry: { toolId: tool.id }
           })
         })
       }}

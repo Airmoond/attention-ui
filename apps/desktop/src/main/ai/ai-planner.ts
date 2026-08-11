@@ -8,6 +8,7 @@ import {
   type ToolPlan
 } from "@focus-ui/shared"
 import type { AiProvider } from "./ai-provider"
+import { appLogger } from "../logger/logger"
 
 const MAX_CONTEXT_TEXT_LENGTH = 1_500
 const MAX_NUMERIC_CANDIDATES = 20
@@ -81,9 +82,14 @@ export const createAiPlanner = ({
         jsonMode: true
       })
       return { source: "ai", plan: parseToolPlan(content) }
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
+      appLogger.warning("AI_SCHEMA_FAILED", "AI规划不可用，已使用本地策略", {
+        errorCode:
+          typeof error === "object" && error !== null && "code" in error
+            ? String(error.code)
+            : "INVALID_TOOL_PLAN"
+      })
       return { source: "local", plan: getLocalFallbackPlan(safeContext) }
     }
   }
 })
-

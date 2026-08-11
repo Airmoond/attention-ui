@@ -1,10 +1,13 @@
 import { app, ipcMain } from "electron"
 import {
   AppSettingsSchema,
+  getFocusUIErrorMessage,
   type AiConnectionTestResult,
   type AppInfo,
   type AppSettings,
+  type LogEntry,
   type PairingStatus,
+  type PreferenceState,
   type ServiceStatus
 } from "@focus-ui/shared"
 import { createOpenAiCompatibleProvider, AiProviderError } from "./ai/ai-provider"
@@ -20,6 +23,8 @@ import {
   getPairingStatus,
   regeneratePairingToken
 } from "./store/auth-store"
+import { resetPreferences } from "./store/preference-store"
+import { appLogger } from "./logger/logger"
 
 const GET_APP_INFO_CHANNEL = "focus-ui:get-app-info"
 const GET_SERVICE_STATUS_CHANNEL = "focus-ui:get-service-status"
@@ -32,6 +37,9 @@ const GET_PAIRING_STATUS_CHANNEL = "focus-ui:get-pairing-status"
 const REGENERATE_PAIRING_TOKEN_CHANNEL = "focus-ui:regenerate-pairing-token"
 const DISCONNECT_PLUGIN_CHANNEL = "focus-ui:disconnect-plugin"
 const TEST_AI_CONNECTION_CHANNEL = "focus-ui:test-ai-connection"
+const RESET_PREFERENCES_CHANNEL = "focus-ui:reset-preferences"
+const GET_LOGS_CHANNEL = "focus-ui:get-logs"
+const CLEAR_LOGS_CHANNEL = "focus-ui:clear-logs"
 
 export const registerIpcHandlers = (): void => {
   ipcMain.handle(GET_APP_INFO_CHANNEL, (): AppInfo => ({
@@ -52,6 +60,13 @@ export const registerIpcHandlers = (): void => {
     regeneratePairingToken()
   )
   ipcMain.handle(DISCONNECT_PLUGIN_CHANNEL, (): PairingStatus => disconnectPlugin())
+  ipcMain.handle(RESET_PREFERENCES_CHANNEL, (): PreferenceState => {
+    const preferences = resetPreferences()
+    appLogger.info("PREFERENCES_RESET", "习惯数据已清除")
+    return preferences
+  })
+  ipcMain.handle(GET_LOGS_CHANNEL, (): LogEntry[] => appLogger.getLogs())
+  ipcMain.handle(CLEAR_LOGS_CHANNEL, (): void => appLogger.clear())
   ipcMain.handle(
     TEST_AI_CONNECTION_CHANNEL,
     async (_event, input: unknown): Promise<AiConnectionTestResult> => {
@@ -70,12 +85,16 @@ export const registerIpcHandlers = (): void => {
         })
         return { ok: true, message: "AI服务连接成功" }
       } catch (error: unknown) {
+        const errorCode =
+          error instanceof AiProviderError
+            ? error.code === "AI_RATE_LIMITED"
+              ? "AI_PROVIDER_ERROR"
+              : error.code
+            : "UNKNOWN_ERROR"
         return {
           ok: false,
-          message:
-            error instanceof AiProviderError && error.code === "AI_NOT_CONFIGURED"
-              ? "请填写完整的AI配置"
-              : "AI服务连接失败"
+          errorCode,
+          message: getFocusUIErrorMessage(errorCode)
         }
       }
     }

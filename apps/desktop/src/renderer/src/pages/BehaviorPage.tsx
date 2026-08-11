@@ -4,13 +4,20 @@ import type { AppSettings } from "@focus-ui/shared"
 type BehaviorPageProps = {
   settings: AppSettings | null
   onSave: (settings: AppSettings) => Promise<void>
+  onResetPreferences: () => Promise<void>
 }
 
-const BehaviorPage = ({ settings, onSave }: BehaviorPageProps): JSX.Element => {
+const BehaviorPage = ({
+  settings,
+  onSave,
+  onResetPreferences
+}: BehaviorPageProps): JSX.Element => {
   const [draft, setDraft] = useState<AppSettings | null>(settings)
   const [delay, setDelay] = useState(settings?.attentionDelayMs.toString() ?? "900")
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+  const [isConfirmingReset, setIsConfirmingReset] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
 
   useEffect(() => {
     setDraft(settings)
@@ -46,6 +53,20 @@ const BehaviorPage = ({ settings, onSave }: BehaviorPageProps): JSX.Element => {
     setDraft((current) => (current ? { ...current, [key]: value } : current))
   }
 
+  const resetHabitData = async (): Promise<void> => {
+    setIsResetting(true)
+    setMessage(null)
+    try {
+      await onResetPreferences()
+      setMessage("习惯数据已清除")
+      setIsConfirmingReset(false)
+    } catch (_error: unknown) {
+      setMessage("清除失败，请稍后重试。")
+    } finally {
+      setIsResetting(false)
+    }
+  }
+
   return (
     <section className="page-panel">
       <p className="eyebrow">交互设置</p>
@@ -72,8 +93,42 @@ const BehaviorPage = ({ settings, onSave }: BehaviorPageProps): JSX.Element => {
       {message ? <p className="notice">{message}</p> : null}
       <div className="button-row">
         <button disabled={!draft || isSaving} onClick={(): void => void save()} type="button">{isSaving ? "保存中…" : "保存交互设置"}</button>
-        <button className="secondary" onClick={(): void => setMessage("习惯学习功能将在后续模块接入。")} type="button">清除习惯数据</button>
+        {!isConfirmingReset ? (
+          <button
+            className="secondary"
+            disabled={isResetting}
+            onClick={(): void => {
+              setMessage(null)
+              setIsConfirmingReset(true)
+            }}
+            type="button"
+          >
+            清除习惯数据
+          </button>
+        ) : null}
       </div>
+      {isConfirmingReset ? (
+        <div className="confirmation-panel" role="alertdialog" aria-label="确认清除习惯数据">
+          <p>确定清除FocusUI学习到的工具使用偏好吗？</p>
+          <div className="button-row">
+            <button
+              disabled={isResetting}
+              onClick={(): void => void resetHabitData()}
+              type="button"
+            >
+              {isResetting ? "清除中…" : "确定清除"}
+            </button>
+            <button
+              className="secondary"
+              disabled={isResetting}
+              onClick={(): void => setIsConfirmingReset(false)}
+              type="button"
+            >
+              取消
+            </button>
+          </div>
+        </div>
+      ) : null}
     </section>
   )
 }

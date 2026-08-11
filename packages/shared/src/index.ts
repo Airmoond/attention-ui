@@ -1,4 +1,8 @@
-export { DEFAULT_APP_SETTINGS } from "./constants"
+export {
+  DEFAULT_APP_SETTINGS,
+  FOCUS_UI_ERROR_MESSAGES,
+  getFocusUIErrorMessage
+} from "./constants"
 export {
   AppSettingsSchema,
   AuthStateSchema,
@@ -6,11 +10,16 @@ export {
   ContextKindSchema,
   ExecuteRequestSchema,
   ExtractedDataSchema,
+  FocusUIErrorCodeSchema,
   NumericCandidateSchema,
   PageContextSchema,
   PlanRequestSchema,
   PlanResponseSchema,
+  PreferenceStateSchema,
+  PreferencesResponseSchema,
   TOOL_IDS,
+  ToolEventResponseSchema,
+  ToolEventSchema,
   ToolIdSchema,
   ToolPlanSchema,
   ToolResultSchema
@@ -36,9 +45,13 @@ export type {
   ExtractedData,
   ExtractedDataItem,
   ExtensionSettings,
+  FocusUIErrorCode,
   AuthState,
   ContextKind,
   HealthResponse,
+  LogEntry,
+  LogLevel,
+  LogMetadata,
   NumericCandidate,
   PairingStatus,
   PairRequest,
@@ -46,7 +59,11 @@ export type {
   PageContext,
   PlanRequest,
   PlanResponse,
+  PreferenceState,
+  PreferencesResponse,
   ServiceStatus,
+  ToolEvent,
+  ToolEventResponse,
   ToolId,
   ToolPlan,
   ToolResult

@@ -29,6 +29,53 @@ export const TOOL_IDS = ["summarize", "explain", "ask", "chart", "extract", "foc
 
 export const ToolIdSchema = z.enum(TOOL_IDS)
 
+export const FocusUIErrorCodeSchema = z.enum([
+  "DESKTOP_OFFLINE",
+  "NOT_PAIRED",
+  "AUTH_EXPIRED",
+  "AI_NOT_CONFIGURED",
+  "AI_TIMEOUT",
+  "AI_AUTH_FAILED",
+  "AI_PROVIDER_ERROR",
+  "AI_INVALID_RESPONSE",
+  "CHART_UNAVAILABLE",
+  "UNKNOWN_ERROR"
+])
+
+export const ToolEventSchema = z
+  .object({
+    eventType: z.literal("tool_clicked"),
+    contextType: ContextKindSchema,
+    toolId: ToolIdSchema
+  })
+  .strict()
+
+export const ToolEventResponseSchema = z.object({ ok: z.literal(true) }).strict()
+
+const ToolCountSchema = z.partialRecord(
+  ToolIdSchema,
+  z.number().int().nonnegative().finite()
+)
+
+export const PreferenceStateSchema = z
+  .object({
+    globalToolCount: ToolCountSchema,
+    contextToolCount: z.partialRecord(ContextKindSchema, ToolCountSchema),
+    lastUsedAt: z.partialRecord(
+      ToolIdSchema,
+      z.number().int().nonnegative().finite()
+    ),
+    pinnedTools: z.array(ToolIdSchema).max(TOOL_IDS.length)
+  })
+  .strict()
+
+export const PreferencesResponseSchema = z
+  .object({
+    ok: z.literal(true),
+    preferences: PreferenceStateSchema
+  })
+  .strict()
+
 export const NumericCandidateSchema = z
   .object({
     label: z.string().max(200),
@@ -121,6 +168,23 @@ export const ToolResultSchema = z
     toolId: ToolIdSchema,
     success: z.boolean(),
     content: z.string().trim().min(1).max(8_000),
-    data: z.unknown().optional()
+    data: z.unknown().optional(),
+    errorCode: FocusUIErrorCodeSchema.optional()
   })
   .strict()
+  .superRefine((value, context) => {
+    if (!value.success && !value.errorCode) {
+      context.addIssue({
+        code: "custom",
+        path: ["errorCode"],
+        message: "失败的工具结果必须包含安全错误码"
+      })
+    }
+    if (value.success && value.errorCode) {
+      context.addIssue({
+        code: "custom",
+        path: ["errorCode"],
+        message: "成功的工具结果不能包含错误码"
+      })
+    }
+  })

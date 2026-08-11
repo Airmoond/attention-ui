@@ -5,13 +5,16 @@ import {
   type ApiError,
   type AuthState,
   type PageContext,
-  type PairResponse
+  type PairResponse,
+  type PreferenceState,
+  type ToolEvent
 } from "@focus-ui/shared"
 import { createServer, type Server } from "node:http"
 import { createAuthController } from "./auth"
 import { createAiPlanner } from "../ai/ai-planner"
 import { createOpenAiCompatibleProvider } from "../ai/ai-provider"
 import { createToolExecutor } from "../ai/tool-executor"
+import { appLogger } from "../logger/logger"
 import {
   configureLocalServer,
   getLocalServiceStatus,
@@ -49,6 +52,7 @@ afterEach(async () => {
 
 describe("local desktop service", () => {
   it("serves health, prevents duplicate starts, and releases its port", async () => {
+    appLogger.clear()
     const started = await startLocalServer()
     expect(started).toMatchObject({ state: "running", running: true })
 
@@ -67,6 +71,9 @@ describe("local desktop service", () => {
     const stopped = await stopLocalServer()
     expect(stopped).toMatchObject({ state: "stopped", running: false })
     expect(getLocalServiceStatus().running).toBe(false)
+    expect(appLogger.getLogs().map((entry) => entry.event)).toEqual(
+      expect.arrayContaining(["SERVICE_STARTED", "SERVICE_STOPPED"])
+    )
     await expect(fetch(healthAddress)).rejects.toThrow()
   })
 
@@ -100,6 +107,118 @@ describe("application settings schema", () => {
 })
 
 describe("pairing and protected local API", () => {
+  it("records only authenticated, strictly validated tool click events", async () => {
+    let authState: AuthState = {
+      pairingToken: "FUI-TEST-1234",
+      clientToken: "authenticated-client-token-value",
+      tokenVersion: 0,
+      lastConnectedAt: null
+    }
+    const authController = createAuthController({
+      getState: (): AuthState => authState,
+      setState: (nextState: AuthState): void => {
+        authState = nextState
+      }
+    })
+    const recordedEvents: ToolEvent[] = []
+    let preferenceState: PreferenceState = {
+      globalToolCount: { chart: 3 },
+      contextToolCount: { numbers: { chart: 3 } },
+      lastUsedAt: { chart: 1234 },
+      pinnedTools: []
+    }
+    configureLocalServer({
+      getAiConfigured: (): boolean => false,
+      authController,
+      recordToolEvent: (event): void => {
+        recordedEvents.push(event)
+      },
+      getPreferences: (): PreferenceState => preferenceState,
+      resetPreferences: (): PreferenceState => {
+        preferenceState = {
+          globalToolCount: {},
+          contextToolCount: {},
+          lastUsedAt: {},
+          pinnedTools: []
+        }
+        return preferenceState
+      }
+    })
+    await startLocalServer()
+
+    const eventUrl = "http://127.0.0.1:17321/v1/events"
+    const event = { eventType: "tool_clicked", contextType: "numbers", toolId: "chart" }
+    const unauthenticatedResponse = await fetch(eventUrl, {
+      method: "POST",
+      headers: { Connection: "close", "Content-Type": "application/json" },
+      body: JSON.stringify(event)
+    })
+    expect(unauthenticatedResponse.status).toBe(401)
+
+    const headers = {
+      Authorization: `Bearer ${authState.clientToken}`,
+      Connection: "close",
+      "Content-Type": "application/json"
+    }
+    const validResponse = await fetch(eventUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(event)
+    })
+    expect(validResponse.status).toBe(200)
+    await expect(validResponse.json()).resolves.toEqual({ ok: true })
+    expect(recordedEvents).toEqual([event])
+
+    for (const invalidEvent of [
+      { ...event, toolId: "run-script" },
+      { ...event, contextType: "finance" },
+      { ...event, eventType: "tool_shown" },
+      { ...event, selectedText: "sensitive page text" }
+    ]) {
+      const invalidResponse = await fetch(eventUrl, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(invalidEvent)
+      })
+      expect(invalidResponse.status).toBe(400)
+    }
+    expect(recordedEvents).toHaveLength(1)
+
+    const unauthenticatedPreferencesResponse = await fetch(
+      "http://127.0.0.1:17321/v1/preferences",
+      { headers: { Connection: "close" } }
+    )
+    expect(unauthenticatedPreferencesResponse.status).toBe(401)
+    const preferencesResponse = await fetch("http://127.0.0.1:17321/v1/preferences", {
+      headers
+    })
+    expect(preferencesResponse.status).toBe(200)
+    await expect(preferencesResponse.json()).resolves.toEqual({
+      ok: true,
+      preferences: preferenceState
+    })
+
+    const unauthenticatedResetResponse = await fetch(
+      "http://127.0.0.1:17321/v1/preferences/reset",
+      { method: "POST", headers: { Connection: "close" } }
+    )
+    expect(unauthenticatedResetResponse.status).toBe(401)
+    const resetResponse = await fetch("http://127.0.0.1:17321/v1/preferences/reset", {
+      method: "POST",
+      headers
+    })
+    expect(resetResponse.status).toBe(200)
+    await expect(resetResponse.json()).resolves.toEqual({
+      ok: true,
+      preferences: {
+        globalToolCount: {},
+        contextToolCount: {},
+        lastUsedAt: {},
+        pinnedTools: []
+      }
+    })
+  })
+
   it("enforces pairing, bearer authentication, token invalidation, and strict CORS", async () => {
     let authState: AuthState = {
       pairingToken: "FUI-TEST-1234",

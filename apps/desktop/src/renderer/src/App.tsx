@@ -96,6 +96,10 @@ const App = (): JSX.Element => {
     setAppInfo(nextAppInfo)
   }
 
+  const resetPreferences = async (): Promise<void> => {
+    await window.focusUI.resetPreferences()
+  }
+
   const runServiceAction = async (action: "start" | "stop"): Promise<void> => {
     setIsServiceActionPending(true)
     setErrorMessage(null)
@@ -183,7 +187,13 @@ const App = (): JSX.Element => {
     }
 
     if (activePage === "behavior") {
-      return <BehaviorPage settings={settings} onSave={updateSettings} />
+      return (
+        <BehaviorPage
+          settings={settings}
+          onSave={updateSettings}
+          onResetPreferences={resetPreferences}
+        />
+      )
     }
 
     return <LogsPage />

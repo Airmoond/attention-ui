@@ -10,16 +10,22 @@ import {
 } from "@focus-ui/shared/extension"
 import {
   PlanResponseSchema,
+  PreferencesResponseSchema,
+  ToolEventResponseSchema,
   ToolResultSchema,
   type ExecuteRequest,
   type PageContext,
   type PlanResponse,
+  type PreferencesResponse,
+  type ToolEvent,
+  type ToolEventResponse,
   type ToolResult
 } from "@focus-ui/shared"
 import type { z } from "zod"
 import { getExtensionSettings } from "../storage/extension-store"
 
-const REQUEST_TIMEOUT_MS = 4000
+const REQUEST_TIMEOUT_MS = 20_000
+const PREFERENCE_CACHE_TTL_MS = 10_000
 
 type JsonSchema<T> = z.ZodType<T>
 
@@ -36,6 +42,8 @@ export type DesktopRequestSuccess<T> = {
 
 export type DesktopRequestResult<T> = DesktopRequestSuccess<T> | DesktopRequestFailure
 
+let preferenceCache: { value: PreferencesResponse; expiresAt: number } | null = null
+
 const requestFailure = (code: string, message: string, status: number | null): DesktopRequestFailure => ({
   ok: false,
   error: { ok: false, code, message },
@@ -43,7 +51,14 @@ const requestFailure = (code: string, message: string, status: number | null): D
 })
 
 const requestDesktopJson = async <T>(
-  path: "/health" | "/v1/pair" | "/v1/auth-check" | "/v1/plan" | "/v1/execute",
+  path:
+    | "/health"
+    | "/v1/pair"
+    | "/v1/auth-check"
+    | "/v1/plan"
+    | "/v1/execute"
+    | "/v1/events"
+    | "/v1/preferences",
   schema: JsonSchema<T>,
   options: { method: "GET" } | { method: "POST"; body: unknown },
   requiresAuthentication: boolean
@@ -136,4 +151,45 @@ export const executeDesktopTool = async (
     true
   )
 
-export { REQUEST_TIMEOUT_MS }
+export const recordDesktopToolEvent = async (
+  event: ToolEvent
+): Promise<DesktopRequestResult<ToolEventResponse>> => {
+  const result = await requestDesktopJson(
+    "/v1/events",
+    ToolEventResponseSchema,
+    { method: "POST", body: event },
+    true
+  )
+  if (result.ok) {
+    preferenceCache = null
+  }
+  return result
+}
+
+export const getDesktopPreferences = async (): Promise<
+  DesktopRequestResult<PreferencesResponse>
+> => {
+  if (preferenceCache && preferenceCache.expiresAt > Date.now()) {
+    return { ok: true, data: preferenceCache.value }
+  }
+
+  const result = await requestDesktopJson(
+    "/v1/preferences",
+    PreferencesResponseSchema,
+    { method: "GET" },
+    true
+  )
+  if (result.ok) {
+    preferenceCache = {
+      value: result.data,
+      expiresAt: Date.now() + PREFERENCE_CACHE_TTL_MS
+    }
+  }
+  return result
+}
+
+export const clearPreferenceCache = (): void => {
+  preferenceCache = null
+}
+
+export { PREFERENCE_CACHE_TTL_MS, REQUEST_TIMEOUT_MS }

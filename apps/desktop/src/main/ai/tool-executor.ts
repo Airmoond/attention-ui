@@ -3,15 +3,18 @@ import {
   ChartDataSchema,
   ExecuteRequestSchema,
   ExtractedDataSchema,
+  getFocusUIErrorMessage,
   ToolResultSchema,
   type ChartData,
   type ExecuteRequest,
   type ExtractedData,
+  type FocusUIErrorCode,
   type PageContext,
   type ToolId,
   type ToolResult
 } from "@focus-ui/shared"
 import { AiProviderError, type AiProvider } from "./ai-provider"
+import { appLogger } from "../logger/logger"
 
 const MAX_RESULT_CHARACTERS = 8_000
 const RESULT_CACHE_TTL_MS = 2 * 60 * 1_000
@@ -80,24 +83,38 @@ const parseExtractedData = (content: string, pageContext: PageContext): Extracte
   return parsed.data
 }
 
-const safeFailureContent = (error: unknown): string =>
-  error instanceof AiProviderError && error.code === "AI_NOT_CONFIGURED"
-    ? "请先在桌面端配置AI服务"
-    : error instanceof AiProviderError && error.code === "AI_INVALID_RESPONSE"
-      ? "AI返回结果无法安全使用"
-      : "AI服务连接失败"
+const getSafeFailureCode = (error: unknown, toolId: ToolId): FocusUIErrorCode => {
+  if (!(error instanceof AiProviderError)) {
+    return "UNKNOWN_ERROR"
+  }
+  if (error.code === "AI_INVALID_RESPONSE" && toolId === "chart") {
+    return "CHART_UNAVAILABLE"
+  }
+  switch (error.code) {
+    case "AI_NOT_CONFIGURED":
+    case "AI_TIMEOUT":
+    case "AI_AUTH_FAILED":
+    case "AI_INVALID_RESPONSE":
+      return error.code
+    case "AI_RATE_LIMITED":
+    case "AI_PROVIDER_ERROR":
+      return "AI_PROVIDER_ERROR"
+  }
+}
 
 const makeResult = (
   toolId: ToolId,
   success: boolean,
   content: string,
-  data?: unknown
+  data?: unknown,
+  errorCode?: FocusUIErrorCode
 ): ToolResult =>
   ToolResultSchema.parse({
     toolId,
     success,
     content: truncate(content.trim(), MAX_RESULT_CHARACTERS) || "AI未返回可用内容",
-    ...(data === undefined ? {} : { data })
+    ...(data === undefined ? {} : { data }),
+    ...(errorCode ? { errorCode } : {})
   })
 
 const contextPrompt = (request: ExecuteRequest): string =>
@@ -180,9 +197,15 @@ export const createToolExecutor = (provider: AiProvider): ToolExecutor => {
         throw new Error("INVALID_EXECUTE_REQUEST")
       }
       const request = parsedRequest.data
+      const startedAt = Date.now()
       const key = cacheKeyFor(request)
       const cached = cache.get(key)
       if (isCacheable(request) && cached && cached.expiresAt > Date.now()) {
+        appLogger.info("CACHE_HIT", "工具结果命中短期缓存", {
+          toolId: request.toolId,
+          contextKind: request.pageContext.contextKind,
+          cacheHit: true
+        })
         return cached.result
       }
       cache.delete(key)
@@ -191,7 +214,14 @@ export const createToolExecutor = (provider: AiProvider): ToolExecutor => {
       try {
         result = await handlers[request.toolId](request)
       } catch (error: unknown) {
-        result = makeResult(request.toolId, false, safeFailureContent(error))
+        const errorCode = getSafeFailureCode(error, request.toolId)
+        result = makeResult(
+          request.toolId,
+          false,
+          getFocusUIErrorMessage(errorCode),
+          undefined,
+          errorCode
+        )
       }
 
       if (result.success && isCacheable(request)) {
@@ -203,10 +233,15 @@ export const createToolExecutor = (provider: AiProvider): ToolExecutor => {
         }
         cache.set(key, { expiresAt: Date.now() + RESULT_CACHE_TTL_MS, result })
       }
+      appLogger.info("TOOL_EXECUTED", "工具执行完成", {
+        toolId: request.toolId,
+        contextKind: request.pageContext.contextKind,
+        durationMs: Date.now() - startedAt,
+        errorCode: result.success ? null : "TOOL_RESULT_FAILED"
+      })
       return result
     }
   }
 }
 
 export { MAX_CACHE_ENTRIES, RESULT_CACHE_TTL_MS }
-

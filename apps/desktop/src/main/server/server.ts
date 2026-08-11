@@ -5,16 +5,26 @@ import type {
   ExecuteRequest,
   PageContext,
   PlanResponse,
+  PreferenceState,
   ServiceStatus,
   ToolResult
 } from "@focus-ui/shared"
+import { getFocusUIErrorMessage } from "@focus-ui/shared"
 import { getLocalFallbackPlan } from "../ai/ai-planner"
+import { appLogger } from "../logger/logger"
 import type { AuthController } from "./auth"
 import { createAuthMiddleware, createCorsMiddleware } from "./middleware"
 import { createHealthRoute } from "./routes/health"
 import { createExecuteRoute, type ExecuteTool } from "./routes/execute"
+import { createEventsRoute, type RecordToolEvent } from "./routes/events"
 import { createPairRoute } from "./routes/pair"
 import { createPlanRoute, type PlanPageContext } from "./routes/plan"
+import {
+  createGetPreferencesRoute,
+  createResetPreferencesRoute,
+  type GetPreferences,
+  type ResetPreferences
+} from "./routes/preferences"
 
 const LOCAL_SERVICE_HOST = "127.0.0.1"
 const LOCAL_SERVICE_PORT = 17321
@@ -27,6 +37,9 @@ type LocalServerOptions = {
   authController: AuthController
   planPageContext?: PlanPageContext
   executeTool?: ExecuteTool
+  recordToolEvent?: RecordToolEvent
+  getPreferences?: GetPreferences
+  resetPreferences?: ResetPreferences
 }
 
 let localServer: Server | null = null
@@ -46,10 +59,20 @@ const defaultPlanPageContext = async (pageContext: PageContext): Promise<PlanRes
 const defaultExecuteTool = async (request: ExecuteRequest): Promise<ToolResult> => ({
   toolId: request.toolId,
   success: false,
-  content: "AI服务连接失败"
+  content: getFocusUIErrorMessage("AI_PROVIDER_ERROR"),
+  errorCode: "AI_PROVIDER_ERROR"
 })
 let planPageContext = defaultPlanPageContext
 let executeTool = defaultExecuteTool
+let recordToolEvent: RecordToolEvent = () => undefined
+const emptyPreferences = (): PreferenceState => ({
+  globalToolCount: {},
+  contextToolCount: {},
+  lastUsedAt: {},
+  pinnedTools: []
+})
+let getPreferences: GetPreferences = emptyPreferences
+let resetPreferences: ResetPreferences = emptyPreferences
 let authController: AuthController = {
   pair: () => ({ ok: false, code: "AUTH_NOT_READY", message: "鉴权服务尚未就绪" }),
   authorize: () => false,
@@ -84,12 +107,18 @@ export const configureLocalServer = ({
   getAiConfigured: nextProvider,
   authController: nextAuthController,
   planPageContext: nextPlanPageContext,
-  executeTool: nextExecuteTool
+  executeTool: nextExecuteTool,
+  recordToolEvent: nextRecordToolEvent,
+  getPreferences: nextGetPreferences,
+  resetPreferences: nextResetPreferences
 }: LocalServerOptions): void => {
   getAiConfigured = nextProvider
   authController = nextAuthController
   planPageContext = nextPlanPageContext ?? defaultPlanPageContext
   executeTool = nextExecuteTool ?? defaultExecuteTool
+  recordToolEvent = nextRecordToolEvent ?? (() => undefined)
+  getPreferences = nextGetPreferences ?? emptyPreferences
+  resetPreferences = nextResetPreferences ?? emptyPreferences
 }
 
 export const onLocalServiceStatusChange = (listener: StatusListener): (() => void) => {
@@ -128,6 +157,12 @@ export const startLocalServer = async (): Promise<ServiceStatus> => {
   })
   application.post("/v1/plan", createPlanRoute(planPageContext))
   application.post("/v1/execute", createExecuteRoute(executeTool))
+  application.post("/v1/events", createEventsRoute(recordToolEvent))
+  application.get("/v1/preferences", createGetPreferencesRoute(getPreferences))
+  application.post(
+    "/v1/preferences/reset",
+    createResetPreferencesRoute(resetPreferences)
+  )
   const handleRequestError: ErrorRequestHandler = (error, _request, response, _next): void => {
     const invalidJson = error instanceof SyntaxError
     const apiError: ApiError = invalidJson
@@ -162,6 +197,7 @@ export const startLocalServer = async (): Promise<ServiceStatus> => {
       address: LOCAL_SERVICE_ADDRESS,
       error: null
     })
+    appLogger.info("SERVICE_STARTED", "本地服务已启动")
   } catch (error: unknown) {
     localServer = null
     updateServiceStatus({
@@ -169,6 +205,12 @@ export const startLocalServer = async (): Promise<ServiceStatus> => {
       running: false,
       address: LOCAL_SERVICE_ADDRESS,
       error: describeServerError(error)
+    })
+    appLogger.error("SERVICE_START_FAILED", "本地服务启动失败", {
+      errorCode:
+        typeof error === "object" && error !== null && "code" in error
+          ? String(error.code)
+          : "UNKNOWN"
     })
   }
 
@@ -213,12 +255,16 @@ export const stopLocalServer = async (): Promise<ServiceStatus> => {
       address: LOCAL_SERVICE_ADDRESS,
       error: null
     })
+    appLogger.info("SERVICE_STOPPED", "本地服务已停止")
   } catch (_error: unknown) {
     updateServiceStatus({
       state: "error",
       running: false,
       address: LOCAL_SERVICE_ADDRESS,
       error: "本地服务停止失败。"
+    })
+    appLogger.error("SERVICE_STOP_FAILED", "本地服务停止失败", {
+      errorCode: "SERVER_CLOSE_FAILED"
     })
   }
 

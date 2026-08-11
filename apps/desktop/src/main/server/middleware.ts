@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express"
 import type { ApiError } from "@focus-ui/shared"
 import type { AuthController } from "./auth"
+import { appLogger } from "../logger/logger"
 
 const DEVELOPMENT_ORIGINS = new Set(["http://localhost:5173", "http://127.0.0.1:5173"])
 
@@ -56,17 +57,29 @@ export const createAuthMiddleware = (authController: AuthController): RequestHan
   return (request, response, next): void => {
     const authorization = request.get("authorization")
     if (!authorization) {
+      appLogger.warning("PLUGIN_AUTH_FAILED", "插件请求缺少鉴权", {
+        errorCode: "MISSING_AUTHORIZATION",
+        statusCode: 401
+      })
       response.status(401).json(unauthorized("MISSING_AUTHORIZATION", "缺少 Authorization 请求头"))
       return
     }
 
     const match = /^Bearer ([^\s]+)$/.exec(authorization)
     if (!match?.[1]) {
+      appLogger.warning("PLUGIN_AUTH_FAILED", "插件请求鉴权格式无效", {
+        errorCode: "INVALID_AUTHORIZATION",
+        statusCode: 401
+      })
       response.status(401).json(unauthorized("INVALID_AUTHORIZATION", "Authorization 格式无效"))
       return
     }
 
     if (!authController.authorize(match[1])) {
+      appLogger.warning("PLUGIN_AUTH_FAILED", "插件客户端令牌无效", {
+        errorCode: "INVALID_CLIENT_TOKEN",
+        statusCode: 401
+      })
       response.status(401).json(unauthorized("INVALID_CLIENT_TOKEN", "客户端令牌无效或已失效"))
       return
     }

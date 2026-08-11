@@ -3,8 +3,10 @@ import {
   checkDesktopAuthentication,
   checkDesktopHealth,
   executeDesktopTool,
+  getDesktopPreferences,
   planDesktopTools,
-  pairDesktop
+  pairDesktop,
+  recordDesktopToolEvent
 } from "../src/communication/desktop-client"
 import {
   ExtensionMessageSchema,
@@ -102,6 +104,18 @@ export default defineBackground(() => {
         case "EXECUTE_TOOL": {
           const executeResult = await executeDesktopTool(parsedMessage.data.request)
           result = executeResult.ok ? executeResult.data : executeResult.error
+          break
+        }
+        case "RECORD_TOOL_EVENT": {
+          const eventResult = await recordDesktopToolEvent(parsedMessage.data.event)
+          result = eventResult.ok ? eventResult.data : eventResult.error
+          break
+        }
+        case "GET_PREFERENCES": {
+          const preferencesResult = await getDesktopPreferences()
+          result = preferencesResult.ok
+            ? preferencesResult.data
+            : preferencesResult.error
           break
         }
       }

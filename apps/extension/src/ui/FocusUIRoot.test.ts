@@ -1,9 +1,11 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
+import type { sendExtensionMessage } from "../communication/messages"
 import type { BackgroundMessageResult } from "../communication/messages"
 import type { LocalTool } from "../policy/local-policy"
 import {
   getToolRequestErrorMessage,
-  mergePlannedTool
+  mergePlannedTool,
+  recordToolClick
 } from "./FocusUIRoot"
 
 const errorResult = (code: string): BackgroundMessageResult => ({
@@ -27,13 +29,13 @@ describe("AI request failure messages", () => {
       "尚未与FocusUI Desktop配对"
     )
     expect(getToolRequestErrorMessage(errorResult("INVALID_CLIENT_TOKEN"))).toBe(
-      "尚未与FocusUI Desktop配对"
+      "配对已失效，请重新连接FocusUI Desktop"
     )
   })
 
   it("uses a generic safe message for other failures", () => {
     expect(getToolRequestErrorMessage(errorResult("UNEXPECTED"))).toBe(
-      "FocusUI暂时无法处理此操作"
+      "操作失败，请重试"
     )
   })
 })
@@ -55,13 +57,34 @@ describe("AI planned tool merge", () => {
     ).toEqual(["explain", "summarize", "ask"])
   })
 
-  it("adds a schema-approved suggestion while keeping at most three tools", () => {
+  it("ignores a schema-approved suggestion outside the current allowed set", () => {
     expect(
       mergePlannedTool(tools, {
         toolId: "chart",
         reason: "适合图表",
         confidence: 0.8
       }).map(({ id }) => id)
-    ).toEqual(["chart", "summarize", "explain"])
+    ).toEqual(["summarize", "explain", "ask"])
+  })
+})
+
+describe("tool event recording", () => {
+  it("starts recording without waiting and contains only minimal event data", async () => {
+    const sendMessage = vi.fn().mockRejectedValue(new Error("desktop offline"))
+
+    expect(
+      recordToolClick(
+        "focus",
+        "text",
+        sendMessage as unknown as typeof sendExtensionMessage
+      )
+    ).toBeUndefined()
+    expect(sendMessage).toHaveBeenCalledWith({
+      type: "RECORD_TOOL_EVENT",
+      event: { eventType: "tool_clicked", contextType: "text", toolId: "focus" }
+    })
+
+    await Promise.resolve()
+    await Promise.resolve()
   })
 })

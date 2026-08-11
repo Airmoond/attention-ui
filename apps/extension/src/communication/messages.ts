@@ -9,8 +9,13 @@ import {
   ExecuteRequestSchema,
   PageContextSchema,
   PlanResponseSchema,
+  PreferencesResponseSchema,
+  ToolEventResponseSchema,
+  ToolEventSchema,
   ToolResultSchema,
   type PlanResponse,
+  type PreferencesResponse,
+  type ToolEventResponse,
   type ToolResult
 } from "@focus-ui/shared"
 import { z } from "zod"
@@ -40,7 +45,9 @@ export const ExtensionMessageSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("UPDATE_EXTENSION_SETTINGS"), settings: SettingsUpdateSchema }).strict(),
   z.object({ type: z.literal("CLEAR_LOCAL_PAIRING") }).strict(),
   z.object({ type: z.literal("PLAN_TOOLS"), pageContext: PageContextSchema }).strict(),
-  z.object({ type: z.literal("EXECUTE_TOOL"), request: ExecuteRequestSchema }).strict()
+  z.object({ type: z.literal("EXECUTE_TOOL"), request: ExecuteRequestSchema }).strict(),
+  z.object({ type: z.literal("RECORD_TOOL_EVENT"), event: ToolEventSchema }).strict(),
+  z.object({ type: z.literal("GET_PREFERENCES") }).strict()
 ])
 
 export type ExtensionMessage = z.infer<typeof ExtensionMessageSchema>
@@ -68,6 +75,8 @@ export const BackgroundMessageResultSchema = z.union([
   SettingsResultSchema,
   PlanResponseSchema,
   ToolResultSchema,
+  ToolEventResponseSchema,
+  PreferencesResponseSchema,
   ApiErrorSchema
 ])
 
@@ -88,6 +97,8 @@ type SettingsMessage = Extract<
 >
 type PlanMessage = Extract<ExtensionMessage, { type: "PLAN_TOOLS" }>
 type ExecuteMessage = Extract<ExtensionMessage, { type: "EXECUTE_TOOL" }>
+type ToolEventMessage = Extract<ExtensionMessage, { type: "RECORD_TOOL_EVENT" }>
+type PreferencesMessage = Extract<ExtensionMessage, { type: "GET_PREFERENCES" }>
 
 export function sendExtensionMessage(
   message: ConnectionMessage
@@ -95,6 +106,8 @@ export function sendExtensionMessage(
 export function sendExtensionMessage(message: SettingsMessage): Promise<z.infer<typeof SettingsResultSchema> | ApiError>
 export function sendExtensionMessage(message: PlanMessage): Promise<PlanResponse | ApiError>
 export function sendExtensionMessage(message: ExecuteMessage): Promise<ToolResult | ApiError>
+export function sendExtensionMessage(message: ToolEventMessage): Promise<ToolEventResponse | ApiError>
+export function sendExtensionMessage(message: PreferencesMessage): Promise<PreferencesResponse | ApiError>
 export async function sendExtensionMessage(
   message: ExtensionMessage
 ): Promise<BackgroundMessageResult> {

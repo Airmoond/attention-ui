@@ -32,6 +32,7 @@ export type AppSettings = {
 export type AiConnectionTestResult = {
   ok: boolean
   message: string
+  errorCode?: FocusUIErrorCode
 }
 
 export type PairRequest = {
@@ -77,6 +78,55 @@ export type AuthState = {
 export type ContextKind = "text" | "numbers" | "table" | "code" | "unknown"
 
 export type ToolId = "summarize" | "explain" | "ask" | "chart" | "extract" | "focus"
+
+export type FocusUIErrorCode =
+  | "DESKTOP_OFFLINE"
+  | "NOT_PAIRED"
+  | "AUTH_EXPIRED"
+  | "AI_NOT_CONFIGURED"
+  | "AI_TIMEOUT"
+  | "AI_AUTH_FAILED"
+  | "AI_PROVIDER_ERROR"
+  | "AI_INVALID_RESPONSE"
+  | "CHART_UNAVAILABLE"
+  | "UNKNOWN_ERROR"
+
+export type ToolEvent = {
+  eventType: "tool_clicked"
+  contextType: ContextKind
+  toolId: ToolId
+}
+
+export type ToolEventResponse = {
+  ok: true
+}
+
+export type PreferenceState = {
+  globalToolCount: Partial<Record<ToolId, number>>
+  contextToolCount: Partial<
+    Record<ContextKind, Partial<Record<ToolId, number>>>
+  >
+  lastUsedAt: Partial<Record<ToolId, number>>
+  pinnedTools: ToolId[]
+}
+
+export type PreferencesResponse = {
+  ok: true
+  preferences: PreferenceState
+}
+
+export type LogLevel = "info" | "warning" | "error"
+
+export type LogMetadata = Record<string, string | number | boolean | null>
+
+export type LogEntry = {
+  id: string
+  level: LogLevel
+  event: string
+  message: string
+  timestamp: number
+  metadata?: LogMetadata
+}
 
 export type ToolPlan = {
   toolId: ToolId
@@ -137,6 +187,7 @@ export type ToolResult = {
   success: boolean
   content: string
   data?: unknown
+  errorCode?: FocusUIErrorCode
 }
 
 export type PairingStatus = {

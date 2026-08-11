@@ -82,7 +82,8 @@ describe("tool executor", () => {
     await expect(executor.execute(requestFor("summarize"))).resolves.toEqual({
       toolId: "summarize",
       success: false,
-      content: "AI服务连接失败"
+      content: "AI服务连接失败，请检查桌面端配置",
+      errorCode: "AI_AUTH_FAILED"
     })
   })
 
@@ -101,7 +102,25 @@ describe("tool executor", () => {
     await expect(executor.execute(requestFor("chart"))).resolves.toEqual({
       toolId: "chart",
       success: false,
-      content: "AI返回结果无法安全使用"
+      content: "当前内容无法可靠生成图表",
+      errorCode: "CHART_UNAVAILABLE"
+    })
+  })
+
+  it.each([
+    ["AI_NOT_CONFIGURED", "请先在桌面端配置AI服务"],
+    ["AI_TIMEOUT", "AI响应超时，请稍后重试"],
+    ["AI_PROVIDER_ERROR", "AI服务暂时不可用，请稍后重试"],
+    ["AI_INVALID_RESPONSE", "AI返回了无法处理的结果"]
+  ] as const)("maps %s to a safe result", async (errorCode, message) => {
+    const executor = createToolExecutor({
+      complete: vi.fn().mockRejectedValue(new AiProviderError(errorCode))
+    })
+
+    await expect(executor.execute(requestFor("summarize"))).resolves.toMatchObject({
+      success: false,
+      content: message,
+      errorCode
     })
   })
 
@@ -114,4 +133,3 @@ describe("tool executor", () => {
     expect(provider.complete).toHaveBeenCalledOnce()
   })
 })
-

@@ -1,7 +1,7 @@
 import { createRoot, type Root } from "react-dom/client"
 import { AttentionEngine, type AttentionCandidate } from "../src/attention/attention-engine"
 import { extractPageContext } from "../src/context/context-extractor"
-import { SemanticBlockDebugOutline, truncateText } from "../src/context/semantic-block"
+import { SemanticBlockDebugOutline } from "../src/context/semantic-block"
 import { getLocalTools } from "../src/policy/local-policy"
 import { getExtensionSettings } from "../src/storage/extension-store"
 import { FocusUIRoot, type ToolbarSession } from "../src/ui/FocusUIRoot"
@@ -49,7 +49,6 @@ const reportAttentionCandidate = (candidate: AttentionCandidate): void => {
     if (import.meta.env.DEV) {
       console.debug("FocusUI Attention Candidate", {
         kind: candidate.kind,
-        textPreview: truncateText(candidate.text, 80),
         rect: {
           x: Math.round(candidate.rect.x),
           y: Math.round(candidate.rect.y),
@@ -60,8 +59,7 @@ const reportAttentionCandidate = (candidate: AttentionCandidate): void => {
         context: {
           contextKind: context.contextKind,
           textLength: context.text.length,
-          numericCandidateCount: context.numericCandidates.length,
-          nearbyHeading: context.nearbyHeading
+          numericCandidateCount: context.numericCandidates.length
         }
       })
     }

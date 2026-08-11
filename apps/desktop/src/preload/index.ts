@@ -3,7 +3,9 @@ import type {
   AiConnectionTestResult,
   AppInfo,
   AppSettings,
+  LogEntry,
   PairingStatus,
+  PreferenceState,
   ServiceStatus
 } from "@focus-ui/shared"
 
@@ -18,6 +20,9 @@ const GET_PAIRING_STATUS_CHANNEL = "focus-ui:get-pairing-status"
 const REGENERATE_PAIRING_TOKEN_CHANNEL = "focus-ui:regenerate-pairing-token"
 const DISCONNECT_PLUGIN_CHANNEL = "focus-ui:disconnect-plugin"
 const TEST_AI_CONNECTION_CHANNEL = "focus-ui:test-ai-connection"
+const RESET_PREFERENCES_CHANNEL = "focus-ui:reset-preferences"
+const GET_LOGS_CHANNEL = "focus-ui:get-logs"
+const CLEAR_LOGS_CHANNEL = "focus-ui:clear-logs"
 
 const focusUI = {
   getAppInfo: (): Promise<AppInfo> =>
@@ -40,6 +45,12 @@ const focusUI = {
     ipcRenderer.invoke(REGENERATE_PAIRING_TOKEN_CHANNEL) as Promise<PairingStatus>,
   disconnectPlugin: (): Promise<PairingStatus> =>
     ipcRenderer.invoke(DISCONNECT_PLUGIN_CHANNEL) as Promise<PairingStatus>,
+  resetPreferences: (): Promise<PreferenceState> =>
+    ipcRenderer.invoke(RESET_PREFERENCES_CHANNEL) as Promise<PreferenceState>,
+  getLogs: (): Promise<LogEntry[]> =>
+    ipcRenderer.invoke(GET_LOGS_CHANNEL) as Promise<LogEntry[]>,
+  clearLogs: (): Promise<void> =>
+    ipcRenderer.invoke(CLEAR_LOGS_CHANNEL) as Promise<void>,
   testAiConnection: (settings: AppSettings): Promise<AiConnectionTestResult> =>
     ipcRenderer.invoke(TEST_AI_CONNECTION_CHANNEL, settings) as Promise<AiConnectionTestResult>
 }
