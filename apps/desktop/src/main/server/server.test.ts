@@ -10,6 +10,7 @@ import {
   type ToolEvent
 } from "@focus-ui/shared"
 import { createServer, type Server } from "node:http"
+import { resolve } from "node:path"
 import { createAuthController } from "./auth"
 import { createAiPlanner } from "../ai/ai-planner"
 import { createOpenAiCompatibleProvider } from "../ai/ai-provider"
@@ -88,6 +89,51 @@ describe("local desktop service", () => {
     } finally {
       await closeServer(occupiedServer)
     }
+  })
+
+  it("serves only the beginner guide and two packaged demo pages", async () => {
+    let authState: AuthState = {
+      pairingToken: "FUI-GUIDE-1234",
+      clientToken: null,
+      tokenVersion: 0,
+      lastConnectedAt: null
+    }
+    const authController = createAuthController({
+      getState: (): AuthState => authState,
+      setState: (nextState: AuthState): void => {
+        authState = nextState
+      }
+    })
+    const repositoryRoot = resolve(process.cwd(), "../..")
+    configureLocalServer({
+      getAiConfigured: (): boolean => false,
+      authController,
+      onboardingAssets: {
+        guideFile: resolve(repositoryRoot, "QUICK_START.html"),
+        demoDirectory: resolve(repositoryRoot, "demo-pages"),
+        extensionDirectory: resolve(repositoryRoot, "apps/extension/.output/chrome-mv3")
+      }
+    })
+    await startLocalServer()
+
+    for (const [path, marker] of [
+      ["/guide", "5分钟快速上手"],
+      ["/demo/article.html", "FocusUI 技术观察"],
+      ["/demo/finance.html", "星海科技经营数据简报"],
+      ["/demo/styles.css", ":root"]
+    ] as const) {
+      const response = await fetch(`http://127.0.0.1:17321${path}`, {
+        headers: { Connection: "close" }
+      })
+      expect(response.status).toBe(200)
+      await expect(response.text()).resolves.toContain(marker)
+    }
+
+    const internalDashboardResponse = await fetch(
+      "http://127.0.0.1:17321/demo/dashboard.html",
+      { headers: { Connection: "close" } }
+    )
+    expect(internalDashboardResponse.status).toBe(404)
   })
 })
 
@@ -261,6 +307,7 @@ describe("pairing and protected local API", () => {
         } else if (systemPrompt.includes("图表数据")) {
           content = JSON.stringify({
             title: "年度营收",
+            chartType: "bar",
             labels: ["2024", "2025"],
             values: [100, 120],
             unit: "亿元"
@@ -365,7 +412,7 @@ describe("pairing and protected local API", () => {
     await expect(chartResponse.json()).resolves.toMatchObject({
       toolId: "chart",
       success: true,
-      data: { labels: ["2024", "2025"], values: [100, 120] }
+      data: { chartType: "bar", labels: ["2024", "2025"], values: [100, 120] }
     })
 
     const illegalToolResponse = await fetch("http://127.0.0.1:17321/v1/execute", {

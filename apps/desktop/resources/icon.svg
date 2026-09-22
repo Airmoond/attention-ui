@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FocusUI">
+  <defs>
+    <linearGradient id="background" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#275efe" />
+      <stop offset="1" stop-color="#183c9f" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#background)" />
+  <path d="M88 256c45-79 99-118 168-118s123 39 168 118c-45 79-99 118-168 118S133 335 88 256Z" fill="#fff" opacity=".98" />
+  <circle cx="256" cy="256" r="77" fill="#172033" />
+  <circle cx="256" cy="256" r="34" fill="#78d7b9" />
+  <circle cx="279" cy="230" r="14" fill="#fff" opacity=".9" />
+</svg>

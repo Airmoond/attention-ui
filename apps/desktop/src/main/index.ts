@@ -3,6 +3,7 @@ import { createAiPlanner } from "./ai/ai-planner"
 import { createOpenAiCompatibleProvider } from "./ai/ai-provider"
 import { createToolExecutor } from "./ai/tool-executor"
 import { registerIpcHandlers } from "./ipc"
+import { getOnboardingAssets } from "./onboarding"
 import {
   configureLocalServer,
   isLocalServerRunning,
@@ -91,7 +92,8 @@ if (!hasSingleInstanceLock) {
         getSettings().enableHabitLearning
           ? getPreferenceState()
           : createDefaultPreferenceState(),
-      resetPreferences
+      resetPreferences,
+      onboardingAssets: getOnboardingAssets()
     })
     registerIpcHandlers()
     openMainWindow()

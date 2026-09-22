@@ -1,0 +1,43 @@
+appId: com.focusui.desktop
+productName: FocusUI 0.1.0 Beta
+artifactName: FocusUI-Setup-${version}.${ext}
+asar: true
+compression: maximum
+
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - out/**/*
+  - package.json
+
+extraResources:
+  - from: ../../QUICK_START.html
+    to: onboarding/QUICK_START.html
+  - from: ../../demo-pages
+    to: onboarding/demo-pages
+    filter:
+      - article.html
+      - finance.html
+      - styles.css
+  - from: ../extension/.output/chrome-mv3
+    to: onboarding/extension
+
+win:
+  executableName: FocusUI
+  icon: resources/icon.svg
+  target:
+    - target: nsis
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: FocusUI
+  uninstallDisplayName: FocusUI 0.1.0 Beta

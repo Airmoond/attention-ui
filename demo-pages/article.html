@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注意力式交互：让界面靠近用户当前任务</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="article-page">
+    <header class="site-header">
+      <a class="brand" href="#article-start" aria-label="FocusUI 技术观察首页">FocusUI 技术观察</a>
+      <nav aria-label="文章导航">
+        <a href="#article-start">前沿</a>
+        <a href="#principles">设计</a>
+        <a href="#practice">实践</a>
+      </nav>
+      <span class="edition">演示专刊 · 2026</span>
+    </header>
+
+    <div class="article-layout">
+      <main id="article-start" class="article-main">
+        <article>
+          <p class="article-kicker">人机交互 · 深度文章</p>
+          <h1>注意力式交互：让界面靠近用户当前任务</h1>
+          <p class="article-deck">当网页功能越来越多，真正稀缺的往往不是按钮，而是用户在正确时刻找到正确按钮的注意力。</p>
+
+          <p>
+            传统网页把导航、操作和信息固定在预先设计的位置。用户需要先理解页面结构，再从菜单、侧栏或工具区寻找下一步操作。这个过程看似自然，却会在阅读、分析和比较数据时不断打断思路。注意力式交互尝试改变这种关系：系统先判断用户当前关注的内容，再把少量、可控的操作送到内容附近。
+          </p>
+          <p>
+            这种判断并不等同于眼动追踪。FocusUI使用鼠标停留、移动速度、滚动状态、元素可见程度和文本选择等信号，形成一个保守的<span class="term">关注内容推断</span>。当信号不足时，系统保持安静；当同一语义块稳定满足条件时，界面才给出总结、解释、提问或专注阅读等候选工具。
+          </p>
+
+          <h2 id="principles">从像素位置到语义内容</h2>
+          <p>
+            语义块解析是这套机制中的专业环节。它会从指针下方的嵌套元素向上寻找完整段落、列表项、引文或表格行，而不是直接读取最内层的标签。例如，当鼠标落在一个<span class="nested-example"><span>嵌套的强调文本</span></span>上时，系统仍应把它所在的完整段落作为上下文，从而避免摘要只得到几个零散词语。
+          </p>
+          <p>
+            随后，PageContext把当前网址、页面标题、有限长度的正文、附近标题、内容类型和数字候选组织成结构化数据。它不会发送完整网页HTML，也不会读取输入框、密码框或可编辑区域。这个边界让AI负责理解内容和规划工具，同时让程序继续掌握安全校验与最终渲染。
+          </p>
+
+          <blockquote>
+            好的自适应界面不是不断改变页面，而是在用户需要时提供恰到好处的下一步，并允许用户随时关闭或撤销。
+          </blockquote>
+
+          <h2 id="practice">稳定性优先的设计原则</h2>
+          <p>
+            为了避免工具条频繁跳动，系统为同一内容块设置冷却时间，并在快速移动或滚动期间暂停触发。工具位置也遵循稳定顺序：优先出现在内容右侧，空间不足时尝试左侧、下方或上方，最后再限制到安全视口边界。这样既能靠近任务，又不明显遮挡鼠标和原文。
+          </p>
+          <ul>
+            <li>本地规则先显示基础工具，网络不可用时仍能进入专注模式。</li>
+            <li>AI只能从受控工具白名单中选择，不能生成并执行任意网页代码。</li>
+            <li>用户习惯只记录工具ID与内容类型，并通过轻量排序逐步调整位置。</li>
+          </ul>
+          <p>
+            专注阅读展示了界面重组的另一种方式。它不会删除原网页节点，而是从文章结构中提取安全的标题、段落、列表和引文，放入独立的阅读面板；关闭后原网页保持原样。对比赛演示而言，这一过程说明自适应界面不仅能够增加新工具，也能够围绕当前任务降低导航、广告和侧栏带来的干扰。
+          </p>
+          <p>
+            最终，FocusUI追求的并不是一个无所不能的网页代理，而是一条可解释、可验证的交互链路：注意力信号找到内容，结构化上下文约束数据，桌面端完成AI调用，浏览器插件渲染固定组件。每一步都能降级，每个结果都能校验，每个界面变化都能撤销，这比追求不可控的自动化更适合真实产品原型。
+          </p>
+        </article>
+      </main>
+
+      <aside class="article-sidebar" aria-label="文章侧栏">
+        <section class="sidebar-panel">
+          <h2>站内搜索</h2>
+          <label for="article-search">搜索技术主题</label>
+          <input id="article-search" type="search" placeholder="输入关键词" />
+          <p class="input-note">用于验证FocusUI不会读取输入控件。</p>
+        </section>
+        <section class="sidebar-panel">
+          <h2>本文要点</h2>
+          <ol>
+            <li>注意力信号</li>
+            <li>语义块解析</li>
+            <li>受控AI工具</li>
+          </ol>
+        </section>
+        <section class="ad-placeholder" aria-label="广告占位" aria-hidden="true">
+          <span>ADVERTISEMENT</span>
+          <strong>广告占位</strong>
+          <p>此区域用于验证专注阅读过滤。</p>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="site-footer">
+      <p>FocusUI 技术观察 · 固定离线演示页面</p>
+    </footer>
+  </body>
+</html>

@@ -1,11 +1,14 @@
 {
   "name": "@focus-ui/desktop",
   "version": "0.1.0",
+  "description": "FocusUI 0.1.0 Beta 本地 AI 服务与隐私控制桌面端",
+  "author": "FocusUI Team",
   "private": true,
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
+    "build:win": "npm run build && electron-builder --win nsis --x64",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
@@ -22,7 +25,8 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "electron": "^33.2.0",
+    "electron": "33.4.11",
+    "electron-builder": "^26.15.3",
     "electron-vite": "^2.3.0",
     "vitest": "^4.1.10"
   }

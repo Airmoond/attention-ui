@@ -43,18 +43,18 @@
 
 ## 三、模块状态表
 
-每完成一个模块后更新此表。
+每完成一个模块后更新此表。当前已完成 0.1.0 Beta；团队全流程验收结论和检查范围见 [Beta 验收记录](docs/releases/v0.1.0-beta.md)。
 
 | 模块 | 状态 | Git提交 | 遗留问题 |
 |---|---|---|---|
-| 01_PROJECT_SCAFFOLD | 未开始 | 无 | 无 |
-| 02_DESKTOP_SERVICE | 未开始 | 无 | 无 |
-| 03_EXTENSION_FOUNDATION | 未开始 | 无 | 无 |
-| 04_ATTENTION_CONTEXT | 未开始 | 无 | 无 |
-| 05_DYNAMIC_UI | 未开始 | 无 | 无 |
-| 06_AI_FEATURES | 未开始 | 无 | 无 |
-| 07_ADAPTATION_DESKTOP_FINISH | 未开始 | 无 | 无 |
-| 08_TEST_BUILD_DEMO | 未开始 | 无 | 无 |
+| 01_PROJECT_SCAFFOLD | 已完成 | 29765eb | 见 Beta 验收记录 |
+| 02_DESKTOP_SERVICE | 已完成 | d453fe7；运行时修复 5fd19d0 | 见 Beta 验收记录 |
+| 03_EXTENSION_FOUNDATION | 已完成 | 0ea8e04 | 见 Beta 验收记录 |
+| 04_ATTENTION_CONTEXT | 已完成 | 310f5c0 | 见 Beta 验收记录 |
+| 05_DYNAMIC_UI | 已完成 | 2bdeb03 | 见 Beta 验收记录 |
+| 06_AI_FEATURES | 已完成 | 86f91cf | 见 Beta 验收记录 |
+| 07_ADAPTATION_DESKTOP_FINISH | 已完成 | b3793c9 | 见 Beta 验收记录 |
+| 08_TEST_BUILD_DEMO | 已完成 | v0.1.0-beta | 见 Beta 验收记录 |
 
 状态只允许使用：
 
@@ -74,7 +74,7 @@
 请先完整阅读项目根目录中的MUST_READ.md。
 
 然后阅读：
-docs/modules/当前模块文件名.md
+当前模块文件名.md
 
 本轮只开发该模块中的当前子步骤。
 不要提前开发模块中的后续子步骤，也不要进入下一个模块。

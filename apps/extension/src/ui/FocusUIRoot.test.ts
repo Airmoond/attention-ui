@@ -24,6 +24,18 @@ describe("AI request failure messages", () => {
     )
   })
 
+  it("distinguishes AI timeout, online request failure, and an updated plugin context", () => {
+    expect(getToolRequestErrorMessage(errorResult("AI_REQUEST_TIMEOUT"))).toBe(
+      "AI响应超时，请稍后重试"
+    )
+    expect(getToolRequestErrorMessage(errorResult("DESKTOP_REQUEST_FAILED"))).toBe(
+      "Desktop在线，但本次工具请求失败，请重试"
+    )
+    expect(getToolRequestErrorMessage(errorResult("BACKGROUND_UNAVAILABLE"))).toBe(
+      "FocusUI插件已更新，请刷新当前网页后重试"
+    )
+  })
+
   it("reports missing or expired pairing", () => {
     expect(getToolRequestErrorMessage(errorResult("MISSING_CLIENT_TOKEN"))).toBe(
       "尚未与FocusUI Desktop配对"

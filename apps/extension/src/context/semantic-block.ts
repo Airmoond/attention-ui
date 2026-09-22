@@ -18,7 +18,7 @@ export const SEMANTIC_BLOCK_LIMITS = {
 
 const HOST_ID = "focus-ui-host"
 const SENSITIVE_CONTENT_SELECTOR =
-  "input, textarea, select, option, button, form, [contenteditable=''], [contenteditable='true'], [contenteditable='plaintext-only']"
+  "input, textarea, select, option, button, form, [hidden], [inert], [aria-hidden='true'], [contenteditable=''], [contenteditable='true'], [contenteditable='plaintext-only']"
 const EXCLUDED_TAGS = new Set([
   "input",
   "textarea",
@@ -103,6 +103,7 @@ export const isExcludedFromAttention = (element: Element | null): boolean => {
 
   return (
     element.closest("input, textarea, select, option, button, form, nav, footer") !== null ||
+    element.closest("[hidden], [inert], [aria-hidden='true']") !== null ||
     element.closest("[contenteditable=''], [contenteditable='true'], [contenteditable='plaintext-only']") !== null ||
     isHeaderNavigation(element)
   )

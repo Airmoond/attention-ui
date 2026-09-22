@@ -9,9 +9,11 @@
   "scripts": {
     "dev:desktop": "npm run dev -w apps/desktop",
     "dev:extension": "npm run dev -w apps/extension",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "typecheck": "npm run typecheck -w packages/shared && npm run typecheck -w apps/desktop && npm run typecheck -w apps/extension",
+    "build": "npm run build -w packages/shared && npm run build -w apps/desktop && npm run build -w apps/extension",
+    "test": "npm run build -w packages/shared && npm run test -w packages/shared && npm run test -w apps/desktop && npm run test -w apps/extension",
+    "package:release": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-release.ps1",
+    "verify:release": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-release-security.ps1"
   },
   "devDependencies": {
     "typescript": "^5.9.3"

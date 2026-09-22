@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import {
   hasAcceptableBlockSize,
   hasMeaningfulText,
+  isExcludedFromAttention,
   normalizeVisibleText,
   SEMANTIC_BLOCK_LIMITS
 } from "./semantic-block"
@@ -31,5 +32,48 @@ describe("semantic block helpers", () => {
     const viewport = { innerWidth: 1000, innerHeight: 800 }
     expect(hasAcceptableBlockSize({ width: 600, height: 240, top: 0, left: 0, right: 600, bottom: 240 }, viewport)).toBe(true)
     expect(SEMANTIC_BLOCK_LIMITS.minimumTextLength).toBe(20)
+  })
+
+  it("excludes content hidden from accessibility and its descendants", () => {
+    class TestElement {
+      public readonly isContentEditable = false
+      public readonly tagName: string
+
+      public constructor(
+        tagName: string,
+        private readonly parent: TestElement | null = null,
+        private readonly ariaHidden = false
+      ) {
+        this.tagName = tagName
+      }
+
+      public closest(selector: string): TestElement | null {
+        if (selector.includes("[aria-hidden='true']")) {
+          for (let current: TestElement | null = this; current; current = current.parent) {
+            if (current.ariaHidden) {
+              return current
+            }
+          }
+        }
+        return null
+      }
+
+      public getRootNode(): object {
+        return {}
+      }
+    }
+    class TestShadowRoot {}
+
+    vi.stubGlobal("HTMLElement", TestElement)
+    vi.stubGlobal("ShadowRoot", TestShadowRoot)
+    try {
+      const hiddenSection = new TestElement("SECTION", null, true)
+      const paragraph = new TestElement("P", hiddenSection)
+
+      expect(isExcludedFromAttention(hiddenSection as unknown as HTMLElement)).toBe(true)
+      expect(isExcludedFromAttention(paragraph as unknown as HTMLElement)).toBe(true)
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 })

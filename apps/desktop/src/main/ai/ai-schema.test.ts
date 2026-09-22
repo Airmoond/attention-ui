@@ -28,6 +28,7 @@ describe("module six schemas", () => {
     expect(
       ChartDataSchema.safeParse({
         title: "趋势",
+        chartType: "line",
         labels: ["2024", "2025"],
         values: [100],
         unit: null
@@ -35,4 +36,3 @@ describe("module six schemas", () => {
     ).toBe(false)
   })
 })
-

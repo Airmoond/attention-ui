@@ -25,9 +25,16 @@ import type { z } from "zod"
 import { getExtensionSettings } from "../storage/extension-store"
 
 const REQUEST_TIMEOUT_MS = 20_000
+const EXECUTE_REQUEST_TIMEOUT_MS = 30_000
 const PREFERENCE_CACHE_TTL_MS = 10_000
 
 type JsonSchema<T> = z.ZodType<T>
+
+type DesktopRequestPolicy = {
+  timeoutMs?: number
+  timeoutCode?: string
+  timeoutMessage?: string
+}
 
 export type DesktopRequestFailure = {
   ok: false
@@ -61,7 +68,8 @@ const requestDesktopJson = async <T>(
     | "/v1/preferences",
   schema: JsonSchema<T>,
   options: { method: "GET" } | { method: "POST"; body: unknown },
-  requiresAuthentication: boolean
+  requiresAuthentication: boolean,
+  policy: DesktopRequestPolicy = {}
 ): Promise<DesktopRequestResult<T>> => {
   const settings = await getExtensionSettings()
   if (requiresAuthentication && !settings.clientToken) {
@@ -69,7 +77,10 @@ const requestDesktopJson = async <T>(
   }
 
   const controller = new AbortController()
-  const timeoutId = globalThis.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+  const timeoutId = globalThis.setTimeout(
+    () => controller.abort(),
+    policy.timeoutMs ?? REQUEST_TIMEOUT_MS
+  )
   const headers: Record<string, string> = { Accept: "application/json" }
   if (options.method === "POST") {
     headers["Content-Type"] = "application/json"
@@ -105,13 +116,10 @@ const requestDesktopJson = async <T>(
       ? { ok: true, data: parsedResponse.data }
       : requestFailure("INVALID_DESKTOP_RESPONSE", "桌面端返回了无效响应", response.status)
   } catch (error: unknown) {
+    const timedOut = error instanceof DOMException && error.name === "AbortError"
     return requestFailure(
-      error instanceof DOMException && error.name === "AbortError"
-        ? "REQUEST_TIMEOUT"
-        : "DESKTOP_UNREACHABLE",
-      error instanceof DOMException && error.name === "AbortError"
-        ? "连接桌面端超时"
-        : "无法连接桌面端",
+      timedOut ? (policy.timeoutCode ?? "REQUEST_TIMEOUT") : "DESKTOP_UNREACHABLE",
+      timedOut ? (policy.timeoutMessage ?? "连接桌面端超时") : "无法连接桌面端",
       null
     )
   } finally {
@@ -143,13 +151,27 @@ export const planDesktopTools = async (
 
 export const executeDesktopTool = async (
   request: ExecuteRequest
-): Promise<DesktopRequestResult<ToolResult>> =>
-  requestDesktopJson(
+): Promise<DesktopRequestResult<ToolResult>> => {
+  const result = await requestDesktopJson(
     "/v1/execute",
     ToolResultSchema,
     { method: "POST", body: request },
-    true
+    true,
+    {
+      timeoutMs: EXECUTE_REQUEST_TIMEOUT_MS,
+      timeoutCode: "AI_REQUEST_TIMEOUT",
+      timeoutMessage: "AI响应超时"
+    }
   )
+  if (result.ok || result.error.code !== "DESKTOP_UNREACHABLE") {
+    return result
+  }
+
+  const healthResult = await checkDesktopHealth()
+  return healthResult.ok
+    ? requestFailure("DESKTOP_REQUEST_FAILED", "桌面端在线，但本次工具请求失败", result.status)
+    : result
+}
 
 export const recordDesktopToolEvent = async (
   event: ToolEvent
@@ -192,4 +214,4 @@ export const clearPreferenceCache = (): void => {
   preferenceCache = null
 }
 
-export { PREFERENCE_CACHE_TTL_MS, REQUEST_TIMEOUT_MS }
+export { EXECUTE_REQUEST_TIMEOUT_MS, PREFERENCE_CACHE_TTL_MS, REQUEST_TIMEOUT_MS }

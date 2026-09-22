@@ -3,6 +3,7 @@ import type {
   AppInfo,
   AppSettings,
   LogEntry,
+  OnboardingActionResult,
   PairingStatus,
   PreferenceState,
   ServiceStatus
@@ -24,6 +25,10 @@ declare global {
       resetPreferences: () => Promise<PreferenceState>
       getLogs: () => Promise<LogEntry[]>
       clearLogs: () => Promise<void>
+      openQuickStart: () => Promise<OnboardingActionResult>
+      prepareExtensionInstall: () => Promise<OnboardingActionResult>
+      openArticleDemo: () => Promise<OnboardingActionResult>
+      openFinanceDemo: () => Promise<OnboardingActionResult>
       testAiConnection: (settings: AppSettings) => Promise<AiConnectionTestResult>
     }
   }

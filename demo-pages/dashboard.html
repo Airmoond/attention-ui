@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FocusOps 管理仪表盘</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="dashboard-page">
+    <aside class="dashboard-sidebar" aria-label="后台侧边栏">
+      <a class="dashboard-logo" href="#dashboard-top">FocusOps</a>
+      <nav>
+        <a class="active" href="#dashboard-top">总览</a>
+        <a href="#regional">区域表现</a>
+        <a href="#operations">运行状态</a>
+        <a href="#dashboard-bottom">页面底部</a>
+      </nav>
+      <p class="sidebar-version">离线演示 · v0.1.0</p>
+    </aside>
+
+    <div class="dashboard-shell">
+      <header class="dashboard-topbar" id="dashboard-top">
+        <div>
+          <p class="section-label">运营中心</p>
+          <h1>业务健康度总览</h1>
+        </div>
+        <label class="dashboard-search">
+          <span>搜索仪表盘</span>
+          <input type="search" placeholder="搜索指标或报告" />
+        </label>
+        <button type="button">导出报告</button>
+      </header>
+
+      <main class="dashboard-main">
+        <section class="edge-test top-edge" aria-labelledby="top-edge-title">
+          <div>
+            <p class="section-label">页面顶部测试区</p>
+            <h2 id="top-edge-title">顶部内容保持在安全视口范围</h2>
+          </div>
+          <p>将鼠标停留在这段文字上，可验证工具条在页面顶部不会越界，并且不会遮挡当前指针位置。</p>
+        </section>
+
+        <section class="dashboard-metrics" aria-label="数据卡片">
+          <article><span>活跃项目</span><strong>24</strong><small>本周增加3个</small></article>
+          <article><span>服务可用率</span><strong>99.8%</strong><small>过去30天</small></article>
+          <article><span>平均响应时间</span><strong>186ms</strong><small>目标低于250ms</small></article>
+          <article><span>待处理事件</span><strong>7</strong><small>均为低优先级</small></article>
+        </section>
+
+        <section class="dashboard-columns" id="regional">
+          <article class="dashboard-panel left-panel">
+            <p class="section-label">页面左侧测试区</p>
+            <h2>区域表现</h2>
+            <p>华东区域本周完成率为92%，华南区域完成率为88%，华北区域完成率为84%。这段固定数据位于主内容左侧。</p>
+            <button type="button">查看无关详情</button>
+          </article>
+
+          <article class="dashboard-panel right-panel">
+            <p class="section-label">页面右侧测试区</p>
+            <h2>风险提示</h2>
+            <p>两个项目进入观察状态，当前没有高优先级中断。将鼠标停留在这里可验证工具条在右侧空间不足时选择其他位置。</p>
+            <button type="button">忽略无关提示</button>
+          </article>
+        </section>
+
+        <section class="large-container" id="operations" aria-labelledby="operations-title">
+          <header>
+            <div>
+              <p class="section-label">大型容器过滤测试</p>
+              <h2 id="operations-title">运行状态</h2>
+            </div>
+            <button type="button">刷新状态</button>
+          </header>
+          <div class="operations-grid">
+            <article>
+              <span class="status-dot good" aria-hidden="true"></span>
+              <div><strong>Desktop 本地服务</strong><p>回环地址服务运行正常，最近一次检查无异常。</p></div>
+            </article>
+            <article>
+              <span class="status-dot good" aria-hidden="true"></span>
+              <div><strong>Extension 通信</strong><p>生产扩展通过<span class="nested-status"><span>受控消息通道</span></span>交换结构化数据。</p></div>
+            </article>
+            <article>
+              <span class="status-dot warning" aria-hidden="true"></span>
+              <div><strong>外部AI服务</strong><p>演示环境未配置真实凭证时，本地工具仍然保持可用。</p></div>
+            </article>
+          </div>
+          <div class="large-filler" aria-hidden="true">
+            <span>大型布局区域</span>
+          </div>
+        </section>
+
+        <section class="center-test" aria-labelledby="center-title">
+          <p class="section-label">页面中央测试区</p>
+          <h2 id="center-title">工具条应靠近内容而不覆盖内容</h2>
+          <p>这个居中的独立段落用于在80%和125%浏览器缩放下检查工具条定位、Shadow DOM样式隔离与视口边界。</p>
+        </section>
+
+        <section class="edge-test bottom-edge" id="dashboard-bottom" aria-labelledby="bottom-edge-title">
+          <div>
+            <p class="section-label">页面底部测试区</p>
+            <h2 id="bottom-edge-title">底部内容仍可稳定触发</h2>
+          </div>
+          <p>滚动到页面末尾并停留在这段文字上，可验证工具条不会落到视口之外，页面滚动期间也不会误触发。</p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

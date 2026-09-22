@@ -4,6 +4,7 @@ import type {
   AppInfo,
   AppSettings,
   LogEntry,
+  OnboardingActionResult,
   PairingStatus,
   PreferenceState,
   ServiceStatus
@@ -23,6 +24,10 @@ const TEST_AI_CONNECTION_CHANNEL = "focus-ui:test-ai-connection"
 const RESET_PREFERENCES_CHANNEL = "focus-ui:reset-preferences"
 const GET_LOGS_CHANNEL = "focus-ui:get-logs"
 const CLEAR_LOGS_CHANNEL = "focus-ui:clear-logs"
+const OPEN_QUICK_START_CHANNEL = "focus-ui:open-quick-start"
+const PREPARE_EXTENSION_INSTALL_CHANNEL = "focus-ui:prepare-extension-install"
+const OPEN_ARTICLE_DEMO_CHANNEL = "focus-ui:open-article-demo"
+const OPEN_FINANCE_DEMO_CHANNEL = "focus-ui:open-finance-demo"
 
 const focusUI = {
   getAppInfo: (): Promise<AppInfo> =>
@@ -51,6 +56,14 @@ const focusUI = {
     ipcRenderer.invoke(GET_LOGS_CHANNEL) as Promise<LogEntry[]>,
   clearLogs: (): Promise<void> =>
     ipcRenderer.invoke(CLEAR_LOGS_CHANNEL) as Promise<void>,
+  openQuickStart: (): Promise<OnboardingActionResult> =>
+    ipcRenderer.invoke(OPEN_QUICK_START_CHANNEL) as Promise<OnboardingActionResult>,
+  prepareExtensionInstall: (): Promise<OnboardingActionResult> =>
+    ipcRenderer.invoke(PREPARE_EXTENSION_INSTALL_CHANNEL) as Promise<OnboardingActionResult>,
+  openArticleDemo: (): Promise<OnboardingActionResult> =>
+    ipcRenderer.invoke(OPEN_ARTICLE_DEMO_CHANNEL) as Promise<OnboardingActionResult>,
+  openFinanceDemo: (): Promise<OnboardingActionResult> =>
+    ipcRenderer.invoke(OPEN_FINANCE_DEMO_CHANNEL) as Promise<OnboardingActionResult>,
   testAiConnection: (settings: AppSettings): Promise<AiConnectionTestResult> =>
     ipcRenderer.invoke(TEST_AI_CONNECTION_CHANNEL, settings) as Promise<AiConnectionTestResult>
 }

@@ -3,11 +3,13 @@ import type { AppInfo, AppSettings, PairingStatus, ServiceStatus } from "@focus-
 import AISettingsPage from "./pages/AISettingsPage"
 import BehaviorPage from "./pages/BehaviorPage"
 import LogsPage from "./pages/LogsPage"
+import QuickStartPage from "./pages/QuickStartPage"
 import StatusPage from "./pages/StatusPage"
 
-type PageId = "status" | "ai" | "behavior" | "logs"
+type PageId = "quickstart" | "status" | "ai" | "behavior" | "logs"
 
 const navigationItems: ReadonlyArray<{ id: PageId; label: string }> = [
+  { id: "quickstart", label: "快速上手" },
   { id: "status", label: "运行状态" },
   { id: "ai", label: "AI设置" },
   { id: "behavior", label: "交互设置" },
@@ -15,7 +17,7 @@ const navigationItems: ReadonlyArray<{ id: PageId; label: string }> = [
 ]
 
 const App = (): JSX.Element => {
-  const [activePage, setActivePage] = useState<PageId>("status")
+  const [activePage, setActivePage] = useState<PageId>("quickstart")
   const [appInfo, setAppInfo] = useState<AppInfo | null>(null)
   const [serviceStatus, setServiceStatus] = useState<ServiceStatus | null>(null)
   const [settings, setSettings] = useState<AppSettings | null>(null)
@@ -164,6 +166,22 @@ const App = (): JSX.Element => {
       return <section className="page-panel">正在读取桌面端状态…</section>
     }
 
+    if (activePage === "quickstart") {
+      return (
+        <QuickStartPage
+          appInfo={appInfo}
+          serviceStatus={serviceStatus}
+          pairingStatus={pairingStatus}
+          onOpenGuide={window.focusUI.openQuickStart}
+          onPrepareExtension={window.focusUI.prepareExtensionInstall}
+          onOpenArticleDemo={window.focusUI.openArticleDemo}
+          onOpenFinanceDemo={window.focusUI.openFinanceDemo}
+          onCopyPairingToken={copyPairingToken}
+          onOpenAiSettings={(): void => setActivePage("ai")}
+        />
+      )
+    }
+
     if (activePage === "status") {
       return (
         <StatusPage
@@ -203,9 +221,9 @@ const App = (): JSX.Element => {
     <main className="app-shell">
       <aside className="sidebar">
         <div>
-          <p className="eyebrow">FOCUSUI</p>
+          <p className="eyebrow">FOCUSUI 0.1.0 BETA</p>
           <h1>Desktop</h1>
-          <p className="sidebar-copy">本地服务与隐私设置</p>
+          <p className="sidebar-copy">本地AI服务与新手引导</p>
         </div>
         <nav aria-label="主导航">
           {navigationItems.map((item) => (

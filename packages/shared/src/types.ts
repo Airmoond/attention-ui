@@ -161,6 +161,7 @@ export type PlanResponse = {
 
 export type ChartData = {
   title: string
+  chartType: "bar" | "line"
   labels: string[]
   values: number[]
   unit: string | null
@@ -194,4 +195,9 @@ export type PairingStatus = {
   pairingToken: string
   paired: boolean
   lastConnectedAt: string | null
+}
+
+export type OnboardingActionResult = {
+  ok: boolean
+  message: string
 }

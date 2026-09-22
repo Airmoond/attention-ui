@@ -208,6 +208,17 @@ const mountFocusUiRoot = (): void => {
       font-size: 15px;
       font-weight: 700;
     }
+    .focus-ui-result-text strong {
+      color: #172033;
+      font-weight: 700;
+    }
+    .focus-ui-result-text code {
+      border-radius: 4px;
+      padding: 1px 4px;
+      color: #1749c7;
+      background: #eef3fb;
+      font: 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
     .focus-ui-result-list-item {
       position: relative;
       padding-left: 15px;
@@ -231,6 +242,14 @@ const mountFocusUiRoot = (): void => {
       display: grid;
       gap: 6px;
       margin: 0;
+    }
+    .focus-ui-chart-canvas {
+      width: 100%;
+      height: 300px;
+      min-height: 260px;
+      border: 1px solid #e1e7f0;
+      border-radius: 8px;
+      background: #ffffff;
     }
     .focus-ui-chart-list > div {
       display: flex;
@@ -504,7 +523,13 @@ const reportSynchronizationFailure = (): void => {
 }
 
 export default defineContentScript({
-  matches: ["https://en.wikipedia.org/*", "file:///*"],
+  matches: [
+    "http://127.0.0.1:17321/demo/*",
+    "http://localhost:17321/demo/*",
+    "http://127.0.0.1:8080/*",
+    "http://localhost:8080/*",
+    "https://en.wikipedia.org/*"
+  ],
   main() {
     void synchronizeFocusUiRoot().catch(reportSynchronizationFailure)
 

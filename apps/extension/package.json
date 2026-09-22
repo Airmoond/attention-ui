@@ -1,18 +1,20 @@
 {
   "name": "@focus-ui/extension",
   "version": "0.1.0",
+  "description": "FocusUI 0.1.0 Beta Chrome 扩展",
   "private": true,
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
+    "build:zip": "wxt zip",
     "typecheck": "wxt prepare && tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
     "@focus-ui/shared": "^0.1.0",
+    "echarts": "^6.1.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "wxt": "^0.21.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -21,6 +23,7 @@
     "@types/react-dom": "^19.2.4",
     "@wxt-dev/module-react": "^1.2.2",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "wxt": "^0.21.3"
   }
 }

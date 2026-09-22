@@ -53,6 +53,7 @@ export type {
   LogLevel,
   LogMetadata,
   NumericCandidate,
+  OnboardingActionResult,
   PairingStatus,
   PairRequest,
   PairResponse,

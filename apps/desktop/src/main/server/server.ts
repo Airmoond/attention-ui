@@ -1,5 +1,6 @@
 import { createServer, type Server } from "node:http"
-import express, { type ErrorRequestHandler } from "express"
+import { join } from "node:path"
+import express, { type ErrorRequestHandler, type RequestHandler } from "express"
 import type {
   ApiError,
   ExecuteRequest,
@@ -12,6 +13,7 @@ import type {
 import { getFocusUIErrorMessage } from "@focus-ui/shared"
 import { getLocalFallbackPlan } from "../ai/ai-planner"
 import { appLogger } from "../logger/logger"
+import type { OnboardingAssets } from "../onboarding"
 import type { AuthController } from "./auth"
 import { createAuthMiddleware, createCorsMiddleware } from "./middleware"
 import { createHealthRoute } from "./routes/health"
@@ -40,6 +42,7 @@ type LocalServerOptions = {
   recordToolEvent?: RecordToolEvent
   getPreferences?: GetPreferences
   resetPreferences?: ResetPreferences
+  onboardingAssets?: OnboardingAssets
 }
 
 let localServer: Server | null = null
@@ -80,6 +83,16 @@ let authController: AuthController = {
   regeneratePairingToken: () => ({ pairingToken: "", paired: false, lastConnectedAt: null }),
   disconnectPlugin: () => ({ pairingToken: "", paired: false, lastConnectedAt: null })
 }
+let onboardingAssets: OnboardingAssets | null = null
+
+const createLocalFileRoute = (filePath: string): RequestHandler =>
+  (_request, response, next): void => {
+    response.sendFile(filePath, { dotfiles: "deny" }, (error) => {
+      if (error) {
+        next(error)
+      }
+    })
+  }
 
 const updateServiceStatus = (nextStatus: ServiceStatus): void => {
   serviceStatus = nextStatus
@@ -110,7 +123,8 @@ export const configureLocalServer = ({
   executeTool: nextExecuteTool,
   recordToolEvent: nextRecordToolEvent,
   getPreferences: nextGetPreferences,
-  resetPreferences: nextResetPreferences
+  resetPreferences: nextResetPreferences,
+  onboardingAssets: nextOnboardingAssets
 }: LocalServerOptions): void => {
   getAiConfigured = nextProvider
   authController = nextAuthController
@@ -119,6 +133,7 @@ export const configureLocalServer = ({
   recordToolEvent = nextRecordToolEvent ?? (() => undefined)
   getPreferences = nextGetPreferences ?? emptyPreferences
   resetPreferences = nextResetPreferences ?? emptyPreferences
+  onboardingAssets = nextOnboardingAssets ?? null
 }
 
 export const onLocalServiceStatusChange = (listener: StatusListener): (() => void) => {
@@ -150,6 +165,21 @@ export const startLocalServer = async (): Promise<ServiceStatus> => {
       getAiConfigured
     })
   )
+  if (onboardingAssets) {
+    application.get("/guide", createLocalFileRoute(onboardingAssets.guideFile))
+    application.get(
+      "/demo/article.html",
+      createLocalFileRoute(join(onboardingAssets.demoDirectory, "article.html"))
+    )
+    application.get(
+      "/demo/finance.html",
+      createLocalFileRoute(join(onboardingAssets.demoDirectory, "finance.html"))
+    )
+    application.get(
+      "/demo/styles.css",
+      createLocalFileRoute(join(onboardingAssets.demoDirectory, "styles.css"))
+    )
+  }
   application.post("/v1/pair", createPairRoute(authController))
   application.use("/v1", createAuthMiddleware(authController))
   application.get("/v1/auth-check", (_request, response): void => {

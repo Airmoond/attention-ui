@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FocusUI 0.1.0 Beta 快速上手说明书</title>
+    <style>
+      :root { color-scheme: light; --ink: #152238; --muted: #5e6b7d; --line: #dce3ed; --blue: #275efe; --soft: #f2f5fa; --good: #087a55; }
+      * { box-sizing: border-box; }
+      body { margin: 0; color: var(--ink); background: #eef2f7; font: 16px/1.7 system-ui, "Microsoft YaHei", sans-serif; }
+      header { padding: 54px 24px 48px; color: white; background: linear-gradient(135deg, #172033, #244187); }
+      header div, main { width: min(940px, calc(100% - 32px)); margin: 0 auto; }
+      .badge { display: inline-block; margin-bottom: 14px; border: 1px solid #ffffff55; border-radius: 999px; padding: 5px 11px; font-size: 13px; letter-spacing: .08em; }
+      h1 { margin: 0; font-size: clamp(34px, 6vw, 54px); line-height: 1.1; }
+      header p { max-width: 660px; margin: 18px 0 0; color: #dfe8ff; font-size: 18px; }
+      main { display: grid; gap: 18px; padding: 30px 0 70px; }
+      section { border: 1px solid var(--line); border-radius: 16px; padding: clamp(20px, 4vw, 32px); background: white; box-shadow: 0 10px 30px #1f365318; }
+      h2 { margin: 0 0 12px; font-size: 25px; }
+      h3 { margin: 24px 0 8px; font-size: 18px; }
+      p { margin: 8px 0; color: var(--muted); }
+      ol, ul { margin: 10px 0 0; padding-left: 24px; }
+      li { margin: 7px 0; }
+      code { border-radius: 5px; padding: 2px 6px; color: #1749c7; background: #edf2fb; font-family: Consolas, monospace; overflow-wrap: anywhere; }
+      .step { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 15px; align-items: start; }
+      .number { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: white; background: var(--blue); font-weight: 800; }
+      .tip { margin-top: 16px; border-left: 4px solid var(--good); border-radius: 6px; padding: 10px 14px; color: #285748; background: #eaf8f2; }
+      .links { display: grid; gap: 10px; margin-top: 14px; }
+      a { color: #1749c7; font-weight: 700; }
+      table { width: 100%; margin-top: 14px; border-collapse: collapse; }
+      th, td { border: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+      th { background: var(--soft); }
+      footer { padding-top: 10px; color: var(--muted); text-align: center; font-size: 14px; }
+      @media (max-width: 560px) { .step { grid-template-columns: 1fr; } table { display: block; overflow-x: auto; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <span class="badge">FOCUSUI 0.1.0 BETA</span>
+        <h1>5分钟快速上手</h1>
+        <p>这份说明面向第一次接触浏览器插件的用户。无需命令行，按顺序完成四步即可开始体验。</p>
+      </div>
+    </header>
+    <main>
+      <section class="step">
+        <span class="number">1</span>
+        <div>
+          <h2>安装 Chrome 插件</h2>
+          <ol>
+            <li>打开 FocusUI Desktop，进入左侧“快速上手”。</li>
+            <li>点击“打开插件文件夹并复制路径”。FocusUI 会打开内置生产插件的位置，并把路径复制好。</li>
+            <li>在 Chrome 地址栏输入 <code>chrome://extensions</code> 并回车。</li>
+            <li>打开页面右上角“开发者模式”。</li>
+            <li>点击左上角“加载已解压的扩展程序”。在文件夹选择窗口粘贴刚才复制的路径，选择该文件夹。</li>
+            <li>看到 FocusUI 卡片后即安装成功。建议点击 Chrome 工具栏的拼图图标，把 FocusUI 固定到工具栏。</li>
+          </ol>
+          <p class="tip">Chrome 出于安全考虑，不允许普通安装程序静默安装未上架扩展，因此“加载已解压的扩展程序”这一步必须由用户确认。</p>
+        </div>
+      </section>
+
+      <section class="step">
+        <span class="number">2</span>
+        <div>
+          <h2>连接 Desktop</h2>
+          <ol>
+            <li>在 Desktop“快速上手”点击“复制配对令牌”。</li>
+            <li>打开 Chrome 工具栏中的 FocusUI，确认显示“桌面端：在线”。</li>
+            <li>打开插件“选项”，粘贴配对令牌并点击连接。</li>
+            <li>Popup 显示“配对：已配对”即完成。</li>
+          </ol>
+          <p>配对只连接本机的 <code>127.0.0.1:17321</code> 服务。不要把配对令牌发送给其他人。</p>
+        </div>
+      </section>
+
+      <section class="step">
+        <span class="number">3</span>
+        <div>
+          <h2>配置 AI</h2>
+          <p>进入 Desktop“AI设置”，填写服务商提供的三项内容：</p>
+          <table>
+            <thead><tr><th>项目</th><th>示例或说明</th></tr></thead>
+            <tbody>
+              <tr><td>Base URL</td><td>OpenAI 兼容接口地址，请以服务商文档为准。</td></tr>
+              <tr><td>API Key</td><td>服务商提供的密钥，仅保存在 Desktop。</td></tr>
+              <tr><td>模型名称</td><td>例如服务商支持的对话模型标识。</td></tr>
+            </tbody>
+          </table>
+          <p>先点击“测试连接”，成功后保存。API Key 不会进入 Chrome 插件或演示网页。</p>
+        </div>
+      </section>
+
+      <section class="step">
+        <span class="number">4</span>
+        <div>
+          <h2>体验两个 Demo</h2>
+          <p>保持 Desktop 在运行，在 Chrome 中打开：</p>
+          <div class="links">
+            <a href="http://127.0.0.1:17321/demo/article.html">文章 Demo：总结、解释、提问、专注阅读</a>
+            <a href="http://127.0.0.1:17321/demo/finance.html">财经 Demo：生成图表、解释、提取数据</a>
+          </div>
+          <h3>正确操作方式</h3>
+          <ol>
+            <li>把鼠标稳定停在一段正文或一组明确数字上，等待工具条出现。</li>
+            <li>文章页尝试“总结”“解释”“提问”“专注”。财经页尝试“生成图表”和“提取数据”。</li>
+            <li>若刚加载插件，请刷新已打开的 Demo 标签页一次。</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <h2>常见问题</h2>
+        <h3>插件显示 Desktop 未连接</h3>
+        <p>确认 FocusUI 正在运行。关闭主窗口不会退出，它会留在系统托盘；可点击 Popup 的“重新检测”。</p>
+        <h3>网页上没有出现工具条</h3>
+        <p>在 <code>chrome://extensions</code> 确认 FocusUI 已启用，然后刷新 Demo 页面，把鼠标停在正文而不是按钮、输入框或广告区域。</p>
+        <h3>提示需要重新配对</h3>
+        <p>重新从 Desktop 复制当前配对令牌，到插件“选项”页面连接。</p>
+        <h3>AI 服务连接失败</h3>
+        <p>核对 Base URL、API Key 和模型名称。可先在 Desktop“AI设置”中测试连接。</p>
+        <h3>如何彻底退出</h3>
+        <p>右键系统托盘中的 FocusUI 图标，选择“退出”。只关闭窗口时服务仍会在后台运行。</p>
+      </section>
+
+      <section>
+        <h2>隐私说明</h2>
+        <ul>
+          <li>网页只发送当前关注的内容块，不发送完整浏览历史。</li>
+          <li>API Key 只保存在 Desktop，不进入 Extension。</li>
+          <li>日志不保存完整网页正文、完整问题或完整 AI 回答。</li>
+          <li>用户习惯只统计工具 ID、内容类型与次数。</li>
+        </ul>
+      </section>
+      <footer>FocusUI 0.1.0 Beta · 本说明书与两个 Demo 均随安装包离线提供</footer>
+    </main>
+  </body>
+</html>

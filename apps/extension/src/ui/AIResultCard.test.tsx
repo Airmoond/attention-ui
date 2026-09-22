@@ -12,13 +12,28 @@ describe("AI result card", () => {
     const markup = renderResult({
       toolId: "summarize",
       success: true,
-      content: "# 结论\n- 保留关键数字 <script>alert(1)</script>"
+      content: "# 结论\n- **保留关键数字**和`安全代码` <script>alert(1)</script>"
     })
 
     expect(markup).toContain("AI总结")
     expect(markup).toContain("结论")
+    expect(markup).toContain("<strong>保留关键数字</strong>")
+    expect(markup).toContain("<code>安全代码</code>")
+    expect(markup).not.toContain("**保留关键数字**")
     expect(markup).toContain("&lt;script&gt;alert(1)&lt;/script&gt;")
     expect(markup).not.toContain("<script>")
+  })
+
+  it("renders a Markdown table as safe table elements", () => {
+    const markup = renderResult({
+      toolId: "explain",
+      success: true,
+      content: "| 术语 | 含义 |\n| --- | --- |\n| **鼠标停留** | 关注信号 |"
+    })
+
+    expect(markup).toContain("<table")
+    expect(markup).toContain("<strong>鼠标停留</strong>")
+    expect(markup).not.toContain("| --- |")
   })
 
   it("renders validated chart data as a simple list", () => {
@@ -28,6 +43,7 @@ describe("AI result card", () => {
       content: "已生成结构化图表数据",
       data: {
         title: "年度营收",
+        chartType: "bar",
         labels: ["2024", "2025"],
         values: [100, 120],
         unit: "亿元"
@@ -59,4 +75,3 @@ describe("AI result card", () => {
     expect(markup).toContain("亿元")
   })
 })
-

@@ -120,6 +120,7 @@ export const PlanResponseSchema = z
 export const ChartDataSchema = z
   .object({
     title: z.string().trim().min(1).max(100),
+    chartType: z.enum(["bar", "line"]),
     labels: z.array(z.string().trim().min(1).max(100)).min(2).max(20),
     values: z.array(z.number().finite()).min(2).max(20),
     unit: z.string().trim().max(20).nullable()
@@ -185,6 +186,45 @@ export const ToolResultSchema = z
         code: "custom",
         path: ["errorCode"],
         message: "成功的工具结果不能包含错误码"
+      })
+    }
+
+    if (!value.success && value.data !== undefined) {
+      context.addIssue({
+        code: "custom",
+        path: ["data"],
+        message: "失败的工具结果不能包含执行数据"
+      })
+      return
+    }
+
+    if (value.toolId === "chart" && value.success) {
+      if (!ChartDataSchema.safeParse(value.data).success) {
+        context.addIssue({
+          code: "custom",
+          path: ["data"],
+          message: "图表工具必须返回合法图表数据"
+        })
+      }
+      return
+    }
+
+    if (value.toolId === "extract" && value.success) {
+      if (!ExtractedDataSchema.safeParse(value.data).success) {
+        context.addIssue({
+          code: "custom",
+          path: ["data"],
+          message: "提取工具必须返回合法结构化数据"
+        })
+      }
+      return
+    }
+
+    if (value.data !== undefined) {
+      context.addIssue({
+        code: "custom",
+        path: ["data"],
+        message: "当前工具不允许携带任意执行数据"
       })
     }
   })
