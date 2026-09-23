@@ -280,6 +280,14 @@ test("local lecture first paragraph excludes the following formula and paragraph
   expect(text).not.toContain("Geometrically")
   expect(text).not.toContain("· · ·")
   await page.screenshot({ path: "test-results/local-lecture-selection.png" })
+  const pageBox = (await paper(page, 1).boundingBox())!
+  const lineBox = (await end.boundingBox())!
+  await page.mouse.click(pageBox.x + 12, lineBox.y + lineBox.height / 2)
+  await expect(page.locator("#selection")).toBeEmpty()
+  await expect(page.locator("#selection-page")).toHaveText("尚未选择")
+  await expect(page.locator("#pin")).toBeDisabled()
+  expect(await page.evaluate(() => document.getSelection()?.toString())).toBe("")
+  await page.screenshot({ path: "test-results/local-lecture-cleared.png" })
 })
 
 
@@ -302,3 +310,30 @@ test("a short drag inside a line selects only the requested word", async ({ page
   await page.mouse.up()
   await expect(page.locator("#selection")).toHaveText("These")
 })
+
+
+for (const area of ["paper", "gutter", "outside"]) {
+  test("left click on " + area + " whitespace clears selection but keeps saved excerpt", async ({ page }) => {
+    await open(page, "sample-06.pdf")
+    await expect(paper(page, 1)).toHaveAttribute("data-state", "ready")
+    await selectByDrag(page, "Page anchor:")
+    await page.getByRole("button", { name: "记录此片段" }).click()
+    const savedText = await page.locator("#saved-text").textContent()
+    await selectByDrag(page, "Page anchor:")
+    const pageBox = (await paper(page, 1).boundingBox())!
+    const viewportBox = (await page.locator("#viewport").boundingBox())!
+    const anchorBox = (await paper(page, 1).locator(".textLayer span").filter({ hasText: "Page anchor:" }).boundingBox())!
+    const point = { x: area === "paper" ? pageBox.x + 12 : area === "gutter" ? viewportBox.x + 5 : 8,
+      y: anchorBox.y + anchorBox.height / 2 }
+    await page.mouse.click(point.x, point.y)
+    await expect(page.locator("#selection")).toBeEmpty()
+    await expect(page.locator("#selection-page")).toHaveText("尚未选择")
+    await expect(page.getByRole("button", { name: "记录此片段" })).toBeDisabled()
+    expect(await page.evaluate(() => document.getSelection()?.toString())).toBe("")
+    await expect(page.locator("#saved-text")).toHaveText(savedText!)
+    await expect(page.locator("#saved-page")).toHaveText("来源：第 1 页")
+    // Clearing the old range must not prevent starting a fresh selection.
+    await selectByDrag(page, "Page anchor:")
+    await expect(page.getByRole("button", { name: "记录此片段" })).toBeEnabled()
+  })
+}

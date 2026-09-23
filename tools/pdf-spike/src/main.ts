@@ -400,6 +400,15 @@ document.addEventListener("keydown", event => {
 // The boundary guard prevents page-wide jumps; snap a release in horizontal
 // whitespace to the nearest line edge so the first/last characters are included.
 let selectingText = false
+document.addEventListener("pointerdown", event => {
+  const target = event.target
+  // Clear at the start of a blank-area click, never when a text drag ends there.
+  // Buttons and excerpt text retain their normal save/copy interactions.
+  if (event.button === 0 && !event.shiftKey && target instanceof Element &&
+      target.matches("body, main, header, aside, .layout, #viewport, #pages, .pdf-page, .textLayer, .textLayerImages, .endOfContent")) {
+    clearSelection()
+  }
+})
 pagesContainer.addEventListener("pointerdown", event => {
   selectingText = event.button === 0 && Boolean(pageForNode(event.target as Node))
 })
