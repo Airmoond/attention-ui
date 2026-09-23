@@ -1,16 +1,17 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FocusUI · PDF 技术验证</title></head>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FocusUI · PDF 阅读验证</title></head>
 <body><main>
-<header><p class="eyebrow">FOCUSUI / 阶段 A</p><h1>本地 PDF 阅读验证</h1><p>选择文件后在本机阅读。此验证页不连接 AI，也不上传文档。</p></header>
+<header><p class="eyebrow">FOCUSUI / 阶段 A</p><h1>本地 PDF 阅读验证</h1><p>选择文件后在本机阅读。连续滚动查看全文，支持跨页选取文字。</p></header>
+<div class="reader-bar">
 <section class="controls" aria-label="阅读控制">
 <label class="file-label">打开本地 PDF<input id="file" type="file" accept=".pdf,application/pdf"></label>
 <button id="close" disabled>关闭文档</button>
-<button id="prev" disabled>上一页</button>
-<label>页码<input id="page" type="number" min="1" value="1" disabled></label>
-<button id="next" disabled>下一页</button>
-<label>缩放<select id="zoom" disabled><option value="0.75">75%</option><option value="1" selected>100%</option><option value="1.5">150%</option><option value="2">200%</option></select></label>
+<div class="control-group"><label>页码 <input id="page" type="number" min="1" value="1" disabled></label><span id="page-count">/ —</span></div>
+<div class="control-group" aria-label="缩放控制"><button id="zoom-out" aria-label="缩小" title="缩小 25%" disabled>−</button><output id="zoom-value" aria-label="缩放比例">100%</output><button id="zoom-in" aria-label="放大" title="放大 25%" disabled>+</button><button id="fit" disabled>适合宽度</button></div>
+<button id="fullscreen" aria-pressed="false">网页全屏</button>
 </section>
-<p id="status" role="status" aria-live="polite">请选择 PDF 文件（验证上限：20 MB、120 页）</p>
-<div class="layout"><section id="viewport" aria-label="PDF 页面"><div id="surface"><canvas id="canvas"></canvas><div id="text-layer" class="textLayer"></div></div></section>
-<aside aria-label="片段验证"><h2>选中文字</h2><p>在文档上拖选文字，核对提取内容与来源页码。</p><p id="selection-page">尚未选择</p><blockquote id="selection"></blockquote><button id="pin" disabled>记录此片段</button><section id="saved" hidden><h3>已记录片段</h3><p id="saved-page"></p><blockquote id="saved-text"></blockquote><button id="return">返回来源页</button></section><p class="note">只保留当前会话。更换或关闭文件后清除片段。</p></aside></div>
+<p id="status" role="status" aria-label="阅读状态" aria-live="polite">请选择 PDF 文件（验证上限：20 MB、120 页）</p>
+</div>
+<div class="layout"><section id="viewport" aria-label="PDF 页面"><div id="pages"><p class="empty">打开一份 PDF，开始阅读</p></div></section>
+<aside aria-label="片段验证"><h2>选中文字</h2><p>在正文上拖选文字，也可以跨页选择。</p><p id="selection-page">尚未选择</p><blockquote id="selection"></blockquote><button id="pin" disabled>记录此片段</button><section id="saved" hidden><h3>已记录片段</h3><p id="saved-page"></p><blockquote id="saved-text"></blockquote><button id="return">返回来源页</button></section><p class="note">只保留当前会话，不上传文档。关闭文件后清除片段。</p></aside></div>
 </main><script type="module" src="/src/main.ts"></script></body></html>

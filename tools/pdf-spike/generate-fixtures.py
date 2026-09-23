@@ -74,3 +74,12 @@ oversized.save(OUT / "too-many-pages.pdf", no_new_id=True)
 oversized.close()
 (OUT / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 print("Generated 10 three-page text PDFs and 4 negative fixtures.")
+
+# Twelve-page navigation fixture for bitmap eviction and return-to-page tests.
+with fitz.open(OUT / "sample-06.pdf") as source:
+    continuous = fitz.open()
+    for _ in range(4):
+        continuous.insert_pdf(source)
+    continuous.save(OUT / "continuous.pdf", deflate=True, no_new_id=True)
+    continuous.close()
+print("Generated twelve-page continuous reading fixture.")
