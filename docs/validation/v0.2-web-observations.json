@@ -1,0 +1,246 @@
+{
+  "checkedAt": "2026-09-23T03:59:48.804Z",
+  "purpose": "Read-only page accessibility; not FocusUI compatibility acceptance",
+  "results": [
+    {
+      "id": "W01",
+      "requestedUrl": "https://zh.wikipedia.org/wiki/%E5%85%89%E5%90%88%E4%BD%9C%E7%94%A8",
+      "finalUrl": "https://zh.wikipedia.org/wiki/%E5%85%89%E5%90%88%E4%BD%9C%E7%94%A8",
+      "httpStatus": 200,
+      "title": "光合作用 - 维基百科，自由的百科全书",
+      "headings": [
+        "光合作用"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1963
+    },
+    {
+      "id": "W02",
+      "requestedUrl": "https://zh.wikipedia.org/wiki/%E7%89%9B%E9%A1%BF%E8%BF%90%E5%8A%A8%E5%AE%9A%E5%BE%8B",
+      "finalUrl": "https://zh.wikipedia.org/wiki/%E7%89%9B%E9%A1%BF%E8%BF%90%E5%8A%A8%E5%AE%9A%E5%BE%8B",
+      "httpStatus": 200,
+      "title": "牛顿运动定律 - 维基百科，自由的百科全书",
+      "headings": [
+        "牛顿运动定律"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1376
+    },
+    {
+      "id": "W03",
+      "requestedUrl": "https://zh.wikipedia.org/wiki/%E5%8B%BE%E8%82%A1%E5%AE%9A%E7%90%86",
+      "finalUrl": "https://zh.wikipedia.org/wiki/%E5%8B%BE%E8%82%A1%E5%AE%9A%E7%90%86",
+      "httpStatus": 200,
+      "title": "勾股定理 - 维基百科，自由的百科全书",
+      "headings": [
+        "勾股定理"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1417
+    },
+    {
+      "id": "W04",
+      "requestedUrl": "https://zh.wikipedia.org/wiki/%E6%A6%82%E7%8E%87%E8%AE%BA",
+      "finalUrl": "https://zh.wikipedia.org/wiki/%E6%A6%82%E7%8E%87%E8%AE%BA",
+      "httpStatus": 200,
+      "title": "概率论 - 维基百科，自由的百科全书",
+      "headings": [
+        "概率论"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1329
+    },
+    {
+      "id": "W05",
+      "requestedUrl": "https://zh.wikipedia.org/wiki/%E5%94%90%E8%AF%97",
+      "finalUrl": "https://zh.wikipedia.org/wiki/%E5%94%90%E8%AF%97",
+      "httpStatus": 200,
+      "title": "唐诗 - 维基百科，自由的百科全书",
+      "headings": [
+        "唐诗"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1358
+    },
+    {
+      "id": "W06",
+      "requestedUrl": "https://en.wikipedia.org/wiki/Photosynthesis",
+      "finalUrl": "https://en.wikipedia.org/wiki/Photosynthesis",
+      "httpStatus": 200,
+      "title": "Photosynthesis - Wikipedia",
+      "headings": [
+        "Photosynthesis"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 983
+    },
+    {
+      "id": "W07",
+      "requestedUrl": "https://en.wikipedia.org/wiki/Cell_(biology)",
+      "finalUrl": "https://en.wikipedia.org/wiki/Cell_(biology)",
+      "httpStatus": 200,
+      "title": "Cell (biology) - Wikipedia",
+      "headings": [
+        "Cell (biology)"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 853
+    },
+    {
+      "id": "W08",
+      "requestedUrl": "https://en.wikipedia.org/wiki/Periodic_table",
+      "finalUrl": "https://en.wikipedia.org/wiki/Periodic_table",
+      "httpStatus": 200,
+      "title": "Periodic table - Wikipedia",
+      "headings": [
+        "Periodic table"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1031
+    },
+    {
+      "id": "W09",
+      "requestedUrl": "https://en.wikipedia.org/wiki/Pythagorean_theorem",
+      "finalUrl": "https://en.wikipedia.org/wiki/Pythagorean_theorem",
+      "httpStatus": 200,
+      "title": "Pythagorean theorem - Wikipedia",
+      "headings": [
+        "Pythagorean theorem"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1000
+    },
+    {
+      "id": "W10",
+      "requestedUrl": "https://en.wikipedia.org/wiki/Artificial_intelligence",
+      "finalUrl": "https://en.wikipedia.org/wiki/Artificial_intelligence",
+      "httpStatus": 200,
+      "title": "Artificial intelligence - Wikipedia",
+      "headings": [
+        "Artificial intelligence"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1488
+    },
+    {
+      "id": "B01",
+      "requestedUrl": "https://baike.baidu.com/item/%E5%85%89%E5%90%88%E4%BD%9C%E7%94%A8",
+      "finalUrl": "https://baike.baidu.com/item/%E5%85%89%E5%90%88%E4%BD%9C%E7%94%A8/24205",
+      "httpStatus": 200,
+      "title": "光合作用（绿色植物吸收光能把二氧化碳和水合成有机物同时释放氧气的过程）_百度百科",
+      "headings": [
+        "光合作用"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 2382
+    },
+    {
+      "id": "B02",
+      "requestedUrl": "https://baike.baidu.com/item/%E7%89%9B%E9%A1%BF%E7%AC%AC%E4%BA%8C%E5%AE%9A%E5%BE%8B",
+      "finalUrl": "https://baike.baidu.com/item/%E7%89%9B%E9%A1%BF%E7%AC%AC%E4%BA%8C%E8%BF%90%E5%8A%A8%E5%AE%9A%E5%BE%8B/8637197?fromtitle=%E7%89%9B%E9%A1%BF%E7%AC%AC%E4%BA%8C%E5%AE%9A%E5%BE%8B&fromid=336149&bst=1790136275.247ec9e2c9cd7b6d",
+      "httpStatus": 200,
+      "title": "牛顿第二运动定律_百度百科",
+      "headings": [
+        "牛顿第二运动定律"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1476
+    },
+    {
+      "id": "B03",
+      "requestedUrl": "https://baike.baidu.com/item/%E5%8B%BE%E8%82%A1%E5%AE%9A%E7%90%86",
+      "finalUrl": "https://baike.baidu.com/item/%E5%8B%BE%E8%82%A1%E5%AE%9A%E7%90%86/91499",
+      "httpStatus": 200,
+      "title": "勾股定理（数学术语）_百度百科",
+      "headings": [
+        "勾股定理"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1580
+    },
+    {
+      "id": "B04",
+      "requestedUrl": "https://baike.baidu.com/item/%E6%A6%82%E7%8E%87",
+      "finalUrl": "https://baike.baidu.com/item/%E6%A6%82%E7%8E%87/828845",
+      "httpStatus": 200,
+      "title": "概率（统计学术语）_百度百科",
+      "headings": [
+        "概率"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1474
+    },
+    {
+      "id": "B05",
+      "requestedUrl": "https://baike.baidu.com/item/%E7%BB%86%E8%83%9E",
+      "finalUrl": "https://baike.baidu.com/item/%E7%BB%86%E8%83%9E/84931",
+      "httpStatus": 200,
+      "title": "细胞（生物学中构成生物体的基本单位）_百度百科",
+      "headings": [
+        "细胞"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1534
+    },
+    {
+      "id": "B06",
+      "requestedUrl": "https://baike.baidu.com/item/%E5%85%83%E7%B4%A0%E5%91%A8%E6%9C%9F%E8%A1%A8",
+      "finalUrl": "https://baike.baidu.com/item/%E5%85%83%E7%B4%A0%E5%91%A8%E6%9C%9F%E8%A1%A8/282048",
+      "httpStatus": 200,
+      "title": "元素周期表（俄国化学家门捷列夫总结的化学元素列表）_百度百科",
+      "headings": [
+        "元素周期表"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1824
+    },
+    {
+      "id": "B07",
+      "requestedUrl": "https://baike.baidu.com/item/%E5%94%90%E8%AF%97",
+      "finalUrl": "https://baike.baidu.com/item/%E5%94%90%E8%AF%97/21033",
+      "httpStatus": 200,
+      "title": "唐诗（唐朝诗歌通称）_百度百科",
+      "headings": [
+        "唐诗"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1473
+    },
+    {
+      "id": "B08",
+      "requestedUrl": "https://baike.baidu.com/item/%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F",
+      "finalUrl": "https://baike.baidu.com/item/%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F?bst=1790136285.61ab804eb9cdd9b1",
+      "httpStatus": 200,
+      "title": "生态系统_百度百科",
+      "headings": [
+        "生态系统"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1339
+    },
+    {
+      "id": "B09",
+      "requestedUrl": "https://baike.baidu.com/item/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD",
+      "finalUrl": "https://baike.baidu.com/item/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/9180",
+      "httpStatus": 200,
+      "title": "人工智能（智能科学与技术专业术语）_百度百科",
+      "headings": [
+        "人工智能"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1949
+    },
+    {
+      "id": "B10",
+      "requestedUrl": "https://baike.baidu.com/item/%E4%BA%8C%E6%AC%A1%E5%87%BD%E6%95%B0",
+      "finalUrl": "https://baike.baidu.com/item/%E4%BA%8C%E6%AC%A1%E5%87%BD%E6%95%B0?bst=1790136289.9901da9b496d9ed9",
+      "httpStatus": 200,
+      "title": "二次函数_百度百科",
+      "headings": [
+        "二次函数"
+      ],
+      "state": "page-loaded-extension-not-tested",
+      "durationMs": 1668
+    }
+  ]
+}

@@ -1,0 +1,486 @@
+{
+  "version": "0.2-stage-a",
+  "webStatus": "page-access-verified-extension-not-tested",
+  "webSteps": [
+    "确认词条和目标段落",
+    "选取正文并手动唤起",
+    "切换章节/滚动/缩放",
+    "关闭工具条并检查原页",
+    "进入并退出专注阅读"
+  ],
+  "web": [
+    {
+      "id": "W01",
+      "site": "wikipedia-zh",
+      "title": "光合作用",
+      "url": "https://zh.wikipedia.org/wiki/%E5%85%89%E5%90%88%E4%BD%9C%E7%94%A8",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "中文",
+        "目录",
+        "正文与参考资料分离"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://zh.wikipedia.org/wiki/%E5%85%89%E5%90%88%E4%BD%9C%E7%94%A8"
+    },
+    {
+      "id": "W02",
+      "site": "wikipedia-zh",
+      "title": "牛顿运动定律",
+      "url": "https://zh.wikipedia.org/wiki/%E7%89%9B%E9%A1%BF%E8%BF%90%E5%8A%A8%E5%AE%9A%E5%BE%8B",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "中文",
+        "目录",
+        "正文与参考资料分离"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://zh.wikipedia.org/wiki/%E7%89%9B%E9%A1%BF%E8%BF%90%E5%8A%A8%E5%AE%9A%E5%BE%8B"
+    },
+    {
+      "id": "W03",
+      "site": "wikipedia-zh",
+      "title": "勾股定理",
+      "url": "https://zh.wikipedia.org/wiki/%E5%8B%BE%E8%82%A1%E5%AE%9A%E7%90%86",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "中文",
+        "目录",
+        "正文与参考资料分离"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://zh.wikipedia.org/wiki/%E5%8B%BE%E8%82%A1%E5%AE%9A%E7%90%86"
+    },
+    {
+      "id": "W04",
+      "site": "wikipedia-zh",
+      "title": "概率论",
+      "url": "https://zh.wikipedia.org/wiki/%E6%A6%82%E7%8E%87%E8%AE%BA",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "中文",
+        "目录",
+        "正文与参考资料分离"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://zh.wikipedia.org/wiki/%E6%A6%82%E7%8E%87%E8%AE%BA"
+    },
+    {
+      "id": "W05",
+      "site": "wikipedia-zh",
+      "title": "唐诗",
+      "url": "https://zh.wikipedia.org/wiki/%E5%94%90%E8%AF%97",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "中文",
+        "目录",
+        "正文与参考资料分离"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://zh.wikipedia.org/wiki/%E5%94%90%E8%AF%97"
+    },
+    {
+      "id": "W06",
+      "site": "wikipedia-en",
+      "title": "Photosynthesis",
+      "url": "https://en.wikipedia.org/wiki/Photosynthesis",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "英文",
+        "信息框或插图",
+        "长文"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://en.wikipedia.org/wiki/Photosynthesis"
+    },
+    {
+      "id": "W07",
+      "site": "wikipedia-en",
+      "title": "Cell (biology)",
+      "url": "https://en.wikipedia.org/wiki/Cell_(biology)",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "英文",
+        "信息框或插图",
+        "长文"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://en.wikipedia.org/wiki/Cell_(biology)"
+    },
+    {
+      "id": "W08",
+      "site": "wikipedia-en",
+      "title": "Periodic table",
+      "url": "https://en.wikipedia.org/wiki/Periodic_table",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "英文",
+        "信息框或插图",
+        "长文"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://en.wikipedia.org/wiki/Periodic_table"
+    },
+    {
+      "id": "W09",
+      "site": "wikipedia-en",
+      "title": "Pythagorean theorem",
+      "url": "https://en.wikipedia.org/wiki/Pythagorean_theorem",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "英文",
+        "信息框或插图",
+        "长文"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://en.wikipedia.org/wiki/Pythagorean_theorem"
+    },
+    {
+      "id": "W10",
+      "site": "wikipedia-en",
+      "title": "Artificial intelligence",
+      "url": "https://en.wikipedia.org/wiki/Artificial_intelligence",
+      "target": "正文首个完整定义段落",
+      "features": [
+        "英文",
+        "信息框或插图",
+        "长文"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://en.wikipedia.org/wiki/Artificial_intelligence"
+    },
+    {
+      "id": "B01",
+      "site": "baidu-baike",
+      "title": "光合作用",
+      "url": "https://baike.baidu.com/item/%E5%85%89%E5%90%88%E4%BD%9C%E7%94%A8",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E5%85%89%E5%90%88%E4%BD%9C%E7%94%A8/24205"
+    },
+    {
+      "id": "B02",
+      "site": "baidu-baike",
+      "title": "牛顿第二定律",
+      "url": "https://baike.baidu.com/item/%E7%89%9B%E9%A1%BF%E7%AC%AC%E4%BA%8C%E5%AE%9A%E5%BE%8B",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E7%89%9B%E9%A1%BF%E7%AC%AC%E4%BA%8C%E8%BF%90%E5%8A%A8%E5%AE%9A%E5%BE%8B/8637197?fromtitle=%E7%89%9B%E9%A1%BF%E7%AC%AC%E4%BA%8C%E5%AE%9A%E5%BE%8B&fromid=336149&bst=1790136275.247ec9e2c9cd7b6d"
+    },
+    {
+      "id": "B03",
+      "site": "baidu-baike",
+      "title": "勾股定理",
+      "url": "https://baike.baidu.com/item/%E5%8B%BE%E8%82%A1%E5%AE%9A%E7%90%86",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E5%8B%BE%E8%82%A1%E5%AE%9A%E7%90%86/91499"
+    },
+    {
+      "id": "B04",
+      "site": "baidu-baike",
+      "title": "概率",
+      "url": "https://baike.baidu.com/item/%E6%A6%82%E7%8E%87",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E6%A6%82%E7%8E%87/828845"
+    },
+    {
+      "id": "B05",
+      "site": "baidu-baike",
+      "title": "细胞",
+      "url": "https://baike.baidu.com/item/%E7%BB%86%E8%83%9E",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E7%BB%86%E8%83%9E/84931"
+    },
+    {
+      "id": "B06",
+      "site": "baidu-baike",
+      "title": "元素周期表",
+      "url": "https://baike.baidu.com/item/%E5%85%83%E7%B4%A0%E5%91%A8%E6%9C%9F%E8%A1%A8",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E5%85%83%E7%B4%A0%E5%91%A8%E6%9C%9F%E8%A1%A8/282048"
+    },
+    {
+      "id": "B07",
+      "site": "baidu-baike",
+      "title": "唐诗",
+      "url": "https://baike.baidu.com/item/%E5%94%90%E8%AF%97",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E5%94%90%E8%AF%97/21033"
+    },
+    {
+      "id": "B08",
+      "site": "baidu-baike",
+      "title": "生态系统",
+      "url": "https://baike.baidu.com/item/%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F?bst=1790136285.61ab804eb9cdd9b1"
+    },
+    {
+      "id": "B09",
+      "site": "baidu-baike",
+      "title": "人工智能",
+      "url": "https://baike.baidu.com/item/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/9180"
+    },
+    {
+      "id": "B10",
+      "site": "baidu-baike",
+      "title": "二次函数",
+      "url": "https://baike.baidu.com/item/%E4%BA%8C%E6%AC%A1%E5%87%BD%E6%95%B0",
+      "target": "学科义项的概述首段；同名词条需记录最终 URL",
+      "features": [
+        "中文",
+        "目录",
+        "复杂侧栏",
+        "义项核对"
+      ],
+      "status": "Chrome 页面访问通过；插件交互待验收",
+      "resolvedUrl": "https://baike.baidu.com/item/%E4%BA%8C%E6%AC%A1%E5%87%BD%E6%95%B0?bst=1790136289.9901da9b496d9ed9"
+    }
+  ],
+  "pdf": {
+    "source": "original-synthetic-engineering-fixtures",
+    "generator": "tools/pdf-spike/generate-fixtures.py",
+    "warning": "原创工程样本不等于学生真实讲义；真实资料适配验收仍需另行完成。",
+    "samples": [
+      {
+        "id": "P01",
+        "file": "sample-01.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "zh",
+        "layout": "single-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      },
+      {
+        "id": "P02",
+        "file": "sample-02.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "zh",
+        "layout": "single-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      },
+      {
+        "id": "P03",
+        "file": "sample-03.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "zh",
+        "layout": "two-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      },
+      {
+        "id": "P04",
+        "file": "sample-04.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "zh",
+        "layout": "single-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      },
+      {
+        "id": "P05",
+        "file": "sample-05.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "zh",
+        "layout": "two-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      },
+      {
+        "id": "P06",
+        "file": "sample-06.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "en",
+        "layout": "single-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      },
+      {
+        "id": "P07",
+        "file": "sample-07.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "en",
+        "layout": "single-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      },
+      {
+        "id": "P08",
+        "file": "sample-08.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "en",
+        "layout": "two-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      },
+      {
+        "id": "P09",
+        "file": "sample-09.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "en",
+        "layout": "single-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      },
+      {
+        "id": "P10",
+        "file": "sample-10.pdf",
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "language": "en",
+        "layout": "two-column",
+        "checks": [
+          "文字可提取",
+          "页面可渲染",
+          "缩放后选区正确",
+          "结果关联当前页"
+        ]
+      }
+    ],
+    "negative": [
+      "scanned.pdf",
+      "encrypted.pdf",
+      "corrupt.pdf",
+      "too-many-pages.pdf"
+    ]
+  }
+}
