@@ -72,3 +72,24 @@ export type {
   PairRequest,
   PairResponse
 }
+
+// Website controls are versioned separately so upgrading never overwrites pairing.
+export const SiteOriginSchema = z.enum([
+  "https://en.wikipedia.org", "https://zh.wikipedia.org", "https://baike.baidu.com",
+  "http://127.0.0.1:8080", "http://localhost:8080",
+  "http://127.0.0.1:17321", "http://localhost:17321"
+])
+export const SitePolicySchema = z.object({
+  enabled: z.boolean(), autoToolbar: z.boolean(), autoAI: z.boolean()
+}).strict()
+export const SitePoliciesSchema = z.object({
+  version: z.literal(1), sites: z.partialRecord(SiteOriginSchema, SitePolicySchema)
+}).strict()
+export const PageAccessSchema = z.object({
+  origin: SiteOriginSchema.nullable(), globalEnabled: z.boolean(),
+  enabled: z.boolean(), autoToolbar: z.boolean(), autoAI: z.boolean(),
+  paused: z.boolean(), permission: z.boolean(), active: z.boolean()
+}).strict()
+export type SiteOrigin = z.infer<typeof SiteOriginSchema>
+export type SitePolicy = z.infer<typeof SitePolicySchema>
+export type PageAccess = z.infer<typeof PageAccessSchema>
