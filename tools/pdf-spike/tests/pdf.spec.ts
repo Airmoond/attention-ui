@@ -91,7 +91,7 @@ test("opening and navigating sends no requests outside local assets", async ({ p
 test("image-only page is readable but not reported as selectable text", async ({ page }) => {
   await open(page, "scanned.pdf")
   await expect(page.getByRole("status", { name: "阅读状态" })).toContainText("暂不支持扫描件 OCR")
-  await expect(paper(page, 1).locator(".textLayer")).toBeEmpty()
+  await expect(paper(page, 1).locator(".textLayer span")).toHaveCount(0)
 })
 for (const [name, message] of [
   ["encrypted.pdf", "加密 PDF 暂不支持"], ["corrupt.pdf", "PDF 无法读取"], ["too-many-pages.pdf", "文档超过 120 页"]
@@ -208,4 +208,97 @@ test("long document bounds live canvases and redraws pages on return", async ({ 
     )).toBeLessThanOrEqual(5)
     await expect(paper(page, number).locator(".textLayer")).toContainText("Study notes P06")
   }
+})
+
+
+async function dragParagraph(page: Page, start: Locator, end: Locator, reverse = false): Promise<void> {
+  const initial = await start.boundingBox()
+  if (!initial) throw new Error("Paragraph missing")
+  await page.mouse.move(8, 400)
+  await page.mouse.wheel(0, initial.y - 250)
+  await expect.poll(async () => Math.abs((await start.boundingBox())!.y - 250)).toBeLessThan(3)
+  const a = (await start.boundingBox())!
+  const b = (await end.boundingBox())!
+  const from = { x: a.x + 1, y: a.y + a.height / 2 }
+  // Stop in whitespace after the last line, where raw TextLayer selected later paragraphs.
+  const to = { x: b.x + b.width + 15, y: b.y + b.height / 2 }
+  await page.mouse.move(reverse ? b.x + b.width - 1 : from.x, reverse ? to.y : from.y)
+  await page.mouse.down()
+  await page.mouse.move(reverse ? from.x - 10 : to.x, reverse ? from.y : to.y, { steps: 24 })
+  await page.mouse.up()
+}
+
+for (const zoom of [100, 150]) {
+  test("paragraph drag into trailing whitespace stays within paragraph at " + zoom + "%", async ({ page }) => {
+    await open(page, "sample-06.pdf")
+    await expect(paper(page, 1)).toHaveAttribute("data-state", "ready")
+    if (zoom === 150) {
+      await page.getByRole("button", { name: "放大", exact: true }).click()
+      await page.getByRole("button", { name: "放大", exact: true }).click()
+      await expect(paper(page, 1)).toHaveAttribute("data-state", "ready")
+    }
+    const start = paper(page, 1).locator(".textLayer span").filter({ hasText: "Column 1:" }).first()
+    const end = paper(page, 1).locator(".textLayer span").filter({ hasText: "unrelated columns." }).first()
+    await dragParagraph(page, start, end)
+    const text = await page.locator("#selection").textContent()
+    expect(text).toContain("Column 1:")
+    expect(text).toContain("unrelated columns.")
+    expect(text!.match(/Column 1:/g)).toHaveLength(1)
+    expect(text).not.toContain("FocusUI original")
+    await expect(page.locator("#selection-page")).toHaveText("来源：第 1 页")
+    await page.screenshot({ path: "test-results/paragraph-selection-" + zoom + ".png" })
+  })
+}
+
+test("reverse paragraph drag into leading whitespace excludes heading and following paragraphs", async ({ page }) => {
+  await open(page, "sample-06.pdf")
+  await expect(paper(page, 1)).toHaveAttribute("data-state", "ready")
+  const start = paper(page, 1).locator(".textLayer span").filter({ hasText: "Column 1:" }).first()
+  const end = paper(page, 1).locator(".textLayer span").filter({ hasText: "unrelated columns." }).first()
+  await dragParagraph(page, start, end, true)
+  const text = await page.locator("#selection").textContent()
+  expect(text!.match(/Column 1:/g)).toHaveLength(1)
+  expect(text).not.toContain("Page anchor")
+  expect(text).not.toContain("Study notes")
+})
+
+test("local lecture first paragraph excludes the following formula and paragraph", async ({ page }) => {
+  const localPdf = process.env.FOCUSUI_TEST_PDF
+  test.skip(!localPdf, "Optional local document; never copy into fixtures or commit")
+  await page.setViewportSize({ width: 1800, height: 1000 })
+  await page.locator("#file").setInputFiles(localPdf!)
+  await expect(paper(page, 1)).toHaveAttribute("data-state", "ready")
+  await page.locator("#fullscreen").click()
+  await page.locator("#fit").click()
+  await expect(paper(page, 1)).toHaveAttribute("data-state", "ready")
+  const start = paper(page, 1).locator(".textLayer span").filter({ hasText: "In regression problem" })
+  const end = paper(page, 1).locator(".textLayer span").filter({ hasText: "hypothesis function is defined by" })
+  await dragParagraph(page, start, end)
+  const text = await page.locator("#selection").textContent()
+  expect(text).toContain("In regression problem")
+  expect(text).toContain("hypothesis function is defined")
+  expect(text).not.toContain("Geometrically")
+  expect(text).not.toContain("· · ·")
+  await page.screenshot({ path: "test-results/local-lecture-selection.png" })
+})
+
+
+test("a short drag inside a line selects only the requested word", async ({ page }) => {
+  await open(page, "sample-06.pdf")
+  await expect(paper(page, 1)).toHaveAttribute("data-state", "ready")
+  const span = paper(page, 1).locator(".textLayer span").filter({ hasText: "Column 1:" }).first()
+  const box = await span.evaluate(node => {
+    const text = node.firstChild!
+    const offset = text.textContent!.indexOf("These")
+    const range = document.createRange()
+    range.setStart(text, offset)
+    range.setEnd(text, offset + 5)
+    const rect = range.getBoundingClientRect()
+    return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+  })
+  await page.mouse.move(box.x + 0.2, box.y + box.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width - 0.2, box.y + box.height / 2, { steps: 12 })
+  await page.mouse.up()
+  await expect(page.locator("#selection")).toHaveText("These")
 })

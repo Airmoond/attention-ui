@@ -1,4 +1,5 @@
-import { getDocument, GlobalWorkerOptions, TextLayer, type PDFDocumentLoadingTask, type PDFDocumentProxy, type PDFPageProxy } from "pdfjs-dist"
+import { getDocument, GlobalWorkerOptions, TextLayerImages, type PDFDocumentLoadingTask, type PDFDocumentProxy, type PDFPageProxy } from "pdfjs-dist"
+import { TextLayerBuilder } from "pdfjs-dist/web/pdf_viewer.mjs"
 import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url"
 import "./style.css"
 
@@ -24,7 +25,7 @@ type Excerpt = { startPage: number; endPage: number; text: string; truncated: bo
 type PageView = {
   number: number; page: PDFPageProxy; width: number; height: number
   shell: HTMLElement; canvas: HTMLCanvasElement; text: HTMLDivElement; hint: HTMLParagraphElement
-  textLayer: TextLayer | null; render: ReturnType<PDFPageProxy["render"]> | null
+  textLayer: TextLayerBuilder | null; render: ReturnType<PDFPageProxy["render"]> | null
   textReady: boolean; painted: boolean; inRange: boolean; hasText: boolean; error: string | null
 }
 let loading: PDFDocumentLoadingTask | null = null
@@ -167,12 +168,17 @@ async function paintPage(view: PageView, version: number, layout: number): Promi
     view.render = null
     view.painted = true
     if (!view.textReady) {
-      const content = await view.page.getTextContent()
-      if (!valid()) return
-      view.textLayer = new TextLayer({ textContentSource: content, container: view.text, viewport: size })
-      await view.textLayer.render()
-      if (!valid()) return
-      view.hasText = content.items.some(item => "str" in item && item.str.trim().length > 0)
+      // The viewer builder supplies selection boundaries and mouse/copy handling.
+      // Raw TextLayer alone lets a drag into whitespace jump to unrelated content.
+      const builder = new TextLayerBuilder({ pdfPage: view.page })
+      view.textLayer = builder
+      view.text.replaceWith(builder.div)
+      view.text = builder.div
+      await builder.render({ viewport: size, textContentParams: { disableNormalization: false },
+        // Image-copy overlays are not used in this text-selection experiment.
+        images: new TextLayerImages(0, new Float32Array(), size, () => view.canvas) })
+      if (!valid()) { builder.cancel(); return }
+      view.hasText = Boolean(view.text.textContent?.trim())
       view.textReady = true
     }
     view.shell.dataset.state = "ready"
@@ -391,7 +397,38 @@ fullScreen.addEventListener("click", () => toggleFullscreen())
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && document.body.classList.contains("reading-fullscreen")) toggleFullscreen(false)
 })
-document.addEventListener("pointerup", captureSelection)
+// The boundary guard prevents page-wide jumps; snap a release in horizontal
+// whitespace to the nearest line edge so the first/last characters are included.
+let selectingText = false
+pagesContainer.addEventListener("pointerdown", event => {
+  selectingText = event.button === 0 && Boolean(pageForNode(event.target as Node))
+})
+document.addEventListener("pointerup", event => {
+  if (selectingText) {
+    const current = document.getSelection()
+    const view = pageForNode(event.target as Node)
+    const target = event.target
+    if (view && current && !current.isCollapsed && pageForNode(current.anchorNode) &&
+        target instanceof Element && (target === view.text || target.matches(".endOfContent, .textLayerImages"))) {
+      const candidates = Array.from(view.text.querySelectorAll("span"))
+        .filter(span => span.firstChild instanceof Text && span.textContent?.trim())
+        .map(span => ({ span, rect: span.getBoundingClientRect() }))
+        .filter(({ rect }) => event.clientY >= rect.top && event.clientY <= rect.bottom)
+        .sort((a, b) => Math.min(Math.abs(event.clientX - a.rect.left), Math.abs(event.clientX - a.rect.right)) -
+          Math.min(Math.abs(event.clientX - b.rect.left), Math.abs(event.clientX - b.rect.right)))
+      const nearest = candidates[0]
+      if (nearest && (event.clientX < nearest.rect.left || event.clientX > nearest.rect.right)) {
+        const node = nearest.span.firstChild as Text
+        current.setBaseAndExtent(current.anchorNode!, current.anchorOffset, node,
+          event.clientX < nearest.rect.left ? 0 : node.length)
+      }
+    }
+  }
+  selectingText = false
+  captureSelection()
+})
+window.addEventListener("blur", () => { selectingText = false })
+document.addEventListener("pointercancel", () => { selectingText = false })
 document.addEventListener("keyup", captureSelection)
 pin.addEventListener("click", () => {
   if (!selection) return
