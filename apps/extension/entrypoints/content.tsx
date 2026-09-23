@@ -36,11 +36,12 @@ const removeFocusUiRoot = (): void => {
   host.remove()
 }
 
-const reportAttentionCandidate = (candidate: AttentionCandidate): void => {
+const reportAttentionCandidate = (candidate: AttentionCandidate, trigger: "hover" | "manual" = "hover"): void => {
   if (!access?.active) return
   try {
     const context = extractPageContext(candidate)
     const session: ToolbarSession = {
+      trigger,
       candidate,
       context,
       tools: getLocalTools(context, {
@@ -526,7 +527,7 @@ const showSelection = (): boolean => {
   if (!access?.active) return false
   const candidate = getManualCandidate()
   if (!candidate) return false
-  reportAttentionCandidate(candidate)
+  reportAttentionCandidate(candidate, "manual")
   return true
 }
 export default defineContentScript({

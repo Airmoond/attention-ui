@@ -6,7 +6,7 @@ import {
   type ToolPlan,
   type ToolResult
 } from "@focus-ui/shared"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { AttentionCandidate } from "../attention/attention-engine"
 import { sendExtensionMessage } from "../communication/messages"
 import {
@@ -34,6 +34,7 @@ import {
 export { getToolRequestErrorMessage } from "./error-messages"
 
 export type ToolbarSession = {
+  trigger?: "hover" | "manual"
   candidate: AttentionCandidate
   context: PageContext
   tools: LocalTool[]
@@ -110,6 +111,12 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
   const [state, setState] = useState<FocusUIState>(() =>
     session ? { kind: "toolbar", session } : { kind: "idle" }
   )
+  const stateRef = useRef(state)
+  // Event handlers must claim the interaction before a pending hover effect runs.
+  const updateState = useCallback((next: FocusUIState): void => {
+    stateRef.current = next
+    setState(next)
+  }, [])
   const toolbarRef = useRef<HTMLDivElement>(null)
   const requestVersionRef = useRef(0)
 
@@ -119,9 +126,13 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
     if (!session) {
       return
     }
+    const current = stateRef.current
+    if (session.trigger !== "manual" && current.kind !== "idle" && current.kind !== "toolbar") {
+      return
+    }
 
     const requestVersion = ++requestVersionRef.current
-    setState({ kind: "toolbar", session })
+    updateState({ kind: "toolbar", session })
     void Promise.all([
       autoAI ? sendExtensionMessage({ type: "PLAN_TOOLS", pageContext: session.context }) : Promise.resolve(null),
       sendExtensionMessage({ type: "GET_PREFERENCES" })
@@ -143,14 +154,13 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
             )
           : plannedTools
       const plannedSession: ToolbarSession = { ...session, tools: finalTools }
-      setState((current) =>
-        current.kind === "toolbar" && current.session === session
-          ? { kind: "toolbar", session: plannedSession }
-          : current
-      )
+      const current = stateRef.current
+      if (current.kind === "toolbar" && current.session === session) {
+        updateState({ kind: "toolbar", session: plannedSession })
+      }
     })
-    return () => { requestVersionRef.current += 1 }
-  }, [session, autoAI])
+    // Only accepted sessions/actions invalidate requests; ignored hovers must not.
+  }, [session, autoAI, updateState])
 
   useEffect(() => {
     if (state.kind === "idle") {
@@ -160,7 +170,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
     const closeOnEscape = (event: KeyboardEvent): void => {
       if (event.key === "Escape") {
         requestVersionRef.current += 1
-        setState({ kind: "idle" })
+        updateState({ kind: "idle" })
       }
     }
     const closeOnOutsidePointer = (event: PointerEvent): void => {
@@ -170,13 +180,13 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
       const surface = toolbarRef.current
       if (surface && !event.composedPath().includes(surface)) {
         requestVersionRef.current += 1
-        setState({ kind: "idle" })
+        updateState({ kind: "idle" })
       }
     }
     const closeOnScroll = (): void => {
       if (state.kind === "toolbar") {
         requestVersionRef.current += 1
-        setState({ kind: "idle" })
+        updateState({ kind: "idle" })
       }
     }
 
@@ -188,7 +198,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
       document.removeEventListener("pointerdown", closeOnOutsidePointer, true)
       window.removeEventListener("scroll", closeOnScroll, true)
     }
-  }, [state.kind])
+  }, [state.kind, updateState])
 
   useEffect(() => {
     if (state.kind !== "focus-reader") {
@@ -228,7 +238,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
 
   const dismiss = (): void => {
     requestVersionRef.current += 1
-    setState({ kind: "idle" })
+    updateState({ kind: "idle" })
   }
 
   const executeAiTool = async (
@@ -237,7 +247,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
     question?: string
   ): Promise<void> => {
     const requestVersion = ++requestVersionRef.current
-    setState({ kind: "loading", toolId, session: currentSession })
+    updateState({ kind: "loading", toolId, session: currentSession })
     const result = await sendExtensionMessage({
       type: "EXECUTE_TOOL",
       request: {
@@ -252,7 +262,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
 
     if ("toolId" in result && "success" in result && result.toolId === toolId) {
       const errorCode = result.success ? null : getToolRequestErrorCode(result)
-      setState(
+      updateState(
         result.success
           ? { kind: "result", result, session: currentSession }
           : {
@@ -268,7 +278,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
     }
 
     const errorCode = getToolRequestErrorCode(result)
-    setState({
+    updateState({
       kind: "message",
       message: getToolRequestErrorMessage(result),
       session: currentSession,
@@ -287,7 +297,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
         currentSession.context
       )
       requestVersionRef.current += 1
-      setState(
+      updateState(
         content
           ? { kind: "focus-reader", content }
           : { kind: "message", message: "未找到可阅读的正文", session: currentSession }
@@ -297,7 +307,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
 
     if (toolId === "ask") {
       requestVersionRef.current += 1
-      setState({ kind: "ask", session: currentSession })
+      updateState({ kind: "ask", session: currentSession })
       return
     }
 
@@ -323,7 +333,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
         }
         onBack={() => {
           requestVersionRef.current += 1
-          setState({ kind: "toolbar", session: state.session })
+          updateState({ kind: "toolbar", session: state.session })
         }}
         onClose={dismiss}
       />
@@ -341,7 +351,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
         onSubmit={(question) => {
           void executeAiTool("ask", state.session, question).catch((_error: unknown) => {
             requestVersionRef.current += 1
-            setState({
+            updateState({
               kind: "message",
               message: getFocusUIErrorMessage("UNKNOWN_ERROR"),
               session: state.session,
@@ -351,7 +361,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
         }}
         onBack={() => {
           requestVersionRef.current += 1
-          setState({ kind: "toolbar", session: state.session })
+          updateState({ kind: "toolbar", session: state.session })
         }}
         onClose={dismiss}
       />
@@ -365,7 +375,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
         result={state.result}
         onBack={() => {
           requestVersionRef.current += 1
-          setState({ kind: "toolbar", session: state.session })
+          updateState({ kind: "toolbar", session: state.session })
         }}
         onClose={dismiss}
       />
@@ -386,7 +396,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
         const currentSession = state.session
         void handleToolSelect(tool.id, currentSession).catch((_error: unknown) => {
           requestVersionRef.current += 1
-          setState({
+          updateState({
             kind: "message",
             message: getFocusUIErrorMessage("UNKNOWN_ERROR"),
             session: currentSession,
