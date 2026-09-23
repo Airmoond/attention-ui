@@ -11,6 +11,7 @@ let receive: (message: unknown, sender: chrome.runtime.MessageSender, respond: (
 let local: Record<string, unknown>
 let session: Record<string, unknown>
 let allowed: boolean
+let registeredScripts: { id: string }[]
 const origin = "https://en.wikipedia.org"
 const sender = { id: "test-extension", url: origin + "/wiki/Physics?secret=1#private", frameId: 0, tab: { id: 1 } } as chrome.runtime.MessageSender
 const popup = { id: "test-extension", url: "chrome-extension://test-extension/popup.html" }
@@ -22,7 +23,7 @@ beforeEach(async () => {
   vi.clearAllMocks()
   local = { desktopBaseUrl: "http://127.0.0.1:17321", clientToken: "authenticated-client-token-value", enabled: true,
     sitePoliciesV1: { version: 1, sites: { [origin]: { enabled: true, autoToolbar: false, autoAI: false } } } }
-  session = {}; allowed = true
+  session = {}; allowed = true; registeredScripts = []
   vi.stubGlobal("defineBackground", (callback: () => void) => ({ main: callback }))
   vi.stubGlobal("chrome", {
     runtime: { id: "test-extension", getURL: (path: string) => "chrome-extension://test-extension/" + path,
@@ -33,7 +34,7 @@ beforeEach(async () => {
       set: async (data: Record<string, unknown>) => { Object.assign(local, data) }
     }, session: { get: async (key: string) => ({ [key]: session[key] }), set: async (data: Record<string, unknown>) => { Object.assign(session, data) }, remove: async (key: string) => { delete session[key] } } },
     tabs: { query: async () => [], get: async (id: number) => ({ id, url: sender.url }), onRemoved: event(), sendMessage: vi.fn(async () => ({ ok: true })) },
-    scripting: { getRegisteredContentScripts: async () => [], registerContentScripts: vi.fn(async () => undefined),
+    scripting: { getRegisteredContentScripts: vi.fn(async () => registeredScripts), registerContentScripts: vi.fn(async () => undefined),
       updateContentScripts: vi.fn(), unregisterContentScripts: vi.fn(), executeScript: vi.fn() }
   })
   const background = await import("../../entrypoints/background")
@@ -78,6 +79,16 @@ describe("background website authorization", () => {
     expect(await request({ type: "SET_TAB_PAUSED", tabId: 1, paused: true }, popup)).toMatchObject({ access: { paused: true, active: false } })
     expect(await request({ type: "GET_TAB_ACCESS", tabId: 2 }, popup)).toMatchObject({ access: { paused: false, active: true } })
     expect(await request({ type: "SET_TAB_PAUSED", tabId: 1, paused: false }, popup)).toMatchObject({ access: { active: true } })
+  })
+  it("unregisters future injection and notifies existing pages after permission removal", async () => {
+    await vi.waitFor(() => expect(chrome.scripting.registerContentScripts).toHaveBeenCalled())
+    registeredScripts = [{ id: "focusui-opt-in" }]
+    chrome.tabs.query = vi.fn().mockResolvedValue([{ id: 1, url: sender.url }])
+    allowed = false
+    const removed = vi.mocked(chrome.permissions.onRemoved.addListener).mock.calls[0]![0]
+    removed({ origins: [origin + "/*"] })
+    await vi.waitFor(() => expect(chrome.scripting.unregisterContentScripts).toHaveBeenCalledWith({ ids: ["focusui-opt-in"] }))
+    await vi.waitFor(() => expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(1, { type: "FOCUSUI_SYNC" }, { frameId: 0 }))
   })
   it("refuses enabling a website without its browser permission", async () => {
     allowed = false

@@ -10,26 +10,22 @@ export const MAX_SELECTION_LENGTH = 1500
 const getElementForNode = (node: Node | null): Element | null =>
   node instanceof Element ? node : node?.parentElement ?? null
 
+const excludedSelection = "input,textarea,select,option,button,form,nav,footer,[contenteditable],[hidden],[inert],[aria-hidden='true'],#focus-ui-host"
 const isSensitiveEditableElement = (element: Element | null): boolean =>
-  element?.closest(
-    "input, textarea, select, option, [contenteditable=''], [contenteditable='true'], [contenteditable='plaintext-only']"
-  ) !== null
+  !element || element.closest(excludedSelection) !== null || element.getRootNode() instanceof ShadowRoot
 
 export const readDocumentSelection = (maximumLength = MAX_SELECTION_LENGTH): string | null => {
   const selection = document.getSelection()
-  if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
-    return null
-  }
-
-  if (isSensitiveEditableElement(getElementForNode(selection.anchorNode))) {
-    return null
-  }
-  if (isSensitiveEditableElement(getElementForNode(selection.focusNode))) {
-    return null
-  }
-
-  const text = normalizeVisibleText(selection.toString())
-  return text ? truncateText(text, maximumLength) : null
+  if (!selection || selection.isCollapsed || selection.rangeCount !== 1) return null
+  if (isSensitiveEditableElement(getElementForNode(selection.anchorNode)) ||
+      isSensitiveEditableElement(getElementForNode(selection.focusNode))) return null
+  try {
+    const range = selection.getRangeAt(0)
+    const scope = getElementForNode(range.commonAncestorContainer)
+    if (!scope || Array.from(scope.querySelectorAll(excludedSelection)).some(node => range.intersectsNode(node))) return null
+    const text = normalizeVisibleText(range.toString())
+    return text ? truncateText(text, maximumLength) : null
+  } catch { return null } // Detached/invalid ranges must not fall back to reading the whole selection.
 }
 
 export class SelectionTracker {
