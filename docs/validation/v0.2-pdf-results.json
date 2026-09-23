@@ -1,0 +1,116 @@
+{
+  "date": "2026-09-23",
+  "browser": "Chrome 153.0.8010.53",
+  "pdfjs": "6.3.289",
+  "note": "Independent PDF spike, not production extension or AI validation",
+  "stats": {
+    "startTime": "2026-09-23T03:58:51.539Z",
+    "duration": 31659.443000000003,
+    "expected": 20,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "text fixture 1 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "text fixture 2 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "text fixture 3 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "text fixture 4 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "text fixture 5 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "text fixture 6 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "text fixture 7 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "text fixture 8 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "text fixture 9 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "text fixture 10 renders all 3 pages",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "native selection after zoom keeps source page and returns to it",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "English columns allow selection without adjoining column",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "opening and navigating sends no requests outside local assets",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "image-only page is readable but not reported as selectable text",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "reject encrypted.pdf",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "reject corrupt.pdf",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "reject too-many-pages.pdf",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "reject files over size cap before parsing",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "reject non-PDF contents",
+      "passed": true,
+      "status": "passed"
+    },
+    {
+      "title": "close and switch clears excerpt and supports repeated opening",
+      "passed": true,
+      "status": "passed"
+    }
+  ]
+}
