@@ -2,6 +2,7 @@ import { getDocument, GlobalWorkerOptions, TextLayerImages, type PDFDocumentLoad
 import { TextLayerBuilder } from "pdfjs-dist/web/pdf_viewer.mjs"
 import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url"
 import "./style.css"
+import { annotateFormulaFonts, createFormulaSelection } from "./formula"
 
 GlobalWorkerOptions.workerSrc = workerUrl
 const element = <T extends HTMLElement>(id: string): T => {
@@ -42,6 +43,7 @@ let rendering = false
 let pendingRender = false
 let observer: IntersectionObserver | null = null
 let scrollFrame = 0
+const formulaSelection = createFormulaSelection()
 
 const sourceLabel = (excerpt: Excerpt): string => excerpt.startPage === excerpt.endPage
   ? "来源：第 " + excerpt.startPage + " 页"
@@ -64,6 +66,7 @@ function updateStatus(): void {
   status.textContent = "第 " + pageNumber + " / " + documentPdf.numPages + " 页 · " + detail
 }
 function clearSelection(): void {
+  formulaSelection.clear()
   selection = null
   document.getSelection()?.removeAllRanges()
   element("selection").textContent = ""
@@ -92,6 +95,7 @@ async function dispose(): Promise<void> {
   pagesContainer.replaceChildren()
   clearSelection()
   saved = null
+  formulaSelection.resetSaved()
   element("saved").hidden = true
   element("saved-text").textContent = ""
   pageNumber = 1
@@ -177,6 +181,8 @@ async function paintPage(view: PageView, version: number, layout: number): Promi
       await builder.render({ viewport: size, textContentParams: { disableNormalization: false },
         // Image-copy overlays are not used in this text-selection experiment.
         images: new TextLayerImages(0, new Float32Array(), size, () => view.canvas) })
+      if (!valid()) { builder.cancel(); return }
+      await annotateFormulaFonts(view.page, view.text)
       if (!valid()) { builder.cancel(); return }
       view.hasText = Boolean(view.text.textContent?.trim())
       view.textReady = true
@@ -369,6 +375,7 @@ function captureSelection(): void {
   }
   if (!text) return
   selection = { startPage, endPage, text, truncated }
+  void formulaSelection.capture(range, views)
   element("selection").textContent = text
   element("selection-page").textContent = sourceLabel(selection) + (truncated ? "（已截取前 1500 字）" : "")
   updateControls()
@@ -441,7 +448,8 @@ document.addEventListener("pointercancel", () => { selectingText = false })
 document.addEventListener("keyup", captureSelection)
 pin.addEventListener("click", () => {
   if (!selection) return
-  saved = { ...selection }
+  saved = { ...selection, text: formulaSelection.saveText(selection.text) }
+  formulaSelection.savePreview()
   element("saved-page").textContent = sourceLabel(saved)
   element("saved-text").textContent = saved.text
   element("saved").hidden = false
