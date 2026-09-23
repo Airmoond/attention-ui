@@ -3,7 +3,9 @@ import { AttentionEngine, type AttentionCandidate } from "../src/attention/atten
 import { extractPageContext } from "../src/context/context-extractor"
 import { SemanticBlockDebugOutline } from "../src/context/semantic-block"
 import { getLocalTools } from "../src/policy/local-policy"
-import { getExtensionSettings } from "../src/storage/extension-store"
+import type { PageAccess } from "@focus-ui/shared/extension"
+import { sendExtensionMessage } from "../src/communication/messages"
+import { getManualCandidate } from "../src/control/manual-selection"
 import { FocusUIRoot, type ToolbarSession } from "../src/ui/FocusUIRoot"
 
 const HOST_ID = "focus-ui-host"
@@ -15,6 +17,7 @@ type FocusUiHost = HTMLElement & {
 
 let attentionEngine: AttentionEngine | null = null
 let synchronizeVersion = 0
+let access: PageAccess | null = null
 
 const getHost = (): FocusUiHost | null => {
   const host = document.getElementById(HOST_ID)
@@ -34,6 +37,7 @@ const removeFocusUiRoot = (): void => {
 }
 
 const reportAttentionCandidate = (candidate: AttentionCandidate): void => {
+  if (!access?.active) return
   try {
     const context = extractPageContext(candidate)
     const session: ToolbarSession = {
@@ -44,7 +48,7 @@ const reportAttentionCandidate = (candidate: AttentionCandidate): void => {
       })
     }
     const host = getHost()
-    host?.focusUiReactRoot?.render(<FocusUIRoot session={session} />)
+    host?.focusUiReactRoot?.render(<FocusUIRoot session={session} autoAI={access.autoAI} />)
 
     if (import.meta.env.DEV) {
       console.debug("FocusUI Attention Candidate", {
@@ -69,7 +73,7 @@ const reportAttentionCandidate = (candidate: AttentionCandidate): void => {
 }
 
 const startAttentionInference = (): void => {
-  if (attentionEngine) {
+  if (attentionEngine || !access?.active || !access.autoToolbar) {
     return
   }
 
@@ -506,41 +510,65 @@ const mountFocusUiRoot = (): void => {
 
 const synchronizeFocusUiRoot = async (): Promise<void> => {
   const version = ++synchronizeVersion
-  const settings = await getExtensionSettings()
-  if (version !== synchronizeVersion) {
-    return
-  }
-  if (settings.enabled) {
-    mountFocusUiRoot()
-    return
-  }
-
+  access = null
   removeFocusUiRoot()
+  const result = await sendExtensionMessage({ type: "GET_PAGE_ACCESS" })
+  if (version !== synchronizeVersion || !result.ok || !("access" in result)) return
+  access = result.access
+  if (access.active) mountFocusUiRoot()
 }
-
 const reportSynchronizationFailure = (): void => {
-  console.warn("FocusUI 网页测试组件状态同步失败")
+  access = null
+  removeFocusUiRoot()
+  console.warn("FocusUI 网站状态同步失败")
 }
-
+const showSelection = (): boolean => {
+  if (!access?.active) return false
+  const candidate = getManualCandidate()
+  if (!candidate) return false
+  reportAttentionCandidate(candidate)
+  return true
+}
 export default defineContentScript({
-  matches: [
-    "http://127.0.0.1:17321/demo/*",
-    "http://localhost:17321/demo/*",
-    "http://127.0.0.1:8080/*",
-    "http://localhost:8080/*",
-    "https://en.wikipedia.org/*"
-  ],
-  main() {
-    void synchronizeFocusUiRoot().catch(reportSynchronizationFailure)
-
-    chrome.storage.onChanged.addListener((changes, areaName) => {
-      if (areaName !== "local" || !changes.enabled) {
-        return
+  registration: "runtime",
+  matches: [],
+  main(ctx) {
+    const synchronize = (): void => { void synchronizeFocusUiRoot().catch(reportSynchronizationFailure) }
+    const changed = (changes: Record<string, chrome.storage.StorageChange>, area: string): void => {
+      if (area === "local" && (changes.enabled || changes.sitePoliciesV1)) synchronize()
+    }
+    const message = (value: unknown, sender: chrome.runtime.MessageSender, respond: (result: unknown) => void): boolean => {
+      if (sender.id !== chrome.runtime.id || !value || typeof value !== "object" || !("type" in value)) return false
+      if (value.type === "FOCUSUI_SYNC") { synchronize(); respond({ ok: true }); return false }
+      if (value.type === "FOCUSUI_SHOW_SELECTION") {
+        void synchronizeFocusUiRoot().then(() => {
+          respond(showSelection() ? { ok: true } : { ok: false, code: "NO_SAFE_SELECTION", message: "请先在正文中选中文字，再唤起工具。" })
+        }).catch(() => { reportSynchronizationFailure(); respond({ ok: false, code: "CONTROL_FAILED", message: "网站状态同步失败，请重试。" }) })
+        return true
       }
-
-      void synchronizeFocusUiRoot().catch(reportSynchronizationFailure)
+      return false
+    }
+    const keydown = (event: KeyboardEvent): void => {
+      if (access?.active && event.altKey && event.shiftKey && event.code === "KeyF" && !event.repeat) {
+        if (showSelection()) event.preventDefault()
+      }
+    }
+    const hide = (): void => { ++synchronizeVersion; access = null; removeFocusUiRoot() }
+    synchronize()
+    chrome.storage.onChanged.addListener(changed)
+    chrome.runtime.onMessage.addListener(message)
+    window.addEventListener("keydown", keydown)
+    window.addEventListener("pagehide", hide)
+    window.addEventListener("pageshow", synchronize)
+    window.addEventListener("popstate", synchronize)
+    ctx.onInvalidated(() => {
+      hide()
+      chrome.storage.onChanged.removeListener(changed)
+      chrome.runtime.onMessage.removeListener(message)
+      window.removeEventListener("keydown", keydown)
+      window.removeEventListener("pagehide", hide)
+      window.removeEventListener("pageshow", synchronize)
+      window.removeEventListener("popstate", synchronize)
     })
-
-    window.addEventListener("pagehide", removeFocusUiRoot, { once: true })
   }
 })

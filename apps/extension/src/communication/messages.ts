@@ -1,5 +1,7 @@
 import {
   ApiErrorSchema,
+  PageAccessSchema,
+  SitePolicySchema,
   ExtensionSettingsSchema,
   HealthResponseSchema,
   type ApiError,
@@ -38,6 +40,11 @@ const SettingsUpdateSchema = ExtensionSettingsSchema.pick({
   })
 
 export const ExtensionMessageSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("GET_PAGE_ACCESS") }).strict(),
+  z.object({ type: z.literal("GET_TAB_ACCESS"), tabId: z.number().int().nonnegative() }).strict(),
+  z.object({ type: z.literal("SET_SITE_POLICY"), tabId: z.number().int().nonnegative(), policy: SitePolicySchema }).strict(),
+  z.object({ type: z.literal("SET_TAB_PAUSED"), tabId: z.number().int().nonnegative(), paused: z.boolean() }).strict(),
+  z.object({ type: z.literal("SHOW_SELECTION"), tabId: z.number().int().nonnegative() }).strict(),
   z.object({ type: z.literal("CHECK_DESKTOP_HEALTH") }).strict(),
   z.object({ type: z.literal("GET_CONNECTION_STATUS") }).strict(),
   z.object({ type: z.literal("PAIR_DESKTOP"), pairingToken: z.string().trim().min(1).max(64) }).strict(),
@@ -70,7 +77,10 @@ export const SettingsResultSchema = z
   })
   .strict()
 
+export const AccessResultSchema = z.object({ ok: z.literal(true), access: PageAccessSchema }).strict()
+
 export const BackgroundMessageResultSchema = z.union([
+  AccessResultSchema,
   ConnectionStatusResultSchema,
   SettingsResultSchema,
   PlanResponseSchema,
@@ -100,6 +110,8 @@ type ExecuteMessage = Extract<ExtensionMessage, { type: "EXECUTE_TOOL" }>
 type ToolEventMessage = Extract<ExtensionMessage, { type: "RECORD_TOOL_EVENT" }>
 type PreferencesMessage = Extract<ExtensionMessage, { type: "GET_PREFERENCES" }>
 
+export function sendExtensionMessage(message: Extract<ExtensionMessage, { type: "GET_PAGE_ACCESS" | "GET_TAB_ACCESS" | "SET_SITE_POLICY" | "SET_TAB_PAUSED" }>): Promise<z.infer<typeof AccessResultSchema> | ApiError>
+export function sendExtensionMessage(message: Extract<ExtensionMessage, { type: "SHOW_SELECTION" }>): Promise<ToolEventResponse | ApiError>
 export function sendExtensionMessage(
   message: ConnectionMessage
 ): Promise<ConnectionStatusResult | ApiError>

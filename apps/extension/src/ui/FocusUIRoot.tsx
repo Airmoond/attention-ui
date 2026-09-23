@@ -72,6 +72,7 @@ type FocusUIState =
 
 export type FocusUIRootProps = {
   session: ToolbarSession | null
+  autoAI?: boolean
 }
 
 export const mergePlannedTool = (tools: LocalTool[], plan: ToolPlan): LocalTool[] => {
@@ -105,12 +106,14 @@ export const recordToolClick = (
     })
 }
 
-export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | null => {
+export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): React.JSX.Element | null => {
   const [state, setState] = useState<FocusUIState>(() =>
     session ? { kind: "toolbar", session } : { kind: "idle" }
   )
   const toolbarRef = useRef<HTMLDivElement>(null)
   const requestVersionRef = useRef(0)
+
+  useEffect(() => () => { requestVersionRef.current += 1 }, [])
 
   useEffect(() => {
     if (!session) {
@@ -120,7 +123,7 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
     const requestVersion = ++requestVersionRef.current
     setState({ kind: "toolbar", session })
     void Promise.all([
-      sendExtensionMessage({ type: "PLAN_TOOLS", pageContext: session.context }),
+      autoAI ? sendExtensionMessage({ type: "PLAN_TOOLS", pageContext: session.context }) : Promise.resolve(null),
       sendExtensionMessage({ type: "GET_PREFERENCES" })
     ]).then(([planResult, preferencesResult]) => {
       if (requestVersion !== requestVersionRef.current) {
@@ -128,7 +131,7 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
       }
 
       const plannedTools =
-        "source" in planResult && planResult.source === "ai"
+        planResult && "source" in planResult && planResult.source === "ai"
           ? mergePlannedTool(session.tools, planResult.plan)
           : session.tools
       const finalTools =
@@ -146,7 +149,8 @@ export const FocusUIRoot = ({ session }: FocusUIRootProps): React.JSX.Element | 
           : current
       )
     })
-  }, [session])
+    return () => { requestVersionRef.current += 1 }
+  }, [session, autoAI])
 
   useEffect(() => {
     if (state.kind === "idle") {
