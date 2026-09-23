@@ -1,0 +1,4 @@
+fixtures/
+public/pdf-assets/
+test-results/
+playwright-report/

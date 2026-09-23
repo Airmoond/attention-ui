@@ -1,0 +1,16 @@
+@import "pdfjs-dist/web/pdf_viewer.css";
+:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#233047;background:#f3f5f8}
+*{box-sizing:border-box}body{margin:0}main{max-width:1320px;margin:auto;padding:28px}
+header{margin-bottom:22px}.eyebrow{font-size:12px;letter-spacing:2px;color:#597399}h1{font-size:28px;margin:8px 0}h2{font-size:18px}
+.controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:white;padding:16px;border-radius:12px}
+button,select,input{font:inherit}button,select{padding:8px 12px;border:1px solid #c8d2df;border-radius:6px;background:white}
+button:not(:disabled){cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #527ff7;outline-offset:2px}
+button:disabled{opacity:.45}.file-label{display:flex;gap:10px;align-items:center}#file{max-width:245px}#page{width:64px;padding:8px;border:1px solid #c8d2df;border-radius:6px}
+#status{min-height:24px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:20px}
+#viewport{min-height:540px;max-height:74vh;overflow:auto;background:#e1e6ee;border-radius:10px;padding:20px}
+#surface{position:relative;background:white;margin:0 auto;box-shadow:0 3px 14px #28354922;display:none}
+#canvas{display:block}#text-layer{position:absolute;inset:0;overflow:clip;opacity:1;line-height:1;text-align:initial;transform-origin:0 0;z-index:1}
+aside{padding:20px;background:white;border-radius:10px;align-self:start}
+blockquote{white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0;padding:10px 12px;border-left:3px solid #587ccb;background:#f5f7fb;font-size:14px}
+blockquote:empty{display:none}.note{font-size:12px;color:#68778b}#saved{border-top:1px solid #dce2eb;margin-top:20px}
+@media(max-width:850px){main{padding:12px}.layout{grid-template-columns:1fr}#viewport{max-height:65vh}}
