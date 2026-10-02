@@ -1,7 +1,7 @@
 {
   "name": "@focus-ui/desktop",
-  "version": "0.1.0",
-  "description": "FocusUI 0.1.0 Beta 本地 AI 服务与隐私控制桌面端",
+  "version": "0.1.1",
+  "description": "FocusUI 0.1.1 学生测试版 本地 AI 服务与隐私控制桌面端",
   "author": "FocusUI Team",
   "private": true,
   "main": "./out/main/index.js",
@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@focus-ui/shared": "0.1.0",
+    "@focus-ui/shared": "0.1.1",
     "electron-store": "^8.2.0",
     "express": "^5.2.1",
     "react": "^18.3.1",

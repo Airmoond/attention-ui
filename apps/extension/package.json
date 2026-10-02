@@ -1,7 +1,7 @@
 {
   "name": "@focus-ui/extension",
-  "version": "0.1.0",
-  "description": "FocusUI 0.1.0 Beta Chrome 扩展",
+  "version": "0.1.1",
+  "description": "FocusUI 0.1.1 学生测试版 Chrome 扩展",
   "private": true,
   "scripts": {
     "dev": "wxt",
@@ -11,7 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@focus-ui/shared": "^0.1.0",
+    "@focus-ui/shared": "0.1.1",
     "echarts": "^6.1.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

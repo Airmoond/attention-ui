@@ -1,5 +1,5 @@
 appId: com.focusui.desktop
-productName: FocusUI 0.1.0 Beta
+productName: FocusUI 0.1.1 学生测试版
 artifactName: FocusUI-Setup-${version}.${ext}
 asar: true
 compression: maximum
@@ -40,4 +40,4 @@ nsis:
   createDesktopShortcut: true
   createStartMenuShortcut: true
   shortcutName: FocusUI
-  uninstallDisplayName: FocusUI 0.1.0 Beta
+  uninstallDisplayName: FocusUI 0.1.1 学生测试版
