@@ -67,7 +67,7 @@ const StatusPage = ({
       </div>
 
       <div className="detail-list">
-        <div><span>应用版本</span><strong>{appInfo ? `${appInfo.version} Beta` : "读取中"}</strong></div>
+        <div><span>应用版本</span><strong>{appInfo ? `${appInfo.version} 学生测试版` : "读取中"}</strong></div>
         <div><span>当前平台</span><strong>{appInfo?.platform ?? "读取中"}</strong></div>
         <div><span>本地服务地址</span><code>{serviceStatus?.address ?? "读取中"}</code></div>
       </div>
