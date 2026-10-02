@@ -10,7 +10,7 @@ const readDemo = (name: string): string =>
 describe("production demo pages", () => {
   it("provides a self-contained beginner guide for the packaged release", () => {
     const guide = readFileSync(quickStartFile, "utf8")
-    expect(guide).toContain("FocusUI 0.1.0 Beta")
+    expect(guide).toContain("FocusUI 0.1.1 学生测试版")
     expect(guide).toContain("chrome://extensions")
     expect(guide).toContain("加载已解压的扩展程序")
     expect(guide).toContain("http://127.0.0.1:17321/demo/article.html")
@@ -21,8 +21,12 @@ describe("production demo pages", () => {
       guide.matchAll(/\bhref=["'](https?:\/\/[^"']+)["']/giu),
       (match) => match[1] ?? ""
     )
-    expect(linkedAddresses).toHaveLength(2)
-    expect(linkedAddresses.every((address) => address.startsWith("http://127.0.0.1:17321/demo/"))).toBe(true)
+    expect(linkedAddresses).toContain("http://127.0.0.1:17321/demo/article.html")
+    expect(linkedAddresses).toContain("http://127.0.0.1:17321/demo/finance.html")
+    expect(guide).toContain("启用此网站")
+    expect(guide).toContain("Alt + Shift + F")
+    expect(guide).toContain("自动 AI 工具推荐")
+    expect(guide).toContain("反馈")
   })
 
   it("stay offline, deterministic, and script-free", () => {

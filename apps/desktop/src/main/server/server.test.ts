@@ -10,6 +10,7 @@ import {
   type ToolEvent
 } from "@focus-ui/shared"
 import { createServer, type Server } from "node:http"
+import { createConnection } from "node:net"
 import { resolve } from "node:path"
 import { createAuthController } from "./auth"
 import { createAiPlanner } from "../ai/ai-planner"
@@ -65,7 +66,7 @@ describe("local desktop service", () => {
     await expect(healthResponse.json()).resolves.toEqual({
       ok: true,
       service: "focusui-desktop",
-      version: "0.1.0",
+      version: "0.1.1",
       aiConfigured: false
     })
 
@@ -76,6 +77,32 @@ describe("local desktop service", () => {
       expect.arrayContaining(["SERVICE_STARTED", "SERVICE_STOPPED"])
     )
     await expect(fetch(healthAddress)).rejects.toThrow()
+  })
+
+  it("stops promptly even when a browser has opened an unused keep-alive socket", async () => {
+    await startLocalServer()
+    const socket = createConnection({ host: "127.0.0.1", port: 17321 })
+    await new Promise<void>((resolve, reject) => {
+      socket.once("connect", resolve)
+      socket.once("error", reject)
+    })
+    const stopping = stopLocalServer()
+    let timer: ReturnType<typeof setTimeout> | undefined
+    try {
+      await Promise.race([
+        stopping,
+        new Promise<never>((_resolve, reject) => {
+          timer = setTimeout(() => reject(new Error("Service stop hung on unused browser socket")), 1_000)
+        })
+      ])
+      expect(getLocalServiceStatus()).toMatchObject({ state: "stopped", running: false })
+    } finally {
+      clearTimeout(timer)
+      socket.destroy()
+      await stopping
+    }
+    await startLocalServer()
+    expect((await fetch(healthAddress)).status).toBe(200)
   })
 
   it("reports a clear error when the local service port is already in use", async () => {

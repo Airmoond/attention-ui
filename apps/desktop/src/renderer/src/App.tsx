@@ -221,7 +221,7 @@ const App = (): JSX.Element => {
     <main className="app-shell">
       <aside className="sidebar">
         <div>
-          <p className="eyebrow">FOCUSUI 0.1.0 BETA</p>
+          <p className="eyebrow">FOCUSUI 0.1.1 学生测试版</p>
           <h1>Desktop</h1>
           <p className="sidebar-copy">本地AI服务与新手引导</p>
         </div>

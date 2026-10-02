@@ -40,7 +40,7 @@ const QuickStartPage = ({
 
   return (
     <section className="page-panel quick-start-page">
-      <p className="eyebrow">FOCUSUI 0.1.0 BETA</p>
+      <p className="eyebrow">FOCUSUI 0.1.1 学生测试版</p>
       <h2>5分钟快速上手</h2>
       <p className="page-intro">
         不需要命令行。按照下面四步完成Chrome插件、配对、AI配置和演示体验。
@@ -53,7 +53,7 @@ const QuickStartPage = ({
         <span className={pairingStatus?.paired ? "ready" : "pending"}>
           ② 插件 {pairingStatus?.paired ? "已配对" : "待配对"}
         </span>
-        <span>版本 {appInfo?.version ?? "0.1.0"} Beta</span>
+        <span>版本 {appInfo?.version ?? "0.1.1"} 学生测试版</span>
       </div>
 
       {actionMessage ? (
@@ -103,7 +103,7 @@ const QuickStartPage = ({
           <span className="step-number">3</span>
           <div>
             <h3>配置AI</h3>
-            <p>准备好服务商提供的Base URL、API Key和模型名称，然后测试连接并保存。</p>
+            <p>准备好服务商提供的Base URL、API Key和模型名称，点击“测试连接”，成功后点击“保存设置”。</p>
             <button className="secondary" onClick={onOpenAiSettings} type="button">
               前往AI设置
             </button>
@@ -114,7 +114,7 @@ const QuickStartPage = ({
           <span className="step-number">4</span>
           <div>
             <h3>打开演示网页</h3>
-            <p>两个网页随安装包提供，由Desktop本地打开，不需要Python或互联网。</p>
+            <p>两个网页随安装包提供。用Chrome打开后，先从FocusUI弹窗启用此网站，再选字按Alt+Shift+F；自动工具条需要单独开启。</p>
             <div className="button-row compact-row">
               <button onClick={(): void => { void runAction(onOpenArticleDemo) }} type="button">
                 打开文章Demo

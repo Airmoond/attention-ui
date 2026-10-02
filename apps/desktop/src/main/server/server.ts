@@ -161,7 +161,7 @@ export const startLocalServer = async (): Promise<ServiceStatus> => {
   application.get(
     "/health",
     createHealthRoute({
-      getVersion: () => "0.1.0",
+      getVersion: () => "0.1.1",
       getAiConfigured
     })
   )
@@ -277,6 +277,9 @@ export const stopLocalServer = async (): Promise<ServiceStatus> => {
         }
         resolve()
       })
+      // Browsers can preconnect without sending HTTP. Those sockets otherwise
+      // keep close() pending forever, including application shutdown.
+      serverToStop.closeAllConnections()
     })
     localServer = null
     updateServiceStatus({
