@@ -17,7 +17,7 @@ try {
   & npm.cmd run build:win -w apps/desktop
   if ($LASTEXITCODE -ne 0) { throw "Desktop 生产打包失败。" }
 } finally { Pop-Location }
-$extensionZips = @(Get-ChildItem -LiteralPath (Join-Path $repoRoot "apps\extension\.output") -File | Where-Object { $_.Name -like "*-$version-chrome.zip" })
+$extensionZips = @(Get-ChildItem -LiteralPath (Join-Path $repoRoot "apps\extension\.output") -File | Where-Object { $_.Name -eq "attention-uiextension-$version-chrome.zip" })
 if ($extensionZips.Count -ne 1) { throw "未找到唯一的当前版本 Extension ZIP。" }
 if (-not (Test-Path -LiteralPath $desktopInstaller -PathType Leaf)) { throw "当前版本安装包缺失。" }
 New-Item -ItemType Directory -Path $releaseRoot -Force | Out-Null
