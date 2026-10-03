@@ -50,7 +50,8 @@ try {
   }
   if (@(Get-ChildItem -LiteralPath (Join-Path $packagedRoot "extension") -File -Recurse).Count -ne $files.Count) { throw "内置插件含额外旧文件。" }
   $textFiles = @($files | Where-Object { $_.Extension -in @(".js", ".json", ".html", ".css") })
-  if (@($textFiles | Select-String -Pattern "sk-[A-Za-z0-9_-]{16,}|Bearer\s+[A-Za-z0-9_-]{20,}|module-eight-invalid-key|E:\\Airmond\\attention-ui" -AllMatches).Count -gt 0) { throw "发现疑似凭证或源码路径。" }
+  $forbiddenContent = "sk-[A-Za-z0-9_-]{16,}|Bearer\s+[A-Za-z0-9_-]{20,}|module-eight-invalid-key|" + [regex]::Escape($repoRoot)
+  if (@($textFiles | Select-String -Pattern $forbiddenContent -AllMatches).Count -gt 0) { throw "发现疑似凭证或源码路径。" }
   if (@($textFiles | Select-String -Pattern "chrome-mv3-dev|__vite_ping|webpackHotUpdate|localhost:[0-9]+/@vite/client" -AllMatches).Count -gt 0) { throw "发现开发服务器代码。" }
   Write-Host "发布检查通过：$version；内置插件与独立 ZIP 逐文件一致；无额外交付文件。"
   Write-Host "Installer：$((Get-Item -LiteralPath $installer).Length) bytes；Extension：$((Get-Item -LiteralPath $extensionZip).Length) bytes。"
