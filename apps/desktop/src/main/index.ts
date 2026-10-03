@@ -4,6 +4,8 @@ import { createOpenAiCompatibleProvider } from "./ai/ai-provider"
 import { createToolExecutor } from "./ai/tool-executor"
 import { registerIpcHandlers } from "./ipc"
 import { getOnboardingAssets } from "./onboarding"
+import { appLogger } from "./logger/logger"
+import { migrateLegacyData } from "./store/legacy-data"
 import {
   configureLocalServer,
   isLocalServerRunning,
@@ -72,6 +74,12 @@ if (!hasSingleInstanceLock) {
   })
 
   app.whenReady().then(() => {
+    if (!process.argv.some((argument) => argument.startsWith("--user-data-dir"))) {
+      const migration = migrateLegacyData(app.getPath("appData"), app.getPath("userData"))
+      if (migration.failed > 0) {
+        appLogger.warning("LEGACY_CONFIG_MIGRATION_FAILED", "部分旧版设置未能迁移，可在设置页重新配置")
+      }
+    }
     const aiProvider = createOpenAiCompatibleProvider({ getSettings })
     const aiPlanner = createAiPlanner({
       provider: aiProvider,

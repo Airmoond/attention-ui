@@ -24,7 +24,7 @@ describe("safe logger", () => {
       apiKey: "secret-api-key",
       authorization: "Bearer secret",
       clientToken: "secret-client-token",
-      pairingToken: "FUI-SECRET-TOKEN",
+      pairingToken: "AUI-SECRET-TOKEN",
       text: "full page text",
       selectedText: "selected page text",
       question: "private question",
