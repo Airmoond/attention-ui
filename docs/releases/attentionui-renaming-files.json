@@ -1,0 +1,695 @@
+{
+  "date": "2026-10-03",
+  "name": "AttentionUI",
+  "committed": [
+    {
+      "file": ".gitignore",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "00_MODULE_INDEX.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "01_PROJECT_SCAFFOLD.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "02_DESKTOP_SERVICE.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "03_EXTENSION_FOUNDATION.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "04_ATTENTION_CONTEXT.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "05_DYNAMIC_UI.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "06_AI_FEATURES.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "07_ADAPTATION_DESKTOP_FINISH.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "08_TEST_BUILD_DEMO.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "DEMO_SCRIPT.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "MUST_READ.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "QUICK_START.html",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "README.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "apps/desktop/electron-builder.yml",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/electron.vite.config.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/package.json",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/resources/icon.svg",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/ai/ai-planner.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/ai/ai-planner.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/ai/ai-provider.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/ai/ai-provider.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/ai/ai-schema.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/ai/tool-executor.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/ai/tool-executor.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/demo-pages.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/index.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/ipc.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/logger/logger.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/logger/logger.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/server/auth.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/server/middleware.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/server/routes/events.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/server/routes/execute.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/server/routes/health.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/server/routes/pair.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/server/routes/plan.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/server/routes/preferences.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/server/server.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/server/server.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/store/auth-store.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/store/legacy-data.test.ts",
+      "change": "A",
+      "purpose": "旧版设置、配对与习惯数据迁移及回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/store/legacy-data.ts",
+      "change": "A",
+      "purpose": "旧版设置、配对与习惯数据迁移及回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/store/preference-store.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/store/preference-store.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/store/settings-store.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/store/settings-store.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/main/tray-controller.test.ts",
+      "change": "M",
+      "purpose": "桌面协议与品牌断言回归验证"
+    },
+    {
+      "file": "apps/desktop/src/main/tray.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/preload/index.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/preload/types.d.ts",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/renderer/index.html",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/renderer/src/App.tsx",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/renderer/src/main.tsx",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/renderer/src/pages/AISettingsPage.tsx",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/renderer/src/pages/BehaviorPage.tsx",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/renderer/src/pages/LogsPage.tsx",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/renderer/src/pages/QuickStartPage.tsx",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/src/renderer/src/pages/StatusPage.tsx",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/desktop/tsconfig.json",
+      "change": "M",
+      "purpose": "桌面名称、IPC、设置文件命名与打包配置"
+    },
+    {
+      "file": "apps/extension/entrypoints/background.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/entrypoints/content.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/entrypoints/options/App.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/entrypoints/options/index.html",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/entrypoints/options/main.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/entrypoints/popup/App.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/entrypoints/popup/index.html",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/entrypoints/popup/main.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/package.json",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/attention/selection-tracker.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/communication/desktop-client.test.ts",
+      "change": "M",
+      "purpose": "插件命名、通信与交互回归验证"
+    },
+    {
+      "file": "apps/extension/src/communication/desktop-client.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/communication/messages.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/context/content-classifier.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/context/context-extractor.test.ts",
+      "change": "M",
+      "purpose": "插件命名、通信与交互回归验证"
+    },
+    {
+      "file": "apps/extension/src/context/context-extractor.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/context/focus-content-extractor.test.ts",
+      "change": "M",
+      "purpose": "插件命名、通信与交互回归验证"
+    },
+    {
+      "file": "apps/extension/src/context/focus-content-extractor.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/context/number-extractor.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/context/semantic-block.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/control/manual-selection.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/control/runtime.test.ts",
+      "change": "M",
+      "purpose": "插件命名、通信与交互回归验证"
+    },
+    {
+      "file": "apps/extension/src/control/site-access.test.ts",
+      "change": "M",
+      "purpose": "插件命名、通信与交互回归验证"
+    },
+    {
+      "file": "apps/extension/src/control/site-access.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/policy/habit-sorter.test.ts",
+      "change": "M",
+      "purpose": "插件命名、通信与交互回归验证"
+    },
+    {
+      "file": "apps/extension/src/policy/habit-sorter.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/policy/local-policy.test.ts",
+      "change": "M",
+      "purpose": "插件命名、通信与交互回归验证"
+    },
+    {
+      "file": "apps/extension/src/policy/local-policy.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/storage/extension-store.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/ui/AIResultCard.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/ui/AskBox.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/ui/AttentionToolbar.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/ui/AttentionUIRoot.test.ts",
+      "change": "R091",
+      "previousFile": "apps/extension/src/ui/FocusUIRoot.test.ts",
+      "purpose": "插件命名、通信与交互回归验证"
+    },
+    {
+      "file": "apps/extension/src/ui/AttentionUIRoot.tsx",
+      "change": "R092",
+      "previousFile": "apps/extension/src/ui/FocusUIRoot.tsx",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/ui/ChartCard.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/ui/ErrorCard.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/ui/FocusReader.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/ui/LoadingCard.tsx",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/src/ui/error-messages.test.ts",
+      "change": "M",
+      "purpose": "插件命名、通信与交互回归验证"
+    },
+    {
+      "file": "apps/extension/src/ui/error-messages.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/tsconfig.json",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "apps/extension/wxt.config.ts",
+      "change": "M",
+      "purpose": "插件名称、通信协议、DOM/CSS 标识及包命名"
+    },
+    {
+      "file": "demo-pages/article.html",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "demo-pages/module4-manual-test.html",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "docs/plans/v0.2-development-plan.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "docs/releases/student-feedback.txt",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "docs/validation/v0.2-feedback-template.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "docs/validation/v0.2-formula-experiment.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "docs/validation/v0.2-stage-a.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "docs/validation/v0.2-stage-b.md",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "docs/validation/v0.2-web-observations.json",
+      "change": "M",
+      "purpose": "当前开发说明、演示、安装文档或品牌引用更新"
+    },
+    {
+      "file": "package-lock.json",
+      "change": "M",
+      "purpose": "项目和 workspace 名称及链接记录"
+    },
+    {
+      "file": "package.json",
+      "change": "M",
+      "purpose": "项目和 workspace 名称及链接记录"
+    },
+    {
+      "file": "packages/shared/package.json",
+      "change": "M",
+      "purpose": "共享类型、Schema、错误码与 npm 包命名"
+    },
+    {
+      "file": "packages/shared/src/constants.ts",
+      "change": "M",
+      "purpose": "共享类型、Schema、错误码与 npm 包命名"
+    },
+    {
+      "file": "packages/shared/src/extension.ts",
+      "change": "M",
+      "purpose": "共享类型、Schema、错误码与 npm 包命名"
+    },
+    {
+      "file": "packages/shared/src/index.ts",
+      "change": "M",
+      "purpose": "共享类型、Schema、错误码与 npm 包命名"
+    },
+    {
+      "file": "packages/shared/src/schemas.ts",
+      "change": "M",
+      "purpose": "共享类型、Schema、错误码与 npm 包命名"
+    },
+    {
+      "file": "packages/shared/src/types.ts",
+      "change": "M",
+      "purpose": "共享类型、Schema、错误码与 npm 包命名"
+    },
+    {
+      "file": "scripts/package-release.ps1",
+      "change": "M",
+      "purpose": "构建、交付检查及浏览器测试对应新名称"
+    },
+    {
+      "file": "scripts/test-site-controls.mjs",
+      "change": "M",
+      "purpose": "构建、交付检查及浏览器测试对应新名称"
+    },
+    {
+      "file": "scripts/verify-release-security.ps1",
+      "change": "M",
+      "purpose": "构建、交付检查及浏览器测试对应新名称"
+    },
+    {
+      "file": "tools/pdf-spike/README.md",
+      "change": "M",
+      "purpose": "PDF 实验页标题、包名、测试和文档对应新名称"
+    },
+    {
+      "file": "tools/pdf-spike/generate-fixtures.py",
+      "change": "M",
+      "purpose": "PDF 实验页标题、包名、测试和文档对应新名称"
+    },
+    {
+      "file": "tools/pdf-spike/index.html",
+      "change": "M",
+      "purpose": "PDF 实验页标题、包名、测试和文档对应新名称"
+    },
+    {
+      "file": "tools/pdf-spike/package-lock.json",
+      "change": "M",
+      "purpose": "PDF 实验页标题、包名、测试和文档对应新名称"
+    },
+    {
+      "file": "tools/pdf-spike/package.json",
+      "change": "M",
+      "purpose": "PDF 实验页标题、包名、测试和文档对应新名称"
+    },
+    {
+      "file": "tools/pdf-spike/probe-sites.ts",
+      "change": "M",
+      "purpose": "PDF 实验页标题、包名、测试和文档对应新名称"
+    },
+    {
+      "file": "tools/pdf-spike/tests/formula.spec.ts",
+      "change": "M",
+      "purpose": "PDF 实验页标题、包名、测试和文档对应新名称"
+    },
+    {
+      "file": "tools/pdf-spike/tests/pdf.spec.ts",
+      "change": "M",
+      "purpose": "PDF 实验页标题、包名、测试和文档对应新名称"
+    }
+  ],
+  "existingUncommitted": [
+    {
+      "file": "apps/cloud/public/attentionui.html",
+      "status": "原有未提交开发内容，仅替换名称",
+      "purpose": "本地介绍页品牌、链接和对应测试引用更新"
+    },
+    {
+      "file": "apps/cloud/public/index.html",
+      "status": "原有未提交开发内容，仅替换名称",
+      "purpose": "本地介绍页品牌、链接和对应测试引用更新"
+    },
+    {
+      "file": "apps/cloud/src/server.ts",
+      "status": "原有未提交开发内容，仅替换名称",
+      "purpose": "本地介绍页品牌、链接和对应测试引用更新"
+    },
+    {
+      "file": "apps/cloud/tsconfig.json",
+      "status": "原有未提交开发内容，仅替换名称",
+      "purpose": "本地介绍页品牌、链接和对应测试引用更新"
+    },
+    {
+      "file": "docs/airmond-homepage.md",
+      "status": "原有未提交开发内容，仅替换名称",
+      "purpose": "本地介绍页品牌、链接和对应测试引用更新"
+    },
+    {
+      "file": "scripts/test-homepage.mjs",
+      "status": "原有未提交开发内容，仅替换名称",
+      "purpose": "本地介绍页品牌、链接和对应测试引用更新"
+    },
+    {
+      "file": "scripts/verify-homepage-live.cjs",
+      "status": "原有未提交开发内容，仅替换名称",
+      "purpose": "本地介绍页品牌、链接和对应测试引用更新"
+    }
+  ]
+}
