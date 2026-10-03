@@ -29,7 +29,7 @@ export const TOOL_IDS = ["summarize", "explain", "ask", "chart", "extract", "foc
 
 export const ToolIdSchema = z.enum(TOOL_IDS)
 
-export const FocusUIErrorCodeSchema = z.enum([
+export const AttentionUIErrorCodeSchema = z.enum([
   "DESKTOP_OFFLINE",
   "NOT_PAIRED",
   "AUTH_EXPIRED",
@@ -170,7 +170,7 @@ export const ToolResultSchema = z
     success: z.boolean(),
     content: z.string().trim().min(1).max(8_000),
     data: z.unknown().optional(),
-    errorCode: FocusUIErrorCodeSchema.optional()
+    errorCode: AttentionUIErrorCodeSchema.optional()
   })
   .strict()
   .superRefine((value, context) => {

@@ -1,4 +1,4 @@
-import type { AppSettings } from "@focus-ui/shared"
+import type { AppSettings } from "@attention-ui/shared"
 import { ChatCompletionResponseSchema } from "./ai-schema"
 import { appLogger } from "../logger/logger"
 

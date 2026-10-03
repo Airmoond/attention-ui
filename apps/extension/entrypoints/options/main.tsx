@@ -4,7 +4,7 @@ import { App } from "./App"
 const rootElement = document.getElementById("root")
 
 if (!rootElement) {
-  throw new Error("FocusUI Options 根节点不存在")
+  throw new Error("AttentionUI Options 根节点不存在")
 }
 
 createRoot(rootElement).render(<App />)

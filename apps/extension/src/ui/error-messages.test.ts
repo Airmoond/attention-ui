@@ -1,10 +1,10 @@
-import type { FocusUIErrorCode } from "@focus-ui/shared"
+import type { AttentionUIErrorCode } from "@attention-ui/shared"
 import { describe, expect, it } from "vitest"
 import type { BackgroundMessageResult } from "../communication/messages"
 import {
   getToolRequestErrorCode,
   getToolRequestErrorMessage,
-  isRetryableFocusUIError
+  isRetryableAttentionUIError
 } from "./error-messages"
 
 const apiError = (code: string): BackgroundMessageResult => ({
@@ -13,7 +13,7 @@ const apiError = (code: string): BackgroundMessageResult => ({
   message: "TypeError: fetch failed with private provider details"
 })
 
-const toolFailure = (errorCode: FocusUIErrorCode): BackgroundMessageResult => ({
+const toolFailure = (errorCode: AttentionUIErrorCode): BackgroundMessageResult => ({
   toolId: errorCode === "CHART_UNAVAILABLE" ? "chart" : "summarize",
   success: false,
   content: "ZodError: private raw response",
@@ -22,9 +22,9 @@ const toolFailure = (errorCode: FocusUIErrorCode): BackgroundMessageResult => ({
 
 describe("unified user error messages", () => {
   it.each([
-    ["DESKTOP_UNREACHABLE", "DESKTOP_OFFLINE", "FocusUI Desktop未连接"],
-    ["MISSING_CLIENT_TOKEN", "NOT_PAIRED", "尚未与FocusUI Desktop配对"],
-    ["INVALID_CLIENT_TOKEN", "AUTH_EXPIRED", "配对已失效，请重新连接FocusUI Desktop"]
+    ["DESKTOP_UNREACHABLE", "DESKTOP_OFFLINE", "AttentionUI Desktop未连接"],
+    ["MISSING_CLIENT_TOKEN", "NOT_PAIRED", "尚未与AttentionUI Desktop配对"],
+    ["INVALID_CLIENT_TOKEN", "AUTH_EXPIRED", "配对已失效，请重新连接AttentionUI Desktop"]
   ] as const)("maps %s to %s", (transportCode, expectedCode, expectedMessage) => {
     const result = apiError(transportCode)
     expect(getToolRequestErrorCode(result)).toBe(expectedCode)
@@ -46,10 +46,10 @@ describe("unified user error messages", () => {
   })
 
   it("allows only explicit user-driven retries for retryable failures", () => {
-    expect(isRetryableFocusUIError("AI_TIMEOUT")).toBe(true)
-    expect(isRetryableFocusUIError("AI_PROVIDER_ERROR")).toBe(true)
-    expect(isRetryableFocusUIError("NOT_PAIRED")).toBe(false)
-    expect(isRetryableFocusUIError("AI_AUTH_FAILED")).toBe(false)
-    expect(isRetryableFocusUIError("CHART_UNAVAILABLE")).toBe(false)
+    expect(isRetryableAttentionUIError("AI_TIMEOUT")).toBe(true)
+    expect(isRetryableAttentionUIError("AI_PROVIDER_ERROR")).toBe(true)
+    expect(isRetryableAttentionUIError("NOT_PAIRED")).toBe(false)
+    expect(isRetryableAttentionUIError("AI_AUTH_FAILED")).toBe(false)
+    expect(isRetryableAttentionUIError("CHART_UNAVAILABLE")).toBe(false)
   })
 })

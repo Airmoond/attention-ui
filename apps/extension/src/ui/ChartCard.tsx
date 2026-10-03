@@ -3,7 +3,7 @@ import { GridComponent, TitleComponent, TooltipComponent } from "echarts/compone
 import { CanvasRenderer } from "echarts/renderers"
 import { init, use, type EChartsCoreOption } from "echarts/core"
 import { useEffect, useRef } from "react"
-import type { ChartData } from "@focus-ui/shared"
+import type { ChartData } from "@attention-ui/shared"
 
 use([BarChart, LineChart, GridComponent, TitleComponent, TooltipComponent, CanvasRenderer])
 
@@ -70,15 +70,15 @@ export const ChartCard = ({ data }: ChartCardProps): React.JSX.Element => {
   }, [data])
 
   return (
-    <div className="focus-ui-structured-result">
+    <div className="attention-ui-structured-result">
       <h3>{data.title}</h3>
       <div
         ref={chartElementRef}
-        className="focus-ui-chart-canvas"
+        className="attention-ui-chart-canvas"
         role="img"
         aria-label={`${data.title}，${data.chartType === "bar" ? "柱状图" : "折线图"}`}
       />
-      <dl className="focus-ui-chart-list" aria-label="图表数据明细">
+      <dl className="attention-ui-chart-list" aria-label="图表数据明细">
         {data.labels.map((label, index) => (
           <div key={`${label}-${index}`}>
             <dt>{label}</dt>

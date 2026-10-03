@@ -45,7 +45,7 @@ for index in range(1, 11):
                                                paragraph, fontsize=12, fontname=font, lineheight=1.6)
                 if available < 0:
                     raise RuntimeError("Fixture text overflow")
-        page.insert_text((44, 790), f"FocusUI original fixture / {index:02d} / {number}", fontsize=10)
+        page.insert_text((44, 790), f"AttentionUI original fixture / {index:02d} / {number}", fontsize=10)
     target = OUT / f"sample-{index:02d}.pdf"
     doc.save(target, deflate=True, no_new_id=True)
     doc.close()

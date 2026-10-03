@@ -2,7 +2,7 @@ import {
   DEFAULT_EXTENSION_SETTINGS,
   ExtensionSettingsSchema,
   type ExtensionSettings
-} from "@focus-ui/shared/extension"
+} from "@attention-ui/shared/extension"
 
 export type ExtensionSettingsUpdate = Partial<ExtensionSettings>
 

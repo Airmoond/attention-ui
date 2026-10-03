@@ -4,7 +4,7 @@ import {
   ExtractedDataSchema,
   type ToolId,
   type ToolResult
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import { ChartCard } from "./ChartCard"
 
 const RESULT_TITLES: Readonly<Record<ToolId, string>> = {
@@ -69,8 +69,8 @@ const SafeMarkdownText = ({ content }: { content: string }): React.JSX.Element =
       }
       index -= 1
       blocks.push(
-        <div className="focus-ui-table-scroll" key={`table-${index}`}>
-          <table className="focus-ui-data-table focus-ui-markdown-table">
+        <div className="attention-ui-table-scroll" key={`table-${index}`}>
+          <table className="attention-ui-data-table attention-ui-markdown-table">
             <thead>
               <tr>{headers.map((cell, cellIndex) => <th key={`head-${cellIndex}`}>{renderInlineMarkdown(cell, `head-${cellIndex}`)}</th>)}</tr>
             </thead>
@@ -100,7 +100,7 @@ const SafeMarkdownText = ({ content }: { content: string }): React.JSX.Element =
     const bullet = /^[-*]\s+(.+)$/u.exec(line)
     if (bullet?.[1]) {
       blocks.push(
-        <p key={`bullet-${index}`} className="focus-ui-result-list-item">
+        <p key={`bullet-${index}`} className="attention-ui-result-list-item">
           {renderInlineMarkdown(bullet[1], `bullet-${index}`)}
         </p>
       )
@@ -114,7 +114,7 @@ const SafeMarkdownText = ({ content }: { content: string }): React.JSX.Element =
     )
   }
 
-  return <div className="focus-ui-result-text">{blocks}</div>
+  return <div className="attention-ui-result-text">{blocks}</div>
 }
 
 const ChartDataView = ({ data }: { data: unknown }): React.JSX.Element | null => {
@@ -133,10 +133,10 @@ const ExtractedDataView = ({ data }: { data: unknown }): React.JSX.Element | nul
   }
 
   return (
-    <div className="focus-ui-structured-result">
+    <div className="attention-ui-structured-result">
       <h3>{parsedData.data.title}</h3>
-      <div className="focus-ui-table-scroll">
-        <table className="focus-ui-data-table">
+      <div className="attention-ui-table-scroll">
+        <table className="attention-ui-data-table">
           <thead>
             <tr><th>字段</th><th>值</th></tr>
           </thead>
@@ -162,18 +162,18 @@ export type AIResultCardProps = {
 
 export const AIResultCard = forwardRef<HTMLDivElement, AIResultCardProps>(
   ({ result, onBack, onClose }, ref): React.JSX.Element => (
-    <div ref={ref} className="focus-ui-message-card focus-ui-result-card" role="dialog" aria-label={RESULT_TITLES[result.toolId]}>
-      <h2 className="focus-ui-result-title">{RESULT_TITLES[result.toolId]}</h2>
+    <div ref={ref} className="attention-ui-message-card attention-ui-result-card" role="dialog" aria-label={RESULT_TITLES[result.toolId]}>
+      <h2 className="attention-ui-result-title">{RESULT_TITLES[result.toolId]}</h2>
       {result.toolId === "chart" ? <ChartDataView data={result.data} /> : null}
       {result.toolId === "extract" ? <ExtractedDataView data={result.data} /> : null}
       {result.toolId !== "chart" && result.toolId !== "extract" ? (
         <SafeMarkdownText content={result.content} />
       ) : null}
-      <div className="focus-ui-message-actions">
-        <button className="focus-ui-message-button" type="button" onClick={onBack}>
+      <div className="attention-ui-message-actions">
+        <button className="attention-ui-message-button" type="button" onClick={onBack}>
           返回
         </button>
-        <button className="focus-ui-message-button" type="button" onClick={onClose}>
+        <button className="attention-ui-message-button" type="button" onClick={onClose}>
           关闭
         </button>
       </div>

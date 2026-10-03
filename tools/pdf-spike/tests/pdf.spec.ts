@@ -158,7 +158,7 @@ test("native drag across page boundary records both pages and returns to start",
   await open(page, "sample-06.pdf")
   await expect(paper(page, 1)).toHaveAttribute("data-state", "ready")
   await expect(paper(page, 2)).toHaveAttribute("data-state", "ready")
-  const start = paper(page, 1).locator(".textLayer span").filter({ hasText: "FocusUI original fixture" })
+  const start = paper(page, 1).locator(".textLayer span").filter({ hasText: "AttentionUI original fixture" })
   const end = paper(page, 2).locator(".textLayer span").filter({ hasText: "Page anchor:" })
   expect(await start.count()).toBe(1)
   expect(await end.count()).toBe(1)
@@ -173,7 +173,7 @@ test("native drag across page boundary records both pages and returns to start",
   await page.mouse.move(b!.x + b!.width - 1, b!.y + b!.height / 2, { steps: 20 })
   await page.mouse.up()
   await expect(page.locator("#selection-page")).toHaveText("来源：第 1–2 页")
-  await expect(page.locator("#selection")).toContainText("FocusUI original fixture")
+  await expect(page.locator("#selection")).toContainText("AttentionUI original fixture")
   await expect(page.locator("#selection")).toContainText("Page anchor")
   await expect(page.locator("#selection")).not.toContainText("正在准备")
   await page.getByRole("button", { name: "记录此片段" }).click()
@@ -244,7 +244,7 @@ for (const zoom of [100, 150]) {
     expect(text).toContain("Column 1:")
     expect(text).toContain("unrelated columns.")
     expect(text!.match(/Column 1:/g)).toHaveLength(1)
-    expect(text).not.toContain("FocusUI original")
+    expect(text).not.toContain("AttentionUI original")
     await expect(page.locator("#selection-page")).toHaveText("来源：第 1 页")
     await page.screenshot({ path: "test-results/paragraph-selection-" + zoom + ".png" })
   })
@@ -263,7 +263,7 @@ test("reverse paragraph drag into leading whitespace excludes heading and follow
 })
 
 test("local lecture first paragraph excludes the following formula and paragraph", async ({ page }) => {
-  const localPdf = process.env.FOCUSUI_TEST_PDF
+  const localPdf = process.env.ATTENTIONUI_TEST_PDF
   test.skip(!localPdf, "Optional local document; never copy into fixtures or commit")
   await page.setViewportSize({ width: 1800, height: 1000 })
   await page.locator("#file").setInputFiles(localPdf!)

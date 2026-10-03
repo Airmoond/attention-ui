@@ -1,5 +1,5 @@
 import { randomBytes, randomInt, timingSafeEqual } from "node:crypto"
-import type { ApiError, AuthState, PairingStatus, PairResponse } from "@focus-ui/shared"
+import type { ApiError, AuthState, PairingStatus, PairResponse } from "@attention-ui/shared"
 
 const PAIRING_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 
@@ -25,7 +25,7 @@ const generateTokenSegment = (length: number): string => {
 }
 
 export const generatePairingToken = (): string =>
-  `FUI-${generateTokenSegment(4)}-${generateTokenSegment(4)}`
+  `AUI-${generateTokenSegment(4)}-${generateTokenSegment(4)}`
 
 export const createInitialAuthState = (): AuthState => ({
   pairingToken: generatePairingToken(),

@@ -1,5 +1,5 @@
-import { SiteOriginSchema, SitePoliciesSchema, SitePolicySchema, type SiteOrigin, type SitePolicy, type PageAccess } from "@focus-ui/shared/extension"
-import type { PageContext } from "@focus-ui/shared"
+import { SiteOriginSchema, SitePoliciesSchema, SitePolicySchema, type SiteOrigin, type SitePolicy, type PageAccess } from "@attention-ui/shared/extension"
+import type { PageContext } from "@attention-ui/shared"
 import { getExtensionSettings } from "../storage/extension-store"
 import { extractNumericCandidates } from "../context/number-extractor"
 
@@ -15,7 +15,7 @@ export const getSiteOrigin = (address: string): SiteOrigin | null => {
   } catch { return null }
 }
 export const sitePattern = (origin: SiteOrigin): string => origin + (origin.endsWith(":17321") ? "/demo/*" : "/*")
-export const pauseKey = (tabId: number): string => "focusuiPaused:" + tabId
+export const pauseKey = (tabId: number): string => "attentionuiPaused:" + tabId
 
 export async function getSitePolicies(): Promise<ReturnType<typeof SitePoliciesSchema.parse>> {
   const stored = await chrome.storage.local.get(SITE_STORAGE_KEY)

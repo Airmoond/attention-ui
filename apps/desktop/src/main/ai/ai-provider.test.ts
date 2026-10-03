@@ -1,4 +1,4 @@
-import { DEFAULT_APP_SETTINGS, type AppSettings } from "@focus-ui/shared"
+import { DEFAULT_APP_SETTINGS, type AppSettings } from "@attention-ui/shared"
 import { describe, expect, it, vi } from "vitest"
 import {
   createOpenAiCompatibleProvider,

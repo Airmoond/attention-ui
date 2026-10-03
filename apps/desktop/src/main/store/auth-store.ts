@@ -1,5 +1,5 @@
 import Store from "electron-store"
-import { AuthStateSchema, type AuthState, type PairingStatus } from "@focus-ui/shared"
+import { AuthStateSchema, type AuthState, type PairingStatus } from "@attention-ui/shared"
 import { createAuthController, createInitialAuthState } from "../server/auth"
 
 type AuthStoreData = {
@@ -11,7 +11,7 @@ let authStore: Store<AuthStoreData> | null = null
 const getStore = (): Store<AuthStoreData> => {
   if (!authStore) {
     authStore = new Store<AuthStoreData>({
-      name: "focus-ui-auth",
+      name: "attention-ui-auth",
       defaults: {
         auth: createInitialAuthState()
       }

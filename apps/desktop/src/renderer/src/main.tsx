@@ -6,7 +6,7 @@ import "./styles.css"
 const rootElement = document.getElementById("root")
 
 if (!rootElement) {
-  throw new Error("FocusUI renderer root was not found.")
+  throw new Error("AttentionUI renderer root was not found.")
 }
 
 createRoot(rootElement).render(

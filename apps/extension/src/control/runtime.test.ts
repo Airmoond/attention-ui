@@ -54,7 +54,7 @@ describe("background website authorization", () => {
   it.each(["global", "site", "pause", "permission"])("blocks new requests after %s disable", async mode => {
     if (mode === "global") local.enabled = false
     if (mode === "site") local.sitePoliciesV1 = { version: 1, sites: {} }
-    if (mode === "pause") session['focusuiPaused:1'] = true
+    if (mode === "pause") session['attentionuiPaused:1'] = true
     if (mode === "permission") allowed = false
     expect(await request(execute)).toMatchObject({ ok: false, code: "SITE_CONTROL_BLOCKED" })
     expect(executeDesktopTool).not.toHaveBeenCalled()
@@ -82,13 +82,13 @@ describe("background website authorization", () => {
   })
   it("unregisters future injection and notifies existing pages after permission removal", async () => {
     await vi.waitFor(() => expect(chrome.scripting.registerContentScripts).toHaveBeenCalled())
-    registeredScripts = [{ id: "focusui-opt-in" }]
+    registeredScripts = [{ id: "attentionui-opt-in" }]
     chrome.tabs.query = vi.fn().mockResolvedValue([{ id: 1, url: sender.url }])
     allowed = false
     const removed = vi.mocked(chrome.permissions.onRemoved.addListener).mock.calls[0]![0]
     removed({ origins: [origin + "/*"] })
-    await vi.waitFor(() => expect(chrome.scripting.unregisterContentScripts).toHaveBeenCalledWith({ ids: ["focusui-opt-in"] }))
-    await vi.waitFor(() => expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(1, { type: "FOCUSUI_SYNC" }, { frameId: 0 }))
+    await vi.waitFor(() => expect(chrome.scripting.unregisterContentScripts).toHaveBeenCalledWith({ ids: ["attentionui-opt-in"] }))
+    await vi.waitFor(() => expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(1, { type: "ATTENTIONUI_SYNC" }, { frameId: 0 }))
   })
   it("refuses enabling a website without its browser permission", async () => {
     allowed = false

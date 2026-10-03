@@ -1,7 +1,7 @@
 import type { AttentionCandidate } from "../attention/attention-engine"
 import { isExcludedFromAttention, normalizeVisibleText, truncateText } from "../context/semantic-block"
 
-const excluded = "input,textarea,select,option,button,form,[contenteditable],[hidden],[inert],[aria-hidden='true'],#focus-ui-host"
+const excluded = "input,textarea,select,option,button,form,[contenteditable],[hidden],[inert],[aria-hidden='true'],#attention-ui-host"
 
 // A manual selection may be one word or span paragraphs. Reject the whole range
 // if it crosses editable/private content, before ever reading its text.

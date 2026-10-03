@@ -1,4 +1,4 @@
-import { TOOL_IDS, ToolIdSchema, type ContextKind, type PageContext } from "@focus-ui/shared"
+import { TOOL_IDS, ToolIdSchema, type ContextKind, type PageContext } from "@attention-ui/shared"
 import { describe, expect, it } from "vitest"
 import { getLocalTools, MAX_LOCAL_TOOLS } from "./local-policy"
 

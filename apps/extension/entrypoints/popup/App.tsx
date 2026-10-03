@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import type { DesktopConnectionStatus, PageAccess, SitePolicy } from "@focus-ui/shared/extension"
+import type { DesktopConnectionStatus, PageAccess, SitePolicy } from "@attention-ui/shared/extension"
 import { sendExtensionMessage } from "../../src/communication/messages"
 import { sitePattern } from "../../src/control/site-access"
 
@@ -44,21 +44,21 @@ export const App = (): React.JSX.Element => {
     if (!access?.origin) return
     const grant = chrome.permissions.request({ origins: [sitePattern(access.origin)] })
     void run(async () => {
-      if (!await grant) { setMessage("未获得网站授权，FocusUI 保持关闭。"); return }
+      if (!await grant) { setMessage("未获得网站授权，AttentionUI 保持关闭。"); return }
       await policy({ enabled: true })
     })
   }
   const supported = Boolean(access?.origin)
   const enabled = Boolean(access?.enabled && access.permission)
   return <main style={popupStyle}>
-    <h1 style={{ margin: "0 0 12px", fontSize: 22 }}>FocusUI</h1>
+    <h1 style={{ margin: "0 0 12px", fontSize: 22 }}>AttentionUI</h1>
     <p>桌面端：{connection === "online_paired" ? "在线 · 已配对" : connection === "offline" ? "离线" : connection === "unknown" ? "检测中" : "需要配对"}</p>
     <label><input type="checkbox" checked={access?.globalEnabled ?? true} disabled={busy || !access}
       onChange={event => { const enabled = event.target.checked; void run(async () => {
         const result = await sendExtensionMessage({ type: "UPDATE_EXTENSION_SETTINGS", settings: { enabled } })
         if (!result.ok) setMessage(result.message)
         await refresh()
-      }) }} /> 全局启用 FocusUI</label>
+      }) }} /> 全局启用 AttentionUI</label>
     <hr style={{ border: 0, borderTop: "1px solid #e1e6ee", margin: "16px 0" }} />
     <strong>当前网站</strong>
     <p style={{ margin: "4px 0 8px", overflowWrap: "anywhere" }}>{access?.origin ?? "当前页面暂不支持"}</p>

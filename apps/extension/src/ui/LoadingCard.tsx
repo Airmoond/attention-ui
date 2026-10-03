@@ -1,5 +1,5 @@
 import { forwardRef } from "react"
-import type { ToolId } from "@focus-ui/shared"
+import type { ToolId } from "@attention-ui/shared"
 
 const LOADING_LABELS: Readonly<Record<ToolId, string>> = {
   summarize: "正在生成AI总结…",
@@ -17,13 +17,13 @@ export type LoadingCardProps = {
 
 export const LoadingCard = forwardRef<HTMLDivElement, LoadingCardProps>(
   ({ toolId, onClose }, ref): React.JSX.Element => (
-    <div ref={ref} className="focus-ui-message-card" role="status" aria-live="polite">
-      <div className="focus-ui-loading-row">
-        <span className="focus-ui-loading-dot" aria-hidden="true" />
-        <p className="focus-ui-message-text">{LOADING_LABELS[toolId]}</p>
+    <div ref={ref} className="attention-ui-message-card" role="status" aria-live="polite">
+      <div className="attention-ui-loading-row">
+        <span className="attention-ui-loading-dot" aria-hidden="true" />
+        <p className="attention-ui-message-text">{LOADING_LABELS[toolId]}</p>
       </div>
-      <div className="focus-ui-message-actions">
-        <button className="focus-ui-message-button" type="button" onClick={onClose}>
+      <div className="attention-ui-message-actions">
+        <button className="attention-ui-message-button" type="button" onClick={onClose}>
           关闭
         </button>
       </div>

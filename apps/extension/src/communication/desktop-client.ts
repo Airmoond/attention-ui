@@ -7,7 +7,7 @@ import {
   type AuthCheckResponse,
   type HealthResponse,
   type PairResponse
-} from "@focus-ui/shared/extension"
+} from "@attention-ui/shared/extension"
 import {
   PlanResponseSchema,
   PreferencesResponseSchema,
@@ -20,7 +20,7 @@ import {
   type ToolEvent,
   type ToolEventResponse,
   type ToolResult
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import type { z } from "zod"
 import { getExtensionSettings } from "../storage/extension-store"
 

@@ -1,4 +1,4 @@
-import type { ContextKind, NumericCandidate } from "@focus-ui/shared"
+import type { ContextKind, NumericCandidate } from "@attention-ui/shared"
 import type { SemanticBlockKind } from "./semantic-block"
 
 const YEAR_PATTERN = /^\d{4}$/u

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { DEFAULT_APP_SETTINGS, type AppSettings } from "@focus-ui/shared"
+import { DEFAULT_APP_SETTINGS, type AppSettings } from "@attention-ui/shared"
 
 const persistedData = vi.hoisted(() => ({ settings: null as AppSettings | null }))
 

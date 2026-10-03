@@ -10,11 +10,11 @@ $repoRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
 $package = Get-Content -LiteralPath (Join-Path $repoRoot "package.json") -Raw | ConvertFrom-Json
 $version = [string]$package.version
 if ($version -notmatch '^\d+\.\d+\.\d+$' -or $BuildDate -notmatch '^\d{8}$') { throw "版本或日期格式无效。" }
-$releaseRoot = Join-Path $repoRoot "release\$version-student-$BuildDate"
-$extensionZip = Join-Path $releaseRoot "focusui-extension.zip"
-$installer = Join-Path $releaseRoot "FocusUI-Setup-$version.exe"
+$releaseRoot = Join-Path $repoRoot "release\$version-attentionui-student-$BuildDate"
+$extensionZip = Join-Path $releaseRoot "attentionui-extension.zip"
+$installer = Join-Path $releaseRoot "AttentionUI-Setup-$version.exe"
 $temporaryRoot = Join-Path $repoRoot "release\.tmp-release-security-$PID"
-$expectedFiles = @("FocusUI-Setup-$version.exe", "focusui-extension.zip", "README.md", "QUICK_START.html", "安装使用说明书.html", "DEMO_SCRIPT.md", "测试反馈表.txt", "BUILD_INFO.json", "demo-pages\article.html", "demo-pages\finance.html", "demo-pages\styles.css")
+$expectedFiles = @("AttentionUI-Setup-$version.exe", "attentionui-extension.zip", "README.md", "QUICK_START.html", "安装使用说明书.html", "DEMO_SCRIPT.md", "测试反馈表.txt", "BUILD_INFO.json", "demo-pages\article.html", "demo-pages\finance.html", "demo-pages\styles.css")
 foreach ($file in $expectedFiles) { if (-not (Test-Path -LiteralPath (Join-Path $releaseRoot $file) -PathType Leaf)) { throw "发布文件缺失：$file" } }
 $allowedFiles = @($expectedFiles + "SHA256SUMS.txt")
 foreach ($file in Get-ChildItem -LiteralPath $releaseRoot -File -Recurse) {
@@ -50,7 +50,7 @@ try {
   }
   if (@(Get-ChildItem -LiteralPath (Join-Path $packagedRoot "extension") -File -Recurse).Count -ne $files.Count) { throw "内置插件含额外旧文件。" }
   $textFiles = @($files | Where-Object { $_.Extension -in @(".js", ".json", ".html", ".css") })
-  if (@($textFiles | Select-String -Pattern "sk-[A-Za-z0-9_-]{16,}|Bearer\s+[A-Za-z0-9_-]{20,}|module-eight-invalid-key|E:\\Airmond\\focus-ui" -AllMatches).Count -gt 0) { throw "发现疑似凭证或源码路径。" }
+  if (@($textFiles | Select-String -Pattern "sk-[A-Za-z0-9_-]{16,}|Bearer\s+[A-Za-z0-9_-]{20,}|module-eight-invalid-key|E:\\Airmond\\attention-ui" -AllMatches).Count -gt 0) { throw "发现疑似凭证或源码路径。" }
   if (@($textFiles | Select-String -Pattern "chrome-mv3-dev|__vite_ping|webpackHotUpdate|localhost:[0-9]+/@vite/client" -AllMatches).Count -gt 0) { throw "发现开发服务器代码。" }
   Write-Host "发布检查通过：$version；内置插件与独立 ZIP 逐文件一致；无额外交付文件。"
   Write-Host "Installer：$((Get-Item -LiteralPath $installer).Length) bytes；Extension：$((Get-Item -LiteralPath $extensionZip).Length) bytes。"

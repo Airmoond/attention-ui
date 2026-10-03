@@ -27,9 +27,9 @@ npm test
 段落选区回归默认使用原创样本。如需复验本次用户提供的线性回归讲义，在实验目录设置本机路径再运行测试：
 
 ```powershell
-$env:FOCUSUI_TEST_PDF = '你的本地路径\Lecture2-LinearReg-Notes.pdf'
+$env:ATTENTIONUI_TEST_PDF = '你的本地路径\Lecture2-LinearReg-Notes.pdf'
 npm test
-Remove-Item Env:FOCUSUI_TEST_PDF
+Remove-Item Env:ATTENTIONUI_TEST_PDF
 ```
 
 未设置时只跳过这项专用讲义用例，其余测试照常运行；不会将本地讲义复制进测试样本或上传。

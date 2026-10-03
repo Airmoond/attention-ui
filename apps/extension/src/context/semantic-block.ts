@@ -16,7 +16,7 @@ export const SEMANTIC_BLOCK_LIMITS = {
   maximumViewportCoverage: 0.8
 } as const
 
-const HOST_ID = "focus-ui-host"
+const HOST_ID = "attention-ui-host"
 const SENSITIVE_CONTENT_SELECTOR =
   "input, textarea, select, option, button, form, [hidden], [inert], [aria-hidden='true'], [contenteditable=''], [contenteditable='true'], [contenteditable='plaintext-only']"
 const EXCLUDED_TAGS = new Set([

@@ -6,7 +6,7 @@ import {
   getToolRequestErrorMessage,
   mergePlannedTool,
   recordToolClick
-} from "./FocusUIRoot"
+} from "./AttentionUIRoot"
 
 const errorResult = (code: string): BackgroundMessageResult => ({
   ok: false,
@@ -17,10 +17,10 @@ const errorResult = (code: string): BackgroundMessageResult => ({
 describe("AI request failure messages", () => {
   it("reports an offline desktop", () => {
     expect(getToolRequestErrorMessage(errorResult("DESKTOP_UNREACHABLE"))).toBe(
-      "FocusUI Desktop未连接"
+      "AttentionUI Desktop未连接"
     )
     expect(getToolRequestErrorMessage(errorResult("REQUEST_TIMEOUT"))).toBe(
-      "FocusUI Desktop未连接"
+      "AttentionUI Desktop未连接"
     )
   })
 
@@ -32,16 +32,16 @@ describe("AI request failure messages", () => {
       "Desktop在线，但本次工具请求失败，请重试"
     )
     expect(getToolRequestErrorMessage(errorResult("BACKGROUND_UNAVAILABLE"))).toBe(
-      "FocusUI插件已更新，请刷新当前网页后重试"
+      "AttentionUI插件已更新，请刷新当前网页后重试"
     )
   })
 
   it("reports missing or expired pairing", () => {
     expect(getToolRequestErrorMessage(errorResult("MISSING_CLIENT_TOKEN"))).toBe(
-      "尚未与FocusUI Desktop配对"
+      "尚未与AttentionUI Desktop配对"
     )
     expect(getToolRequestErrorMessage(errorResult("INVALID_CLIENT_TOKEN"))).toBe(
-      "配对已失效，请重新连接FocusUI Desktop"
+      "配对已失效，请重新连接AttentionUI Desktop"
     )
   })
 

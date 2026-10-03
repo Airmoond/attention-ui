@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express"
-import type { PreferenceState, PreferencesResponse } from "@focus-ui/shared"
+import type { PreferenceState, PreferencesResponse } from "@attention-ui/shared"
 import { appLogger } from "../../logger/logger"
 
 export type GetPreferences = () => PreferenceState

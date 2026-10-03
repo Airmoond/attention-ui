@@ -1,4 +1,4 @@
-import type { AppSettings, FocusUIErrorCode } from "./types"
+import type { AppSettings, AttentionUIErrorCode } from "./types"
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
   apiBaseUrl: "",
@@ -11,10 +11,10 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   enableHabitLearning: true
 }
 
-export const FOCUS_UI_ERROR_MESSAGES = {
-  DESKTOP_OFFLINE: "FocusUI Desktop未连接",
-  NOT_PAIRED: "尚未与FocusUI Desktop配对",
-  AUTH_EXPIRED: "配对已失效，请重新连接FocusUI Desktop",
+export const ATTENTION_UI_ERROR_MESSAGES = {
+  DESKTOP_OFFLINE: "AttentionUI Desktop未连接",
+  NOT_PAIRED: "尚未与AttentionUI Desktop配对",
+  AUTH_EXPIRED: "配对已失效，请重新连接AttentionUI Desktop",
   AI_NOT_CONFIGURED: "请先在桌面端配置AI服务",
   AI_TIMEOUT: "AI响应超时，请稍后重试",
   AI_AUTH_FAILED: "AI服务连接失败，请检查桌面端配置",
@@ -22,7 +22,7 @@ export const FOCUS_UI_ERROR_MESSAGES = {
   AI_INVALID_RESPONSE: "AI返回了无法处理的结果",
   CHART_UNAVAILABLE: "当前内容无法可靠生成图表",
   UNKNOWN_ERROR: "操作失败，请重试"
-} as const satisfies Readonly<Record<FocusUIErrorCode, string>>
+} as const satisfies Readonly<Record<AttentionUIErrorCode, string>>
 
-export const getFocusUIErrorMessage = (code: FocusUIErrorCode): string =>
-  FOCUS_UI_ERROR_MESSAGES[code]
+export const getAttentionUIErrorMessage = (code: AttentionUIErrorCode): string =>
+  ATTENTION_UI_ERROR_MESSAGES[code]

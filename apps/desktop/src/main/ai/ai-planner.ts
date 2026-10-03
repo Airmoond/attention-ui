@@ -6,7 +6,7 @@ import {
   type PlanResponse,
   type ToolId,
   type ToolPlan
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import type { AiProvider } from "./ai-provider"
 import { appLogger } from "../logger/logger"
 
@@ -50,7 +50,7 @@ export const parseToolPlan = (content: string): ToolPlan => {
   return ToolPlanSchema.parse(parsedJson)
 }
 
-const PLANNER_SYSTEM_PROMPT = `你是FocusUI的单次工具规划器。请根据用户当前关注的PageContext只选择一个最合适的工具。
+const PLANNER_SYSTEM_PROMPT = `你是AttentionUI的单次工具规划器。请根据用户当前关注的PageContext只选择一个最合适的工具。
 你只能选择：summarize、explain、ask、chart、extract、focus。
 禁止自定义或编造工具，禁止修改网页，禁止返回HTML、CSS、JavaScript或任何可执行代码。
 仅返回JSON对象，格式为：{"toolId":"工具ID","reason":"不超过100字的原因","confidence":0到1之间的数字}。

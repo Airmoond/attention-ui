@@ -1,11 +1,11 @@
 import {
-  getFocusUIErrorMessage,
+  getAttentionUIErrorMessage,
   type ContextKind,
   type PageContext,
   type ToolId,
   type ToolPlan,
   type ToolResult
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { AttentionCandidate } from "../attention/attention-engine"
 import { sendExtensionMessage } from "../communication/messages"
@@ -28,7 +28,7 @@ import { LoadingCard } from "./LoadingCard"
 import {
   getToolRequestErrorCode,
   getToolRequestErrorMessage,
-  isRetryableFocusUIError
+  isRetryableAttentionUIError
 } from "./error-messages"
 
 export { getToolRequestErrorMessage } from "./error-messages"
@@ -40,7 +40,7 @@ export type ToolbarSession = {
   tools: LocalTool[]
 }
 
-type FocusUIState =
+type AttentionUIState =
   | { kind: "idle" }
   | {
       kind: "toolbar"
@@ -71,7 +71,7 @@ type FocusUIState =
       content: FocusReaderContent
     }
 
-export type FocusUIRootProps = {
+export type AttentionUIRootProps = {
   session: ToolbarSession | null
   autoAI?: boolean
 }
@@ -97,23 +97,23 @@ export const recordToolClick = (
   })
     .then((result) => {
       if ("ok" in result && !result.ok && import.meta.env.DEV) {
-        console.warn("FocusUI 工具使用记录失败", result.code)
+        console.warn("AttentionUI 工具使用记录失败", result.code)
       }
     })
     .catch((_error: unknown) => {
       if (import.meta.env.DEV) {
-        console.warn("FocusUI 工具使用记录失败")
+        console.warn("AttentionUI 工具使用记录失败")
       }
     })
 }
 
-export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): React.JSX.Element | null => {
-  const [state, setState] = useState<FocusUIState>(() =>
+export const AttentionUIRoot = ({ session, autoAI = false }: AttentionUIRootProps): React.JSX.Element | null => {
+  const [state, setState] = useState<AttentionUIState>(() =>
     session ? { kind: "toolbar", session } : { kind: "idle" }
   )
   const stateRef = useRef(state)
   // Event handlers must claim the interaction before a pending hover effect runs.
-  const updateState = useCallback((next: FocusUIState): void => {
+  const updateState = useCallback((next: AttentionUIState): void => {
     stateRef.current = next
     setState(next)
   }, [])
@@ -267,9 +267,9 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
           ? { kind: "result", result, session: currentSession }
           : {
               kind: "message",
-              message: getFocusUIErrorMessage(errorCode ?? "UNKNOWN_ERROR"),
+              message: getAttentionUIErrorMessage(errorCode ?? "UNKNOWN_ERROR"),
               session: currentSession,
-              ...(errorCode && isRetryableFocusUIError(errorCode)
+              ...(errorCode && isRetryableAttentionUIError(errorCode)
                 ? { retry: { toolId, ...(question ? { question } : {}) } }
                 : {})
             }
@@ -282,7 +282,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
       kind: "message",
       message: getToolRequestErrorMessage(result),
       session: currentSession,
-      ...(isRetryableFocusUIError(errorCode)
+      ...(isRetryableAttentionUIError(errorCode)
         ? { retry: { toolId, ...(question ? { question } : {}) } }
         : {})
     })
@@ -353,7 +353,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
             requestVersionRef.current += 1
             updateState({
               kind: "message",
-              message: getFocusUIErrorMessage("UNKNOWN_ERROR"),
+              message: getAttentionUIErrorMessage("UNKNOWN_ERROR"),
               session: state.session,
               retry: { toolId: "ask", question }
             })
@@ -398,7 +398,7 @@ export const FocusUIRoot = ({ session, autoAI = false }: FocusUIRootProps): Reac
           requestVersionRef.current += 1
           updateState({
             kind: "message",
-            message: getFocusUIErrorMessage("UNKNOWN_ERROR"),
+            message: getAttentionUIErrorMessage("UNKNOWN_ERROR"),
             session: currentSession,
             retry: { toolId: tool.id }
           })

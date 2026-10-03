@@ -51,7 +51,7 @@ apps/extension/
    ├─storage/
    │  └─extension-store.ts
    └─ui/
-      └─FocusUIRoot.tsx
+      └─AttentionUIRoot.tsx
 ```
 
 ## 四、子步骤1：创建WXT插件
@@ -90,7 +90,7 @@ https://en.wikipedia.org/*
 显示：
 
 ```text
-FocusUI
+AttentionUI
 桌面端状态：未检测
 当前页面：已启用
 ```
@@ -237,7 +237,7 @@ POST /v1/pair
 创建唯一节点：
 
 ```text
-focus-ui-host
+attention-ui-host
 ```
 
 要求：
@@ -251,7 +251,7 @@ focus-ui-host
 先显示固定测试组件：
 
 ```text
-FocusUI已启用
+AttentionUI已启用
 ```
 
 位置：

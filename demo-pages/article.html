@@ -8,7 +8,7 @@
   </head>
   <body class="article-page">
     <header class="site-header">
-      <a class="brand" href="#article-start" aria-label="FocusUI 技术观察首页">FocusUI 技术观察</a>
+      <a class="brand" href="#article-start" aria-label="AttentionUI 技术观察首页">AttentionUI 技术观察</a>
       <nav aria-label="文章导航">
         <a href="#article-start">前沿</a>
         <a href="#principles">设计</a>
@@ -28,7 +28,7 @@
             传统网页把导航、操作和信息固定在预先设计的位置。用户需要先理解页面结构，再从菜单、侧栏或工具区寻找下一步操作。这个过程看似自然，却会在阅读、分析和比较数据时不断打断思路。注意力式交互尝试改变这种关系：系统先判断用户当前关注的内容，再把少量、可控的操作送到内容附近。
           </p>
           <p>
-            这种判断并不等同于眼动追踪。FocusUI使用鼠标停留、移动速度、滚动状态、元素可见程度和文本选择等信号，形成一个保守的<span class="term">关注内容推断</span>。当信号不足时，系统保持安静；当同一语义块稳定满足条件时，界面才给出总结、解释、提问或专注阅读等候选工具。
+            这种判断并不等同于眼动追踪。AttentionUI使用鼠标停留、移动速度、滚动状态、元素可见程度和文本选择等信号，形成一个保守的<span class="term">关注内容推断</span>。当信号不足时，系统保持安静；当同一语义块稳定满足条件时，界面才给出总结、解释、提问或专注阅读等候选工具。
           </p>
 
           <h2 id="principles">从像素位置到语义内容</h2>
@@ -56,7 +56,7 @@
             专注阅读展示了界面重组的另一种方式。它不会删除原网页节点，而是从文章结构中提取安全的标题、段落、列表和引文，放入独立的阅读面板；关闭后原网页保持原样。对比赛演示而言，这一过程说明自适应界面不仅能够增加新工具，也能够围绕当前任务降低导航、广告和侧栏带来的干扰。
           </p>
           <p>
-            最终，FocusUI追求的并不是一个无所不能的网页代理，而是一条可解释、可验证的交互链路：注意力信号找到内容，结构化上下文约束数据，桌面端完成AI调用，浏览器插件渲染固定组件。每一步都能降级，每个结果都能校验，每个界面变化都能撤销，这比追求不可控的自动化更适合真实产品原型。
+            最终，AttentionUI追求的并不是一个无所不能的网页代理，而是一条可解释、可验证的交互链路：注意力信号找到内容，结构化上下文约束数据，桌面端完成AI调用，浏览器插件渲染固定组件。每一步都能降级，每个结果都能校验，每个界面变化都能撤销，这比追求不可控的自动化更适合真实产品原型。
           </p>
         </article>
       </main>
@@ -66,7 +66,7 @@
           <h2>站内搜索</h2>
           <label for="article-search">搜索技术主题</label>
           <input id="article-search" type="search" placeholder="输入关键词" />
-          <p class="input-note">用于验证FocusUI不会读取输入控件。</p>
+          <p class="input-note">用于验证AttentionUI不会读取输入控件。</p>
         </section>
         <section class="sidebar-panel">
           <h2>本文要点</h2>
@@ -90,7 +90,7 @@
     </div>
 
     <footer class="site-footer">
-      <p>FocusUI 技术观察 · 固定离线演示页面</p>
+      <p>AttentionUI 技术观察 · 固定离线演示页面</p>
     </footer>
   </body>
 </html>

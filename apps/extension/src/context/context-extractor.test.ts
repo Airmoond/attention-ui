@@ -1,4 +1,4 @@
-import { PageContextSchema } from "@focus-ui/shared"
+import { PageContextSchema } from "@attention-ui/shared"
 import { describe, expect, it } from "vitest"
 import { classifyContent } from "./content-classifier"
 import { extractNumericCandidates, parseNumericValue } from "./number-extractor"

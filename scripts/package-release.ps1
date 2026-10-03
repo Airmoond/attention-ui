@@ -6,8 +6,8 @@ $versions = @($packages.version | Select-Object -Unique)
 if ($versions.Count -ne 1 -or $versions[0] -notmatch '^\d+\.\d+\.\d+$') { throw "Root、Desktop、Extension 与 Shared 必须使用相同的三段版本号。" }
 if ($BuildDate -notmatch '^\d{8}$') { throw "BuildDate 必须为 YYYYMMDD。" }
 $version = [string]$versions[0]
-$releaseRoot = Join-Path $repoRoot "release\$version-student-$BuildDate"
-$desktopInstaller = Join-Path $repoRoot "apps\desktop\release\FocusUI-Setup-$version.exe"
+$releaseRoot = Join-Path $repoRoot "release\$version-attentionui-student-$BuildDate"
+$desktopInstaller = Join-Path $repoRoot "apps\desktop\release\AttentionUI-Setup-$version.exe"
 Push-Location $repoRoot
 try {
   & npm.cmd run build -w packages/shared
@@ -23,8 +23,8 @@ if (-not (Test-Path -LiteralPath $desktopInstaller -PathType Leaf)) { throw "当
 New-Item -ItemType Directory -Path $releaseRoot -Force | Out-Null
 $releaseDemoRoot = Join-Path $releaseRoot "demo-pages"
 New-Item -ItemType Directory -Path $releaseDemoRoot -Force | Out-Null
-Copy-Item -LiteralPath $desktopInstaller -Destination (Join-Path $releaseRoot "FocusUI-Setup-$version.exe") -Force
-Copy-Item -LiteralPath $extensionZips[0].FullName -Destination (Join-Path $releaseRoot "focusui-extension.zip") -Force
+Copy-Item -LiteralPath $desktopInstaller -Destination (Join-Path $releaseRoot "AttentionUI-Setup-$version.exe") -Force
+Copy-Item -LiteralPath $extensionZips[0].FullName -Destination (Join-Path $releaseRoot "attentionui-extension.zip") -Force
 # Explicit lists exclude local lecture PDFs, profiles and credentials.
 foreach ($demoFile in @("article.html", "finance.html", "styles.css")) { Copy-Item -LiteralPath (Join-Path $repoRoot "demo-pages\$demoFile") -Destination (Join-Path $releaseDemoRoot $demoFile) -Force }
 foreach ($document in @("README.md", "QUICK_START.html", "DEMO_SCRIPT.md")) { Copy-Item -LiteralPath (Join-Path $repoRoot $document) -Destination (Join-Path $releaseRoot $document) -Force }
@@ -33,6 +33,6 @@ Copy-Item -LiteralPath (Join-Path $repoRoot "docs\releases\student-feedback.txt"
 $sourceCommit = & git -c "safe.directory=$($repoRoot.Replace('\', '/'))" -C $repoRoot rev-parse HEAD
 if ($LASTEXITCODE -ne 0) { throw "无法读取源码基线。" }
 [ordered]@{ version = $version; edition = "学生测试版"; buildDate = $BuildDate; sourceBaseCommit = $sourceCommit.Trim(); guide = "安装使用说明书.html"; scope = "网页测试版；不包含独立 PDF/公式实验" } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $releaseRoot "BUILD_INFO.json") -Encoding UTF8
-Write-Host "FocusUI 学生测试版已生成：$releaseRoot"
+Write-Host "AttentionUI 学生测试版已生成：$releaseRoot"
 Write-Host "发布验证通过后，再创建同学转发用 ZIP。"
 Get-ChildItem -LiteralPath $releaseRoot -File -Recurse | Select-Object FullName, Length

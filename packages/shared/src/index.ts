@@ -1,7 +1,7 @@
 export {
   DEFAULT_APP_SETTINGS,
-  FOCUS_UI_ERROR_MESSAGES,
-  getFocusUIErrorMessage
+  ATTENTION_UI_ERROR_MESSAGES,
+  getAttentionUIErrorMessage
 } from "./constants"
 export {
   AppSettingsSchema,
@@ -10,7 +10,7 @@ export {
   ContextKindSchema,
   ExecuteRequestSchema,
   ExtractedDataSchema,
-  FocusUIErrorCodeSchema,
+  AttentionUIErrorCodeSchema,
   NumericCandidateSchema,
   PageContextSchema,
   PlanRequestSchema,
@@ -45,7 +45,7 @@ export type {
   ExtractedData,
   ExtractedDataItem,
   ExtensionSettings,
-  FocusUIErrorCode,
+  AttentionUIErrorCode,
   AuthState,
   ContextKind,
   HealthResponse,

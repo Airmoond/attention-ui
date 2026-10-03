@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { AppSettings } from "@focus-ui/shared"
+import type { AppSettings } from "@attention-ui/shared"
 
 type AISettingsPageProps = {
   settings: AppSettings | null
@@ -48,7 +48,7 @@ const AISettingsPage = ({ settings, onSave }: AISettingsPageProps): JSX.Element 
     setIsSaving(true)
     setMessage(null)
     try {
-      const result = await window.focusUI.testAiConnection({
+      const result = await window.attentionUI.testAiConnection({
         ...settings,
         apiBaseUrl,
         apiKey,

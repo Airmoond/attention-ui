@@ -1,4 +1,4 @@
-import type { ContextKind, PageContext, ToolId } from "@focus-ui/shared"
+import type { ContextKind, PageContext, ToolId } from "@attention-ui/shared"
 
 export type LocalTool = {
   id: ToolId

@@ -28,4 +28,4 @@ try {
     } finally { await context.close() }
   }
 } finally { await browser.close() }
-await writeFile(path.join(root, "docs/validation/v0.2-web-observations.json"), JSON.stringify({checkedAt: new Date().toISOString(), purpose:"Read-only page accessibility; not FocusUI compatibility acceptance", results}, null, 2) + "\n")
+await writeFile(path.join(root, "docs/validation/v0.2-web-observations.json"), JSON.stringify({checkedAt: new Date().toISOString(), purpose:"Read-only page accessibility; not AttentionUI compatibility acceptance", results}, null, 2) + "\n")

@@ -23,7 +23,7 @@ try {
     globalThis.fetch = async (address, options) => {
       const url = new URL(address); globalThis.calls.push({ path: url.pathname, body: options?.body });
       let data = { ok: true };
-      if (url.pathname === '/health') data = { ok: true, service: 'focusui-desktop', version: '0.1.0', aiConfigured: true };
+      if (url.pathname === '/health') data = { ok: true, service: 'attentionui-desktop', version: '0.1.0', aiConfigured: true };
       if (url.pathname === '/v1/auth-check') data = { ok: true, authenticated: true };
       if (url.pathname === '/v1/preferences') data = { ok: true, preferences: { globalToolCount: {}, contextToolCount: {}, lastUsedAt: {}, pinnedTools: [] } };
       if (url.pathname === '/v1/execute' && globalThis.delayExecution) await new Promise(resolve => { globalThis.releaseExecution = resolve; });
@@ -36,13 +36,13 @@ try {
   await context.route(/^http:\/\/127\.0\.0\.1:(17321|8080)\/demo\//, route => route.fulfill({ contentType: 'text/html', body: `<!doctype html><title>Private test title</title><style>body{font:20px Arial;max-width:720px;margin:80px}p{margin:30px 0;line-height:1.8}</style><div><h1>Learning physics</h1><p id="passage">Physics studies matter and energy. This passage is a safe student reading sample used to verify manual tools.</p><p id="before">Before private input.</p><div contenteditable="true" id="private">PRIVATE_EDITABLE_VALUE</div><p id="after">After private input.</p><p id="hover-next">Another paragraph about chemistry describes how atoms form molecules.</p><p id="hover-third">A final paragraph about biology describes how living cells use energy.</p></div>` }));
   const page = await context.newPage();
   await page.goto('http://127.0.0.1:17321/demo/control.html?secret=private#fragment');
-  await expect(page.locator('#focus-ui-host')).toHaveCount(0); done.push('disabled by default');
+  await expect(page.locator('#attention-ui-host')).toHaveCount(0); done.push('disabled by default');
   let popup = await context.newPage();
   const reopen = async (site = 'http://127.0.0.1:17321') => { if (popup.isClosed()) popup = await context.newPage(); await popup.goto(`chrome-extension://${id}/popup.html`); await page.bringToFront(); await popup.reload(); await expect(popup.getByText(site, { exact: true })).toBeVisible(); };
   await reopen();
   await popup.getByRole('button', { name: '启用此网站', exact: true }).click();
   await expect(popup.getByRole('button', { name: '禁用此网站', exact: true })).toBeVisible();
-  await expect(page.locator('#focus-ui-host')).toHaveCount(1); done.push('popup enable injects reader');
+  await expect(page.locator('#attention-ui-host')).toHaveCount(1); done.push('popup enable injects reader');
   await page.bringToFront();
   await page.locator('#passage').hover();
   await page.waitForTimeout(1400);
@@ -60,10 +60,10 @@ try {
   await Promise.all([popup.waitForEvent('close'), popup.getByRole('button', { name: '对选中文字使用工具', exact: true }).click()]);
   await expect(page.getByRole('toolbar')).toBeVisible(); done.push('popup action opens selected-text tools');
   await reopen(); await popup.getByRole('button', { name: '暂停此标签页', exact: true }).click();
-  await expect(page.locator('#focus-ui-host')).toHaveCount(0);
+  await expect(page.locator('#attention-ui-host')).toHaveCount(0);
   await page.keyboard.press('Alt+Shift+KeyF'); await expect(page.getByRole('toolbar')).toHaveCount(0); done.push('pause removes UI and blocks manual trigger');
   await popup.getByRole('button', { name: '恢复此标签页', exact: true }).click();
-  await expect(page.locator('#focus-ui-host')).toHaveCount(1);
+  await expect(page.locator('#attention-ui-host')).toHaveCount(1);
   await page.evaluate(() => { const range = document.createRange(); range.setStartBefore(document.getElementById('before')); range.setEndAfter(document.getElementById('after')); const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range); });
   await page.keyboard.press('Alt+Shift+KeyF'); await expect(page.getByRole('toolbar')).toHaveCount(0); done.push('selection crossing editable content rejected');
   await reopen(); await popup.getByLabel('鼠标停留时自动显示工具条').click(); await expect(popup.getByLabel('鼠标停留时自动显示工具条')).toBeChecked();
@@ -108,7 +108,7 @@ try {
   done.push('explicit manual selection can replace an active interaction');
   const other = await context.newPage();
   await other.goto('http://127.0.0.1:17321/demo/second.html');
-  await expect(other.locator('#focus-ui-host')).toHaveCount(1);
+  await expect(other.locator('#attention-ui-host')).toHaveCount(1);
   await other.evaluate(() => { const range = document.createRange(); range.setStartBefore(document.getElementById('passage')); range.setEndAfter(document.getElementById('after')); const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range); });
   await other.mouse.move(20, 20); await other.waitForTimeout(100); await other.locator('#passage').hover();
   await expect.poll(async () => await worker.evaluate(() => calls.filter(x => x.path === '/v1/plan').length)).toBe(3);
@@ -116,10 +116,10 @@ try {
   expect(automatic.pageContext.selectedText).toBeNull();
   expect(JSON.stringify(automatic)).not.toContain('PRIVATE_EDITABLE_VALUE'); done.push('automatic mode excludes editable content inside selection');
   await reopen(); await popup.getByRole('button', { name: '暂停此标签页', exact: true }).click();
-  await expect(page.locator('#focus-ui-host')).toHaveCount(0);
-  await expect(other.locator('#focus-ui-host')).toHaveCount(1); done.push('pausing one tab leaves the other tab enabled');
+  await expect(page.locator('#attention-ui-host')).toHaveCount(0);
+  await expect(other.locator('#attention-ui-host')).toHaveCount(1); done.push('pausing one tab leaves the other tab enabled');
   await popup.getByRole('button', { name: '恢复此标签页', exact: true }).click();
-  await expect(page.locator('#focus-ui-host')).toHaveCount(1);
+  await expect(page.locator('#attention-ui-host')).toHaveCount(1);
   await popup.getByLabel('自动 AI 工具推荐', { exact: true }).click(); await expect(popup.getByLabel('自动 AI 工具推荐', { exact: true })).not.toBeChecked();
   await popup.getByLabel('鼠标停留时自动显示工具条').click(); await expect(popup.getByLabel('鼠标停留时自动显示工具条')).not.toBeChecked();
   await worker.evaluate(() => { globalThis.delayExecution = true; globalThis.releaseExecution = undefined; });
@@ -127,14 +127,14 @@ try {
   await page.getByRole('button', { name: '总结', exact: true }).click();
   await expect.poll(async () => await worker.evaluate(() => typeof globalThis.releaseExecution)).toBe('function');
   await reopen(); await popup.getByRole('button', { name: '暂停此标签页', exact: true }).click();
-  await expect(page.locator('#focus-ui-host')).toHaveCount(0);
+  await expect(page.locator('#attention-ui-host')).toHaveCount(0);
   await worker.evaluate(() => { globalThis.delayExecution = false; globalThis.releaseExecution(); });
   await page.waitForTimeout(200); await expect(page.getByText('Controlled answer for browser verification.')).toHaveCount(0);
-  await expect(page.locator('#focus-ui-host')).toHaveCount(0); done.push('late AI response cannot restore a paused interface');
+  await expect(page.locator('#attention-ui-host')).toHaveCount(0); done.push('late AI response cannot restore a paused interface');
   await popup.getByRole('button', { name: '恢复此标签页', exact: true }).click();
   await reopen(); await popup.screenshot({ path: path.join(experiment, 'test-results/site-control-popup.png') });
   await popup.getByRole('button', { name: '禁用此网站', exact: true }).click();
-  await expect(page.locator('#focus-ui-host')).toHaveCount(0); await page.reload(); await expect(page.locator('#focus-ui-host')).toHaveCount(0); done.push('site disable persists across reload');
+  await expect(page.locator('#attention-ui-host')).toHaveCount(0); await page.reload(); await expect(page.locator('#attention-ui-host')).toHaveCount(0); done.push('site disable persists across reload');
   const browserVersion = context.browser().version();
   await context.close();
   const restarted = await chromium.launchPersistentContext(profile, { channel: 'chromium', headless: true,

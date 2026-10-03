@@ -6,7 +6,7 @@ export type AppInfo = {
 
 export type HealthResponse = {
   ok: true
-  service: "focusui-desktop"
+  service: "attentionui-desktop"
   version: string
   aiConfigured: boolean
 }
@@ -32,7 +32,7 @@ export type AppSettings = {
 export type AiConnectionTestResult = {
   ok: boolean
   message: string
-  errorCode?: FocusUIErrorCode
+  errorCode?: AttentionUIErrorCode
 }
 
 export type PairRequest = {
@@ -79,7 +79,7 @@ export type ContextKind = "text" | "numbers" | "table" | "code" | "unknown"
 
 export type ToolId = "summarize" | "explain" | "ask" | "chart" | "extract" | "focus"
 
-export type FocusUIErrorCode =
+export type AttentionUIErrorCode =
   | "DESKTOP_OFFLINE"
   | "NOT_PAIRED"
   | "AUTH_EXPIRED"
@@ -188,7 +188,7 @@ export type ToolResult = {
   success: boolean
   content: string
   data?: unknown
-  errorCode?: FocusUIErrorCode
+  errorCode?: AttentionUIErrorCode
 }
 
 export type PairingStatus = {

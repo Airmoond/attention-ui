@@ -6,7 +6,7 @@ import {
   HealthResponseSchema,
   type ApiError,
   type DesktopConnectionStatus
-} from "@focus-ui/shared/extension"
+} from "@attention-ui/shared/extension"
 import {
   ExecuteRequestSchema,
   PageContextSchema,
@@ -19,7 +19,7 @@ import {
   type PreferencesResponse,
   type ToolEventResponse,
   type ToolResult
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import { z } from "zod"
 
 const ConnectionStatusSchema = z.enum([
@@ -133,13 +133,13 @@ export async function sendExtensionMessage(
     return {
       ok: false,
       code: "BACKGROUND_UNAVAILABLE",
-      message: "FocusUI 后台服务不可用，请重新加载插件"
+      message: "AttentionUI 后台服务不可用，请重新加载插件"
     }
   }
 
   return {
     ok: false,
     code: "BACKGROUND_UNAVAILABLE",
-    message: "FocusUI 后台服务不可用，请重新加载插件"
+    message: "AttentionUI 后台服务不可用，请重新加载插件"
   }
 }

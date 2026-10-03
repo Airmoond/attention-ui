@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { AppSettings } from "@focus-ui/shared"
+import type { AppSettings } from "@attention-ui/shared"
 
 type BehaviorPageProps = {
   settings: AppSettings | null
@@ -109,7 +109,7 @@ const BehaviorPage = ({
       </div>
       {isConfirmingReset ? (
         <div className="confirmation-panel" role="alertdialog" aria-label="确认清除习惯数据">
-          <p>确定清除FocusUI学习到的工具使用偏好吗？</p>
+          <p>确定清除AttentionUI学习到的工具使用偏好吗？</p>
           <div className="button-row">
             <button
               disabled={isResetting}

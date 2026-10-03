@@ -7,11 +7,11 @@ import type {
   PairingStatus,
   PreferenceState,
   ServiceStatus
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 
 declare global {
   interface Window {
-    focusUI: {
+    attentionUI: {
       getAppInfo: () => Promise<AppInfo>
       getServiceStatus: () => Promise<ServiceStatus>
       startService: () => Promise<ServiceStatus>

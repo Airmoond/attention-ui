@@ -10,7 +10,7 @@ const readDemo = (name: string): string =>
 describe("production demo pages", () => {
   it("provides a self-contained beginner guide for the packaged release", () => {
     const guide = readFileSync(quickStartFile, "utf8")
-    expect(guide).toContain("FocusUI 0.1.1 学生测试版")
+    expect(guide).toContain("AttentionUI 0.1.1 学生测试版")
     expect(guide).toContain("chrome://extensions")
     expect(guide).toContain("加载已解压的扩展程序")
     expect(guide).toContain("http://127.0.0.1:17321/demo/article.html")

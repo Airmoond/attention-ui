@@ -8,7 +8,7 @@ export default defineConfig({
     }
   }),
   manifest: {
-    name: "FocusUI 0.1.1 学生测试版",
+    name: "AttentionUI 0.1.1 学生测试版",
     version_name: "0.1.1 学生测试版",
     description: "根据当前关注内容提供总结、解释、提问、图表、提取与专注阅读工具",
     permissions: ["storage", "activeTab", "scripting"],

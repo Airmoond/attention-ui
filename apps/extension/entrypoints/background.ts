@@ -1,5 +1,5 @@
 import { getPageAccess, getSitePolicies, getSiteOrigin, minimizePageContext, pauseKey, sitePattern, updateSitePolicy } from "../src/control/site-access"
-import type { ApiError, DesktopConnectionStatus } from "@focus-ui/shared/extension"
+import type { ApiError, DesktopConnectionStatus } from "@attention-ui/shared/extension"
 import {
   checkDesktopAuthentication,
   checkDesktopHealth,
@@ -68,7 +68,7 @@ const controlError = (message = "该网站尚未启用、已暂停或缺少访�
 async function synchronizeTab(tab: chrome.tabs.Tab): Promise<void> {
   if (tab.id === undefined) return
   try {
-    await chrome.tabs.sendMessage(tab.id, { type: "FOCUSUI_SYNC" }, { frameId: 0 })
+    await chrome.tabs.sendMessage(tab.id, { type: "ATTENTIONUI_SYNC" }, { frameId: 0 })
   } catch {
     if (tab.url && (await getPageAccess(tab.url, tab.id)).active) {
       await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content-scripts/content.js"] })
@@ -85,7 +85,7 @@ function synchronizeSites(): Promise<void> {
       const pattern = sitePattern(origin as NonNullable<ReturnType<typeof getSiteOrigin>>)
       if (await chrome.permissions.contains({ origins: [pattern] })) matches.push(pattern)
     }
-    const id = "focusui-opt-in"
+    const id = "attentionui-opt-in"
     const registered = (await chrome.scripting.getRegisteredContentScripts({ ids: [id] })).length > 0
     if (!matches.length && registered) await chrome.scripting.unregisterContentScripts({ ids: [id] })
     else if (matches.length) {
@@ -98,7 +98,7 @@ function synchronizeSites(): Promise<void> {
   synchronization = task
   return task
 }
-const reportControlFailure = (): void => { console.warn("FocusUI 网站控制同步失败，请重新加载插件") }
+const reportControlFailure = (): void => { console.warn("AttentionUI 网站控制同步失败，请重新加载插件") }
 
 export default defineBackground(() => {
   void synchronizeSites().catch(reportControlFailure)
@@ -107,8 +107,8 @@ export default defineBackground(() => {
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === "local" && (changes.sitePoliciesV1 || changes.enabled)) void synchronizeSites().catch(reportControlFailure)
     if (area === "session") for (const key of Object.keys(changes)) {
-      if (!key.startsWith("focusuiPaused:")) continue
-      const tabId = Number(key.slice("focusuiPaused:".length))
+      if (!key.startsWith("attentionuiPaused:")) continue
+      const tabId = Number(key.slice("attentionuiPaused:".length))
       void chrome.tabs.get(tabId).then(synchronizeTab).catch(reportControlFailure)
     }
   })
@@ -150,7 +150,7 @@ export default defineBackground(() => {
         access = await getPageAccess(address, data.tabId)
         if (data.type === "SHOW_SELECTION") {
           if (!access.active) { sendResponse(controlError()); return }
-          try { sendResponse(await chrome.tabs.sendMessage(data.tabId, { type: "FOCUSUI_SHOW_SELECTION" }, { frameId: 0 })) }
+          try { sendResponse(await chrome.tabs.sendMessage(data.tabId, { type: "ATTENTIONUI_SHOW_SELECTION" }, { frameId: 0 })) }
           catch { sendResponse(controlError("请刷新网页，选中文字后重试")) }
           return
         }

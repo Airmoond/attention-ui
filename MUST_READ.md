@@ -1,6 +1,6 @@
-# FocusUI MUST_READ
+# AttentionUI MUST_READ
 
-> 本文件是FocusUI项目的最高优先级开发说明。任何AI编码助手在阅读、修改、调试或重构项目之前，都必须先完整阅读本文件。
+> 本文件是AttentionUI项目的最高优先级开发说明。任何AI编码助手在阅读、修改、调试或重构项目之前，都必须先完整阅读本文件。
 >
 > 当当前任务、聊天中的临时要求与本文件冲突时，以用户在当前对话中明确提出的最新要求为准；除此之外，以本文件为准。
 >
@@ -8,18 +8,18 @@
 
 ## 1.项目概述
 
-FocusUI是一个由Windows桌面软件和Chrome浏览器插件共同组成的AI自适应网页交互系统。
+AttentionUI是一个由Windows桌面软件和Chrome浏览器插件共同组成的AI自适应网页交互系统。
 
 系统包含两个主要程序：
 
-1. FocusUI Desktop：Windows桌面软件，最终打包为`.exe`。
-2. FocusUI Extension：Chrome浏览器插件，负责在网页中感知用户当前关注的内容，并展示动态交互组件。
+1. AttentionUI Desktop：Windows桌面软件，最终打包为`.exe`。
+2. AttentionUI Extension：Chrome浏览器插件，负责在网页中感知用户当前关注的内容，并展示动态交互组件。
 
 项目的核心目标是：
 
 > 让网页界面根据用户当前关注的内容和长期使用习惯，主动提供最合适的交互功能。
 
-FocusUI主要验证四项能力：
+AttentionUI主要验证四项能力：
 
 1. 当用户关注某段网页内容时，工具条主动出现在内容附近。
 2. AI根据当前内容决定应该显示哪些工具。
@@ -28,7 +28,7 @@ FocusUI主要验证四项能力：
 
 ## 2.产品核心表达
 
-FocusUI的设计方向可以概括为：
+AttentionUI的设计方向可以概括为：
 
 - 从“用户寻找UI”到“UI主动来到用户附近”。
 - 从“导航式交互”到“注意力式交互”。
@@ -36,7 +36,7 @@ FocusUI的设计方向可以概括为：
 - 从“固定功能集合”到“根据当前内容选择交互能力”。
 - 从“AI直接生成任意网页代码”到“AI在受控组件库中规划界面”。
 
-FocusUI不会声称自己能够真正检测用户视线。
+AttentionUI不会声称自己能够真正检测用户视线。
 
 MVP通过以下信号推断用户当前关注的内容：
 
@@ -167,7 +167,7 @@ Background Service Worker
                     ↓
 HTTP请求127.0.0.1:17321
                     ↓
-FocusUI Desktop本地服务
+AttentionUI Desktop本地服务
                     ↓
 AI Planner或Tool Executor
                     ↓
@@ -182,7 +182,7 @@ Component Registry选择固定React组件
 
 ### 5.1桌面端职责
 
-FocusUI Desktop负责：
+AttentionUI Desktop负责：
 
 - 保存AI API地址。
 - 保存AI API Key。
@@ -198,7 +198,7 @@ FocusUI Desktop负责：
 
 ### 5.2插件端职责
 
-FocusUI Extension负责：
+AttentionUI Extension负责：
 
 - 监听鼠标、滚动和文本选择。
 - 推断用户当前关注的网页内容。
@@ -258,7 +258,7 @@ AI决定“使用哪个受控组件，以及组件显示什么数据”
 
 ### 6.2浏览器插件不能保存API Key
 
-API Key只能保存在FocusUI Desktop中。
+API Key只能保存在AttentionUI Desktop中。
 
 以下位置禁止出现API Key：
 
@@ -326,7 +326,7 @@ AI返回的数据必须经过Zod Schema校验。
 最终产物：
 
 ```text
-FocusUI-Setup-0.1.0.exe
+AttentionUI-Setup-0.1.0.exe
 ```
 
 ### 7.2浏览器插件
@@ -359,7 +359,7 @@ FocusUI-Setup-0.1.0.exe
 ## 8.项目目录
 
 ```text
-focus-ui/
+attention-ui/
 ├─package.json
 ├─package-lock.json
 ├─tsconfig.base.json
@@ -447,7 +447,7 @@ focus-ui/
 │     │  │  ├─local-policy.ts
 │     │  │  └─habit-sorter.ts
 │     │  ├─ui/
-│     │  │  ├─FocusUIRoot.tsx
+│     │  │  ├─AttentionUIRoot.tsx
 │     │  │  ├─AttentionToolbar.tsx
 │     │  │  ├─SummaryCard.tsx
 │     │  │  ├─ExplanationCard.tsx
@@ -609,7 +609,7 @@ GET /health
 ```json
 {
   "ok": true,
-  "service": "focusui-desktop",
+  "service": "attentionui-desktop",
   "version": "0.1.0",
   "aiConfigured": false
 }
@@ -625,7 +625,7 @@ POST /v1/pair
 
 ```json
 {
-  "pairingToken": "FUI-H8K2-PQ9M"
+  "pairingToken": "AUI-H8K2-PQ9M"
 }
 ```
 
@@ -952,7 +952,7 @@ API Key默认隐藏。
 开始任何新步骤时，使用以下提示词：
 
 ```text
-请继续开发FocusUI项目。
+请继续开发AttentionUI项目。
 
 开始编码前必须完整阅读项目根目录中的MUST_READ.md。
 
@@ -1160,7 +1160,7 @@ git status
 - 使用Electron、electron-vite、React和TypeScript。
 - 窗口默认尺寸960×680。
 - 最小尺寸760×520。
-- 显示“FocusUI Desktop”。
+- 显示“AttentionUI Desktop”。
 - 显示“本地服务：尚未启动”。
 - 开启`contextIsolation`。
 - 关闭`nodeIntegration`。
@@ -1183,7 +1183,7 @@ Renderer安全读取应用版本和运行状态。
 Preload暴露：
 
 ```ts
-window.focusUI.getAppInfo()
+window.attentionUI.getAppInfo()
 ```
 
 返回：
@@ -1201,7 +1201,7 @@ window.focusUI.getAppInfo()
 - Renderer不能直接访问`require`。
 - 能显示应用版本。
 - 能显示平台信息。
-- TypeScript识别`window.focusUI`。
+- TypeScript识别`window.attentionUI`。
 
 ## 第四步：创建本地Express服务
 
@@ -1289,7 +1289,7 @@ type AppSettings = {
 
 ### 目标
 
-防止任意本机网页调用FocusUI接口。
+防止任意本机网页调用AttentionUI接口。
 
 ### 必须完成
 
@@ -1654,7 +1654,7 @@ AI规划当前工具。
 托盘菜单：
 
 ```text
-打开FocusUI
+打开AttentionUI
 启动服务
 停止服务
 退出
@@ -1756,20 +1756,20 @@ AI失败时有日志，日志中不存在密钥。
 桌面端输出：
 
 ```text
-FocusUI-Setup-0.1.0.exe
+AttentionUI-Setup-0.1.0.exe
 ```
 
 插件输出：
 
 ```text
-focusui-extension.zip
+attentionui-extension.zip
 ```
 
 应用信息：
 
 ```text
-产品名称：FocusUI
-应用ID：com.focusui.desktop
+产品名称：AttentionUI
+应用ID：com.attentionui.desktop
 版本：0.1.0
 ```
 
@@ -1785,7 +1785,7 @@ focusui-extension.zip
 
 ### 测试顺序
 
-1. 安装FocusUI Desktop。
+1. 安装AttentionUI Desktop。
 2. 启动桌面软件。
 3. 填写AI配置。
 4. 测试AI连接。
@@ -1943,7 +1943,7 @@ AI不得只依靠本节判断项目状态，必须同时检查真实代码和Git
 说明：
 
 ```text
-传统网页需要用户主动寻找按钮。FocusUI通过鼠标停留、滚动状态和文本选择推断用户当前关注的内容，并把相关操作直接送到内容附近。
+传统网页需要用户主动寻找按钮。AttentionUI通过鼠标停留、滚动状态和文本选择推断用户当前关注的内容，并把相关操作直接送到内容附近。
 ```
 
 ### 第二阶段：内容理解
@@ -1961,7 +1961,7 @@ AI不得只依靠本节判断项目状态，必须同时检查真实代码和Git
 说明：
 
 ```text
-生成图表并不是原网页提供的功能。FocusUI理解当前内容后，从受控组件库中选择了一个新的交互组件。
+生成图表并不是原网页提供的功能。AttentionUI理解当前内容后，从受控组件库中选择了一个新的交互组件。
 ```
 
 ### 第四阶段：动态重构
@@ -1971,7 +1971,7 @@ AI不得只依靠本节判断项目状态，必须同时检查真实代码和Git
 说明：
 
 ```text
-FocusUI可以根据当前任务调整信息展示，降低无关内容干扰。
+AttentionUI可以根据当前任务调整信息展示，降低无关内容干扰。
 ```
 
 ### 第五阶段：桌面端和隐私
@@ -1996,7 +1996,7 @@ FocusUI可以根据当前任务调整信息展示，降低无关内容干扰。
 说明：
 
 ```text
-FocusUI不仅适应当前内容，也会在本地学习用户长期的工具使用习惯。
+AttentionUI不仅适应当前内容，也会在本地学习用户长期的工具使用习惯。
 ```
 
 ## 25.给AI的最终提醒
@@ -2014,6 +2014,6 @@ FocusUI不仅适应当前内容，也会在本地学习用户长期的工具使�
 - 已计划运行类型检查和测试。
 - 已明确当前步骤的验收标准。
 
-FocusUI的第一目标是做出稳定、可演示、能说明核心思想的MVP。
+AttentionUI的第一目标是做出稳定、可演示、能说明核心思想的MVP。
 
 不要为了“功能看起来更多”，牺牲核心链路的稳定性。

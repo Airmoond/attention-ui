@@ -1,4 +1,4 @@
-import type { ContextKind, PageContext } from "@focus-ui/shared"
+import type { ContextKind, PageContext } from "@attention-ui/shared"
 import { describe, expect, it, vi } from "vitest"
 import type { AiProvider } from "./ai-provider"
 import {

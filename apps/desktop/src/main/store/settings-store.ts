@@ -3,7 +3,7 @@ import {
   AppSettingsSchema,
   DEFAULT_APP_SETTINGS,
   type AppSettings
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 
 type SettingsStoreData = {
   settings: AppSettings
@@ -14,7 +14,7 @@ let settingsStore: Store<SettingsStoreData> | null = null
 const getStore = (): Store<SettingsStoreData> => {
   if (!settingsStore) {
     settingsStore = new Store<SettingsStoreData>({
-      name: "focus-ui-settings",
+      name: "attention-ui-settings",
       defaults: {
         settings: DEFAULT_APP_SETTINGS
       }

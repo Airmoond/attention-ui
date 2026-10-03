@@ -5,7 +5,7 @@ import {
   type ApiError,
   type ExecuteRequest,
   type ToolResult
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 
 export type ExecuteTool = (request: ExecuteRequest) => Promise<ToolResult>
 

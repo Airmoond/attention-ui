@@ -2,7 +2,7 @@ import {
   ChartDataSchema,
   ToolPlanSchema,
   ToolResultSchema
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import { describe, expect, it } from "vitest"
 
 describe("module six schemas", () => {

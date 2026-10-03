@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express"
-import type { HealthResponse } from "@focus-ui/shared"
+import type { HealthResponse } from "@attention-ui/shared"
 
 type HealthRouteOptions = {
   getVersion: () => string
@@ -13,7 +13,7 @@ export const createHealthRoute = ({
   return (_request, response): void => {
     const health: HealthResponse = {
       ok: true,
-      service: "focusui-desktop",
+      service: "attentionui-desktop",
       version: getVersion(),
       aiConfigured: getAiConfigured()
     }

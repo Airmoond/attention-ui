@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import type { AppInfo, AppSettings, PairingStatus, ServiceStatus } from "@focus-ui/shared"
+import type { AppInfo, AppSettings, PairingStatus, ServiceStatus } from "@attention-ui/shared"
 import AISettingsPage from "./pages/AISettingsPage"
 import BehaviorPage from "./pages/BehaviorPage"
 import LogsPage from "./pages/LogsPage"
@@ -28,10 +28,10 @@ const App = (): JSX.Element => {
 
   const refreshData = useCallback(async (): Promise<void> => {
     const [nextAppInfo, nextServiceStatus, nextSettings, nextPairingStatus] = await Promise.all([
-      window.focusUI.getAppInfo(),
-      window.focusUI.getServiceStatus(),
-      window.focusUI.getSettings(),
-      window.focusUI.getPairingStatus()
+      window.attentionUI.getAppInfo(),
+      window.attentionUI.getServiceStatus(),
+      window.attentionUI.getSettings(),
+      window.attentionUI.getPairingStatus()
     ])
 
     setAppInfo(nextAppInfo)
@@ -69,7 +69,7 @@ const App = (): JSX.Element => {
 
     const refreshPairingStatus = async (): Promise<void> => {
       try {
-        const nextPairingStatus = await window.focusUI.getPairingStatus()
+        const nextPairingStatus = await window.attentionUI.getPairingStatus()
         if (isActive) {
           setPairingStatus(nextPairingStatus)
         }
@@ -92,14 +92,14 @@ const App = (): JSX.Element => {
 
   const updateSettings = async (nextSettings: AppSettings): Promise<void> => {
     setErrorMessage(null)
-    const savedSettings = await window.focusUI.updateSettings(nextSettings)
+    const savedSettings = await window.attentionUI.updateSettings(nextSettings)
     setSettings(savedSettings)
-    const nextAppInfo = await window.focusUI.getAppInfo()
+    const nextAppInfo = await window.attentionUI.getAppInfo()
     setAppInfo(nextAppInfo)
   }
 
   const resetPreferences = async (): Promise<void> => {
-    await window.focusUI.resetPreferences()
+    await window.attentionUI.resetPreferences()
   }
 
   const runServiceAction = async (action: "start" | "stop"): Promise<void> => {
@@ -109,10 +109,10 @@ const App = (): JSX.Element => {
     try {
       const nextStatus =
         action === "start"
-          ? await window.focusUI.startService()
-          : await window.focusUI.stopService()
+          ? await window.attentionUI.startService()
+          : await window.attentionUI.stopService()
       setServiceStatus(nextStatus)
-      setAppInfo(await window.focusUI.getAppInfo())
+      setAppInfo(await window.attentionUI.getAppInfo())
 
       if (nextStatus.error) {
         setErrorMessage(nextStatus.error)
@@ -153,8 +153,8 @@ const App = (): JSX.Element => {
     try {
       const nextPairingStatus =
         action === "regenerate"
-          ? await window.focusUI.regeneratePairingToken()
-          : await window.focusUI.disconnectPlugin()
+          ? await window.attentionUI.regeneratePairingToken()
+          : await window.attentionUI.disconnectPlugin()
       setPairingStatus(nextPairingStatus)
     } catch (_error: unknown) {
       setErrorMessage(action === "regenerate" ? "无法重新生成配对令牌。" : "无法断开插件。")
@@ -172,10 +172,10 @@ const App = (): JSX.Element => {
           appInfo={appInfo}
           serviceStatus={serviceStatus}
           pairingStatus={pairingStatus}
-          onOpenGuide={window.focusUI.openQuickStart}
-          onPrepareExtension={window.focusUI.prepareExtensionInstall}
-          onOpenArticleDemo={window.focusUI.openArticleDemo}
-          onOpenFinanceDemo={window.focusUI.openFinanceDemo}
+          onOpenGuide={window.attentionUI.openQuickStart}
+          onPrepareExtension={window.attentionUI.prepareExtensionInstall}
+          onOpenArticleDemo={window.attentionUI.openArticleDemo}
+          onOpenFinanceDemo={window.attentionUI.openFinanceDemo}
           onCopyPairingToken={copyPairingToken}
           onOpenAiSettings={(): void => setActivePage("ai")}
         />
@@ -221,7 +221,7 @@ const App = (): JSX.Element => {
     <main className="app-shell">
       <aside className="sidebar">
         <div>
-          <p className="eyebrow">FOCUSUI 0.1.1 学生测试版</p>
+          <p className="eyebrow">ATTENTIONUI 0.1.1 学生测试版</p>
           <h1>Desktop</h1>
           <p className="sidebar-copy">本地AI服务与新手引导</p>
         </div>

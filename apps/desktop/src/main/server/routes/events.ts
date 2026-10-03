@@ -4,7 +4,7 @@ import {
   type ApiError,
   type ToolEvent,
   type ToolEventResponse
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import { appLogger } from "../../logger/logger"
 
 export type RecordToolEvent = (event: ToolEvent) => void

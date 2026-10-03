@@ -10,7 +10,7 @@ export const MAX_SELECTION_LENGTH = 1500
 const getElementForNode = (node: Node | null): Element | null =>
   node instanceof Element ? node : node?.parentElement ?? null
 
-const excludedSelection = "input,textarea,select,option,button,form,nav,footer,[contenteditable],[hidden],[inert],[aria-hidden='true'],#focus-ui-host"
+const excludedSelection = "input,textarea,select,option,button,form,nav,footer,[contenteditable],[hidden],[inert],[aria-hidden='true'],#attention-ui-host"
 const isSensitiveEditableElement = (element: Element | null): boolean =>
   !element || element.closest(excludedSelection) !== null || element.getRootNode() instanceof ShadowRoot
 

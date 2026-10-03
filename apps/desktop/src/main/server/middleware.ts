@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express"
-import type { ApiError } from "@focus-ui/shared"
+import type { ApiError } from "@attention-ui/shared"
 import type { AuthController } from "./auth"
 import { appLogger } from "../logger/logger"
 

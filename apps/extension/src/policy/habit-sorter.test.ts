@@ -1,4 +1,4 @@
-import type { ContextKind, PreferenceState, ToolId } from "@focus-ui/shared"
+import type { ContextKind, PreferenceState, ToolId } from "@attention-ui/shared"
 import { describe, expect, it } from "vitest"
 import { getLocalToolById, type LocalTool } from "./local-policy"
 import { getPreferenceScore, sortToolsByPreference } from "./habit-sorter"

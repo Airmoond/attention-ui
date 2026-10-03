@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import type { LogEntry } from "@focus-ui/shared"
+import type { LogEntry } from "@attention-ui/shared"
 
 const LogsPage = (): JSX.Element => {
   const [logs, setLogs] = useState<LogEntry[]>([])
@@ -10,7 +10,7 @@ const LogsPage = (): JSX.Element => {
     setIsLoading(true)
     setMessage(null)
     try {
-      setLogs(await window.focusUI.getLogs())
+      setLogs(await window.attentionUI.getLogs())
     } catch (_error: unknown) {
       setMessage("无法读取日志，请稍后重试。")
     } finally {
@@ -25,7 +25,7 @@ const LogsPage = (): JSX.Element => {
   const clearLogs = async (): Promise<void> => {
     setMessage(null)
     try {
-      await window.focusUI.clearLogs()
+      await window.attentionUI.clearLogs()
       setLogs([])
       setMessage("日志已清空。")
     } catch (_error: unknown) {
@@ -50,7 +50,7 @@ const LogsPage = (): JSX.Element => {
       {!isLoading && logs.length === 0 ? (
         <div className="empty-state">当前没有日志。</div>
       ) : (
-        <div className="log-list" aria-label="FocusUI安全日志">
+        <div className="log-list" aria-label="AttentionUI安全日志">
           {[...logs].reverse().map((entry) => (
             <article className={`log-entry log-${entry.level}`} key={entry.id}>
               <div className="log-entry-header">

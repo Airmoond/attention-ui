@@ -9,27 +9,27 @@ export type ErrorCardProps = {
 
 export const ErrorCard = forwardRef<HTMLDivElement, ErrorCardProps>(
   ({ message, onRetry, onBack, onClose }, ref): React.JSX.Element => (
-    <div ref={ref} className="focus-ui-message-card" role="status" aria-live="polite">
-      <p className="focus-ui-message-text">{message}</p>
-      <div className="focus-ui-message-actions">
+    <div ref={ref} className="attention-ui-message-card" role="status" aria-live="polite">
+      <p className="attention-ui-message-text">{message}</p>
+      <div className="attention-ui-message-actions">
         {onRetry ? (
-          <button className="focus-ui-message-button" type="button" onClick={onRetry}>
+          <button className="attention-ui-message-button" type="button" onClick={onRetry}>
             重试
           </button>
         ) : null}
         <button
-          className="focus-ui-message-button"
+          className="attention-ui-message-button"
           type="button"
-          aria-label="返回FocusUI工具条"
+          aria-label="返回AttentionUI工具条"
           title="返回"
           onClick={onBack}
         >
           返回
         </button>
         <button
-          className="focus-ui-message-button"
+          className="attention-ui-message-button"
           type="button"
-          aria-label="关闭FocusUI消息"
+          aria-label="关闭AttentionUI消息"
           title="关闭"
           onClick={onClose}
         >

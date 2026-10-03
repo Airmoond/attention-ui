@@ -35,7 +35,7 @@ apps/extension/src/
 ├─position/
 │  └─position-manager.ts
 └─ui/
-   ├─FocusUIRoot.tsx
+   ├─AttentionUIRoot.tsx
    ├─AttentionToolbar.tsx
    ├─LoadingCard.tsx
    ├─ErrorCard.tsx
@@ -85,7 +85,7 @@ focus
 其他工具在AI未接入前显示说明：
 
 ```text
-需要连接FocusUI Desktop并配置AI
+需要连接AttentionUI Desktop并配置AI
 ```
 
 ### 验收标准
@@ -193,7 +193,7 @@ type PositionInput = {
 错误提示示例：
 
 ```text
-FocusUI Desktop未连接
+AttentionUI Desktop未连接
 ```
 
 或：
@@ -283,7 +283,7 @@ button
 ## 九、UI状态建议
 
 ```ts
-type FocusUIState =
+type AttentionUIState =
     | { kind: "idle" }
     | {
         kind: "toolbar"

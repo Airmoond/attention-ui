@@ -1,4 +1,4 @@
-import { PageContextSchema, type PageContext } from "@focus-ui/shared"
+import { PageContextSchema, type PageContext } from "@attention-ui/shared"
 import { readDocumentSelection } from "../attention/selection-tracker"
 import { classifyContent } from "./content-classifier"
 import { extractNumericCandidates } from "./number-extractor"

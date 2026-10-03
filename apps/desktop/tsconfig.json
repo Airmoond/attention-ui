@@ -6,7 +6,7 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@focus-ui/shared": ["../../packages/shared/src/index.ts"]
+      "@attention-ui/shared": ["../../packages/shared/src/index.ts"]
     },
     "noEmit": true
   },

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import type { PreferenceState } from "@focus-ui/shared"
+import type { PreferenceState } from "@attention-ui/shared"
 
 const persistedData = vi.hoisted(() => ({ preferences: null as PreferenceState | null }))
 

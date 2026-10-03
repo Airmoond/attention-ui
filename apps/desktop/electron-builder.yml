@@ -1,6 +1,6 @@
-appId: com.focusui.desktop
-productName: FocusUI 0.1.1 学生测试版
-artifactName: FocusUI-Setup-${version}.${ext}
+appId: com.attentionui.desktop
+productName: AttentionUI 0.1.1 学生测试版
+artifactName: AttentionUI-Setup-${version}.${ext}
 asar: true
 compression: maximum
 
@@ -25,7 +25,7 @@ extraResources:
     to: onboarding/extension
 
 win:
-  executableName: FocusUI
+  executableName: AttentionUI
   icon: resources/icon.svg
   target:
     - target: nsis
@@ -39,5 +39,5 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: FocusUI
-  uninstallDisplayName: FocusUI 0.1.1 学生测试版
+  shortcutName: AttentionUI
+  uninstallDisplayName: AttentionUI 0.1.1 学生测试版

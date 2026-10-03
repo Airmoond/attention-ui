@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { SitePoliciesSchema } from "@focus-ui/shared/extension"
+import { SitePoliciesSchema } from "@attention-ui/shared/extension"
 import { DEFAULT_SITE_POLICY, getPageAccess, getSiteOrigin, getSitePolicies, minimizePageContext, pauseKey, SITE_STORAGE_KEY, updateSitePolicy } from "./site-access"
 
 let local: Record<string, unknown>

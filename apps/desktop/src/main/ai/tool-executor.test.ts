@@ -4,7 +4,7 @@ import {
   type ExecuteRequest,
   type PageContext,
   type ToolId
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import { describe, expect, it, vi } from "vitest"
 import { AiProviderError, type AiCompletionRequest, type AiProvider } from "./ai-provider"
 import { createToolExecutor } from "./tool-executor"

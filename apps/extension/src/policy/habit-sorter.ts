@@ -1,4 +1,4 @@
-import type { ContextKind, PreferenceState, ToolId } from "@focus-ui/shared"
+import type { ContextKind, PreferenceState, ToolId } from "@attention-ui/shared"
 import type { LocalTool } from "./local-policy"
 
 export const HABIT_ADAPTATION_THRESHOLD = 3

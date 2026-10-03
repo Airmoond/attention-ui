@@ -8,7 +8,7 @@ import {
   type PairResponse,
   type PreferenceState,
   type ToolEvent
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import { createServer, type Server } from "node:http"
 import { createConnection } from "node:net"
 import { resolve } from "node:path"
@@ -65,7 +65,7 @@ describe("local desktop service", () => {
     expect(healthResponse.status).toBe(200)
     await expect(healthResponse.json()).resolves.toEqual({
       ok: true,
-      service: "focusui-desktop",
+      service: "attentionui-desktop",
       version: "0.1.1",
       aiConfigured: false
     })
@@ -120,7 +120,7 @@ describe("local desktop service", () => {
 
   it("serves only the beginner guide and two packaged demo pages", async () => {
     let authState: AuthState = {
-      pairingToken: "FUI-GUIDE-1234",
+      pairingToken: "AUI-GUIDE-1234",
       clientToken: null,
       tokenVersion: 0,
       lastConnectedAt: null
@@ -144,8 +144,8 @@ describe("local desktop service", () => {
     await startLocalServer()
 
     for (const [path, marker] of [
-      ["/guide", "5分钟快速上手"],
-      ["/demo/article.html", "FocusUI 技术观察"],
+      ["/guide", "安装说明书"],
+      ["/demo/article.html", "AttentionUI 技术观察"],
       ["/demo/finance.html", "星海科技经营数据简报"],
       ["/demo/styles.css", ":root"]
     ] as const) {
@@ -182,7 +182,7 @@ describe("application settings schema", () => {
 describe("pairing and protected local API", () => {
   it("records only authenticated, strictly validated tool click events", async () => {
     let authState: AuthState = {
-      pairingToken: "FUI-TEST-1234",
+      pairingToken: "AUI-TEST-1234",
       clientToken: "authenticated-client-token-value",
       tokenVersion: 0,
       lastConnectedAt: null
@@ -294,7 +294,7 @@ describe("pairing and protected local API", () => {
 
   it("enforces pairing, bearer authentication, token invalidation, and strict CORS", async () => {
     let authState: AuthState = {
-      pairingToken: "FUI-TEST-1234",
+      pairingToken: "AUI-TEST-1234",
       clientToken: null,
       tokenVersion: 0,
       lastConnectedAt: null

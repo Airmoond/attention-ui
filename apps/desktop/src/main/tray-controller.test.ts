@@ -96,7 +96,7 @@ describe("tray controller", () => {
     await Promise.resolve()
     expect(startService).toHaveBeenCalledOnce()
 
-    menuItem(tray as InstanceType<typeof electronMocks.FakeTray>, "打开FocusUI").click?.()
+    menuItem(tray as InstanceType<typeof electronMocks.FakeTray>, "打开AttentionUI").click?.()
     menuItem(tray as InstanceType<typeof electronMocks.FakeTray>, "退出").click?.()
     expect(options.showWindow).toHaveBeenCalledOnce()
     expect(options.quitApplication).toHaveBeenCalledOnce()

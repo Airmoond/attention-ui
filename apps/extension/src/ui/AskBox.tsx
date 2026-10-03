@@ -12,10 +12,10 @@ export const AskBox = forwardRef<HTMLDivElement, AskBoxProps>(
     const normalizedQuestion = question.trim()
 
     return (
-      <div ref={ref} className="focus-ui-message-card" role="dialog" aria-label="围绕当前内容提问">
-        <h2 className="focus-ui-result-title">向当前内容提问</h2>
+      <div ref={ref} className="attention-ui-message-card" role="dialog" aria-label="围绕当前内容提问">
+        <h2 className="attention-ui-result-title">向当前内容提问</h2>
         <textarea
-          className="focus-ui-ask-input"
+          className="attention-ui-ask-input"
           value={question}
           maxLength={500}
           rows={4}
@@ -29,20 +29,20 @@ export const AskBox = forwardRef<HTMLDivElement, AskBoxProps>(
             }
           }}
         />
-        <p className="focus-ui-input-hint">最多500字，Ctrl/⌘ + Enter发送</p>
-        <div className="focus-ui-message-actions">
-          <button className="focus-ui-message-button" type="button" onClick={onBack}>
+        <p className="attention-ui-input-hint">最多500字，Ctrl/⌘ + Enter发送</p>
+        <div className="attention-ui-message-actions">
+          <button className="attention-ui-message-button" type="button" onClick={onBack}>
             返回
           </button>
           <button
-            className="focus-ui-message-button"
+            className="attention-ui-message-button"
             type="button"
             disabled={!normalizedQuestion}
             onClick={() => onSubmit(normalizedQuestion)}
           >
             发送
           </button>
-          <button className="focus-ui-message-button" type="button" onClick={onClose}>
+          <button className="attention-ui-message-button" type="button" onClick={onClose}>
             关闭
           </button>
         </div>

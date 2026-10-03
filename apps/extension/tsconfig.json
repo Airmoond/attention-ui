@@ -6,8 +6,8 @@
     "jsx": "react-jsx",
     "types": ["chrome"],
     "paths": {
-      "@focus-ui/shared": ["../../packages/shared/src/index.ts"],
-      "@focus-ui/shared/extension": ["../../packages/shared/src/extension.ts"]
+      "@attention-ui/shared": ["../../packages/shared/src/index.ts"],
+      "@attention-ui/shared/extension": ["../../packages/shared/src/extension.ts"]
     }
   }
 }

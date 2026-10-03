@@ -112,7 +112,7 @@ describe("desktop tool transport", () => {
       .mockResolvedValueOnce(
         Response.json({
           ok: true,
-          service: "focusui-desktop",
+          service: "attentionui-desktop",
           version: "0.1.0",
           aiConfigured: true
         })

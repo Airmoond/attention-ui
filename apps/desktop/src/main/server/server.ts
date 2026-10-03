@@ -9,8 +9,8 @@ import type {
   PreferenceState,
   ServiceStatus,
   ToolResult
-} from "@focus-ui/shared"
-import { getFocusUIErrorMessage } from "@focus-ui/shared"
+} from "@attention-ui/shared"
+import { getAttentionUIErrorMessage } from "@attention-ui/shared"
 import { getLocalFallbackPlan } from "../ai/ai-planner"
 import { appLogger } from "../logger/logger"
 import type { OnboardingAssets } from "../onboarding"
@@ -62,7 +62,7 @@ const defaultPlanPageContext = async (pageContext: PageContext): Promise<PlanRes
 const defaultExecuteTool = async (request: ExecuteRequest): Promise<ToolResult> => ({
   toolId: request.toolId,
   success: false,
-  content: getFocusUIErrorMessage("AI_PROVIDER_ERROR"),
+  content: getAttentionUIErrorMessage("AI_PROVIDER_ERROR"),
   errorCode: "AI_PROVIDER_ERROR"
 })
 let planPageContext = defaultPlanPageContext

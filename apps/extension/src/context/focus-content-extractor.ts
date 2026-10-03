@@ -1,4 +1,4 @@
-import type { PageContext } from "@focus-ui/shared"
+import type { PageContext } from "@attention-ui/shared"
 import { normalizeVisibleText, truncateText } from "./semantic-block"
 
 export type FocusReaderBlock =
@@ -43,7 +43,7 @@ const EXCLUDED_READER_SELECTOR = [
   "[class~='ad']",
   "[class*='advert']",
   "[id*='advert']",
-  "#focus-ui-host"
+  "#attention-ui-host"
 ].join(", ")
 
 const isInsideSensitiveRegion = (element: Element, root: HTMLElement): boolean => {

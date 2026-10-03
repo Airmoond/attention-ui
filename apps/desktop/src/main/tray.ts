@@ -47,7 +47,7 @@ const buildTrayMenu = (): Electron.Menu => {
   const menuState = getTrayServiceMenuState(options?.isServiceRunning() ?? false)
   const template: MenuItemConstructorOptions[] = [
     {
-      label: "打开FocusUI",
+      label: "打开AttentionUI",
       click: (): void => options?.showWindow()
     },
     { type: "separator" },
@@ -82,7 +82,7 @@ export const createFocusTray = (options: FocusTrayOptions): FocusTrayController 
   activeOptions = options
   if (!applicationTray) {
     applicationTray = new Tray(createTrayImage())
-    applicationTray.setToolTip("FocusUI Desktop")
+    applicationTray.setToolTip("AttentionUI Desktop")
     applicationTray.on("click", options.showWindow)
   }
   refreshTrayMenu()
@@ -96,8 +96,8 @@ export const createFocusTray = (options: FocusTrayOptions): FocusTrayController 
       backgroundNotificationShown = true
       if (process.platform === "win32") {
         applicationTray.displayBalloon({
-          title: "FocusUI",
-          content: "FocusUI仍在后台运行",
+          title: "AttentionUI",
+          content: "AttentionUI仍在后台运行",
           iconType: "info",
           noSound: true,
           respectQuietTime: true

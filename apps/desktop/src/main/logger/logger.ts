@@ -1,4 +1,4 @@
-import type { LogEntry, LogLevel, LogMetadata } from "@focus-ui/shared"
+import type { LogEntry, LogLevel, LogMetadata } from "@attention-ui/shared"
 
 export const MAX_LOG_ENTRIES = 100
 

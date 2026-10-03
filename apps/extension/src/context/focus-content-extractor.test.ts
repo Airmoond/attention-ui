@@ -1,4 +1,4 @@
-import type { PageContext } from "@focus-ui/shared"
+import type { PageContext } from "@attention-ui/shared"
 import { parseHTML } from "linkedom"
 import { describe, expect, it } from "vitest"
 import {

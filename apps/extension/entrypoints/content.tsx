@@ -3,28 +3,28 @@ import { AttentionEngine, type AttentionCandidate } from "../src/attention/atten
 import { extractPageContext } from "../src/context/context-extractor"
 import { SemanticBlockDebugOutline } from "../src/context/semantic-block"
 import { getLocalTools } from "../src/policy/local-policy"
-import type { PageAccess } from "@focus-ui/shared/extension"
+import type { PageAccess } from "@attention-ui/shared/extension"
 import { sendExtensionMessage } from "../src/communication/messages"
 import { getManualCandidate } from "../src/control/manual-selection"
-import { FocusUIRoot, type ToolbarSession } from "../src/ui/FocusUIRoot"
+import { AttentionUIRoot, type ToolbarSession } from "../src/ui/AttentionUIRoot"
 
-const HOST_ID = "focus-ui-host"
-const HOST_ATTRIBUTE = "data-focus-ui-root"
+const HOST_ID = "attention-ui-host"
+const HOST_ATTRIBUTE = "data-attention-ui-root"
 
-type FocusUiHost = HTMLElement & {
-  focusUiReactRoot?: Root
+type AttentionUiHost = HTMLElement & {
+  attentionUiReactRoot?: Root
 }
 
 let attentionEngine: AttentionEngine | null = null
 let synchronizeVersion = 0
 let access: PageAccess | null = null
 
-const getHost = (): FocusUiHost | null => {
+const getHost = (): AttentionUiHost | null => {
   const host = document.getElementById(HOST_ID)
-  return host?.getAttribute(HOST_ATTRIBUTE) === "true" ? (host as FocusUiHost) : null
+  return host?.getAttribute(HOST_ATTRIBUTE) === "true" ? (host as AttentionUiHost) : null
 }
 
-const removeFocusUiRoot = (): void => {
+const removeAttentionUiRoot = (): void => {
   attentionEngine?.stop()
   attentionEngine = null
   const host = getHost()
@@ -32,7 +32,7 @@ const removeFocusUiRoot = (): void => {
     return
   }
 
-  host.focusUiReactRoot?.unmount()
+  host.attentionUiReactRoot?.unmount()
   host.remove()
 }
 
@@ -49,10 +49,10 @@ const reportAttentionCandidate = (candidate: AttentionCandidate, trigger: "hover
       })
     }
     const host = getHost()
-    host?.focusUiReactRoot?.render(<FocusUIRoot session={session} autoAI={access.autoAI} />)
+    host?.attentionUiReactRoot?.render(<AttentionUIRoot session={session} autoAI={access.autoAI} />)
 
     if (import.meta.env.DEV) {
-      console.debug("FocusUI Attention Candidate", {
+      console.debug("AttentionUI Attention Candidate", {
         kind: candidate.kind,
         rect: {
           x: Math.round(candidate.rect.x),
@@ -69,7 +69,7 @@ const reportAttentionCandidate = (candidate: AttentionCandidate, trigger: "hover
       })
     }
   } catch (_error: unknown) {
-    console.warn("FocusUI 上下文提取失败")
+    console.warn("AttentionUI 上下文提取失败")
   }
 }
 
@@ -85,7 +85,7 @@ const startAttentionInference = (): void => {
   attentionEngine.start()
 }
 
-const mountFocusUiRoot = (): void => {
+const mountAttentionUiRoot = (): void => {
   const existingHost = getHost()
   if (existingHost) {
     startAttentionInference()
@@ -97,7 +97,7 @@ const mountFocusUiRoot = (): void => {
     return
   }
 
-  const host = document.createElement("div") as FocusUiHost
+  const host = document.createElement("div") as AttentionUiHost
   host.id = HOST_ID
   host.setAttribute(HOST_ATTRIBUTE, "true")
 
@@ -108,7 +108,7 @@ const mountFocusUiRoot = (): void => {
       all: initial;
       color-scheme: light;
     }
-    .focus-ui-toolbar {
+    .attention-ui-toolbar {
       position: fixed;
       z-index: 2147483000;
       display: flex;
@@ -126,10 +126,10 @@ const mountFocusUiRoot = (): void => {
       font-size: 13px;
       line-height: 1.2;
       letter-spacing: 0;
-      animation: focus-ui-fade-in 150ms ease-out both;
+      animation: attention-ui-fade-in 150ms ease-out both;
     }
-    .focus-ui-tool-button,
-    .focus-ui-close-button {
+    .attention-ui-tool-button,
+    .attention-ui-close-button {
       box-sizing: border-box;
       margin: 0;
       border: 0;
@@ -142,31 +142,31 @@ const mountFocusUiRoot = (): void => {
       white-space: nowrap;
       cursor: pointer;
     }
-    .focus-ui-tool-button:hover,
-    .focus-ui-tool-button:focus-visible,
-    .focus-ui-close-button:hover,
-    .focus-ui-close-button:focus-visible {
+    .attention-ui-tool-button:hover,
+    .attention-ui-tool-button:focus-visible,
+    .attention-ui-close-button:hover,
+    .attention-ui-close-button:focus-visible {
       color: #ffffff;
       background: rgba(255, 255, 255, 0.14);
       outline: none;
     }
-    .focus-ui-tool-button:focus-visible,
-    .focus-ui-close-button:focus-visible {
+    .attention-ui-tool-button:focus-visible,
+    .attention-ui-close-button:focus-visible {
       box-shadow: 0 0 0 2px #8bb5ff;
     }
-    .focus-ui-close-button {
+    .attention-ui-close-button {
       min-width: 30px;
       color: #cbd5e1;
       font-size: 16px;
       font-weight: 500;
     }
-    .focus-ui-separator {
+    .attention-ui-separator {
       width: 1px;
       height: 20px;
       margin: 0 2px;
       background: rgba(255, 255, 255, 0.18);
     }
-    .focus-ui-message-card {
+    .attention-ui-message-card {
       position: fixed;
       top: 20px;
       right: 20px;
@@ -183,72 +183,72 @@ const mountFocusUiRoot = (): void => {
       background: #ffffff;
       box-shadow: 0 12px 32px rgba(20, 33, 61, 0.2);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      animation: focus-ui-fade-in 150ms ease-out both;
+      animation: attention-ui-fade-in 150ms ease-out both;
     }
-    .focus-ui-result-card {
+    .attention-ui-result-card {
       width: min(460px, calc(100vw - 32px));
       max-height: min(72vh, 680px);
       overflow: hidden auto;
       overscroll-behavior: contain;
     }
-    .focus-ui-result-title {
+    .attention-ui-result-title {
       margin: 0;
       color: #172033;
       font: 700 17px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    .focus-ui-result-text {
+    .attention-ui-result-text {
       display: grid;
       gap: 8px;
       color: #263957;
       overflow-wrap: anywhere;
     }
-    .focus-ui-result-text p,
-    .focus-ui-result-text h3 {
+    .attention-ui-result-text p,
+    .attention-ui-result-text h3 {
       margin: 0;
       font: 400 14px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       white-space: pre-wrap;
     }
-    .focus-ui-result-text h3 {
+    .attention-ui-result-text h3 {
       color: #172033;
       font-size: 15px;
       font-weight: 700;
     }
-    .focus-ui-result-text strong {
+    .attention-ui-result-text strong {
       color: #172033;
       font-weight: 700;
     }
-    .focus-ui-result-text code {
+    .attention-ui-result-text code {
       border-radius: 4px;
       padding: 1px 4px;
       color: #1749c7;
       background: #eef3fb;
       font: 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
     }
-    .focus-ui-result-list-item {
+    .attention-ui-result-list-item {
       position: relative;
       padding-left: 15px;
     }
-    .focus-ui-result-list-item::before {
+    .attention-ui-result-list-item::before {
       position: absolute;
       left: 2px;
       content: "•";
       color: #275efe;
     }
-    .focus-ui-structured-result {
+    .attention-ui-structured-result {
       display: grid;
       gap: 9px;
     }
-    .focus-ui-structured-result h3 {
+    .attention-ui-structured-result h3 {
       margin: 0;
       color: #263957;
       font: 700 14px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    .focus-ui-chart-list {
+    .attention-ui-chart-list {
       display: grid;
       gap: 6px;
       margin: 0;
     }
-    .focus-ui-chart-canvas {
+    .attention-ui-chart-canvas {
       width: 100%;
       height: 300px;
       min-height: 260px;
@@ -256,7 +256,7 @@ const mountFocusUiRoot = (): void => {
       border-radius: 8px;
       background: #ffffff;
     }
-    .focus-ui-chart-list > div {
+    .attention-ui-chart-list > div {
       display: flex;
       justify-content: space-between;
       gap: 16px;
@@ -264,39 +264,39 @@ const mountFocusUiRoot = (): void => {
       padding: 8px 10px;
       background: #f1f5fb;
     }
-    .focus-ui-chart-list dt,
-    .focus-ui-chart-list dd {
+    .attention-ui-chart-list dt,
+    .attention-ui-chart-list dd {
       margin: 0;
       color: #263957;
       font: 500 13px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    .focus-ui-chart-list dd {
+    .attention-ui-chart-list dd {
       color: #1749c7;
       font-weight: 700;
     }
-    .focus-ui-table-scroll {
+    .attention-ui-table-scroll {
       max-width: 100%;
       overflow-x: auto;
     }
-    .focus-ui-data-table {
+    .attention-ui-data-table {
       width: 100%;
       border-collapse: collapse;
       color: #263957;
       background: #ffffff;
       font: 13px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    .focus-ui-data-table th,
-    .focus-ui-data-table td {
+    .attention-ui-data-table th,
+    .attention-ui-data-table td {
       border: 1px solid #d8e1ef;
       padding: 8px 10px;
       text-align: left;
       overflow-wrap: anywhere;
     }
-    .focus-ui-data-table th {
+    .attention-ui-data-table th {
       background: #f1f5fb;
       font-weight: 700;
     }
-    .focus-ui-ask-input {
+    .attention-ui-ask-input {
       box-sizing: border-box;
       width: 100%;
       min-height: 88px;
@@ -308,40 +308,40 @@ const mountFocusUiRoot = (): void => {
       background: #ffffff;
       font: 14px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    .focus-ui-ask-input:focus {
+    .attention-ui-ask-input:focus {
       border-color: #275efe;
       outline: none;
       box-shadow: 0 0 0 2px rgba(39, 94, 254, 0.18);
     }
-    .focus-ui-input-hint {
+    .attention-ui-input-hint {
       margin: -4px 0 0;
       color: #64748b;
       font: 12px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    .focus-ui-loading-row {
+    .attention-ui-loading-row {
       display: flex;
       align-items: center;
       gap: 9px;
     }
-    .focus-ui-loading-dot {
+    .attention-ui-loading-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
       background: #275efe;
-      animation: focus-ui-pulse 900ms ease-in-out infinite alternate;
+      animation: attention-ui-pulse 900ms ease-in-out infinite alternate;
     }
-    .focus-ui-message-text {
+    .attention-ui-message-text {
       margin: 0;
       color: #263957;
       font-size: 14px;
       line-height: 1.5;
     }
-    .focus-ui-message-actions {
+    .attention-ui-message-actions {
       display: flex;
       justify-content: flex-end;
       gap: 6px;
     }
-    .focus-ui-message-button {
+    .attention-ui-message-button {
       box-sizing: border-box;
       margin: 0;
       border: 1px solid #c9d5e6;
@@ -352,21 +352,21 @@ const mountFocusUiRoot = (): void => {
       font: 600 13px/1.2 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       cursor: pointer;
     }
-    .focus-ui-message-button:hover,
-    .focus-ui-message-button:focus-visible {
+    .attention-ui-message-button:hover,
+    .attention-ui-message-button:focus-visible {
       border-color: #275efe;
       color: #1749c7;
       outline: none;
       box-shadow: 0 0 0 2px rgba(39, 94, 254, 0.2);
     }
-    .focus-ui-message-button:disabled {
+    .attention-ui-message-button:disabled {
       border-color: #d8e1ef;
       color: #94a3b8;
       background: #f8fafc;
       cursor: not-allowed;
       box-shadow: none;
     }
-    .focus-ui-reader-overlay {
+    .attention-ui-reader-overlay {
       position: fixed;
       inset: 0;
       z-index: 2147483000;
@@ -379,9 +379,9 @@ const mountFocusUiRoot = (): void => {
       padding: 24px;
       background: rgba(10, 17, 30, 0.76);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      animation: focus-ui-fade-in 150ms ease-out both;
+      animation: attention-ui-fade-in 150ms ease-out both;
     }
-    .focus-ui-reader-panel {
+    .attention-ui-reader-panel {
       box-sizing: border-box;
       width: min(820px, 100%);
       max-height: calc(100vh - 48px);
@@ -395,7 +395,7 @@ const mountFocusUiRoot = (): void => {
       box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
       overscroll-behavior: contain;
     }
-    .focus-ui-reader-header {
+    .attention-ui-reader-header {
       position: sticky;
       top: 0;
       z-index: 1;
@@ -409,13 +409,13 @@ const mountFocusUiRoot = (): void => {
       background: rgba(251, 252, 254, 0.97);
       backdrop-filter: blur(8px);
     }
-    .focus-ui-reader-title {
+    .attention-ui-reader-title {
       margin: 0;
       color: #172033;
       font: 700 clamp(24px, 3vw, 34px)/1.25 Georgia, "Times New Roman", serif;
       letter-spacing: -0.015em;
     }
-    .focus-ui-reader-close {
+    .attention-ui-reader-close {
       flex: 0 0 auto;
       box-sizing: border-box;
       width: 36px;
@@ -429,52 +429,52 @@ const mountFocusUiRoot = (): void => {
       font: 500 22px/1 system-ui, sans-serif;
       cursor: pointer;
     }
-    .focus-ui-reader-close:hover,
-    .focus-ui-reader-close:focus-visible {
+    .attention-ui-reader-close:hover,
+    .attention-ui-reader-close:focus-visible {
       border-color: #275efe;
       color: #1749c7;
       outline: none;
       box-shadow: 0 0 0 3px rgba(39, 94, 254, 0.18);
     }
-    .focus-ui-reader-content {
+    .attention-ui-reader-content {
       box-sizing: border-box;
       padding: 24px 28px 42px;
     }
-    .focus-ui-reader-heading {
+    .attention-ui-reader-heading {
       margin: 30px 0 12px;
       color: #172033;
       font: 700 23px/1.35 Georgia, "Times New Roman", serif;
     }
-    .focus-ui-reader-heading:first-child {
+    .attention-ui-reader-heading:first-child {
       margin-top: 0;
     }
-    .focus-ui-reader-heading-3 {
+    .attention-ui-reader-heading-3 {
       font-size: 19px;
     }
-    .focus-ui-reader-paragraph,
-    .focus-ui-reader-list-item,
-    .focus-ui-reader-quote {
+    .attention-ui-reader-paragraph,
+    .attention-ui-reader-list-item,
+    .attention-ui-reader-quote {
       margin: 0 0 17px;
       color: #263957;
       font: 400 17px/1.8 Georgia, "Times New Roman", serif;
       overflow-wrap: anywhere;
     }
-    .focus-ui-reader-list-item {
+    .attention-ui-reader-list-item {
       position: relative;
       padding-left: 20px;
     }
-    .focus-ui-reader-list-item::before {
+    .attention-ui-reader-list-item::before {
       position: absolute;
       left: 2px;
       content: "•";
       color: #275efe;
     }
-    .focus-ui-reader-quote {
+    .attention-ui-reader-quote {
       border-left: 3px solid #7aa2ff;
       padding: 4px 0 4px 18px;
       color: #40516d;
     }
-    .focus-ui-reader-code {
+    .attention-ui-reader-code {
       box-sizing: border-box;
       margin: 0 0 18px;
       border-radius: 9px;
@@ -487,16 +487,16 @@ const mountFocusUiRoot = (): void => {
       overflow-wrap: anywhere;
     }
     @media (max-width: 600px) {
-      .focus-ui-reader-overlay { padding: 10px; }
-      .focus-ui-reader-panel { max-height: calc(100vh - 20px); }
-      .focus-ui-reader-header { padding: 20px 18px 16px; }
-      .focus-ui-reader-content { padding: 20px 18px 34px; }
+      .attention-ui-reader-overlay { padding: 10px; }
+      .attention-ui-reader-panel { max-height: calc(100vh - 20px); }
+      .attention-ui-reader-header { padding: 20px 18px 16px; }
+      .attention-ui-reader-content { padding: 20px 18px 34px; }
     }
-    @keyframes focus-ui-fade-in {
+    @keyframes attention-ui-fade-in {
       from { opacity: 0; transform: translateY(2px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes focus-ui-pulse {
+    @keyframes attention-ui-pulse {
       from { opacity: 0.35; transform: scale(0.82); }
       to { opacity: 1; transform: scale(1); }
     }
@@ -504,24 +504,24 @@ const mountFocusUiRoot = (): void => {
   const mountElement = document.createElement("div")
   shadowRoot.append(style, mountElement)
   document.documentElement.append(host)
-  host.focusUiReactRoot = createRoot(mountElement)
-  host.focusUiReactRoot.render(<FocusUIRoot session={null} />)
+  host.attentionUiReactRoot = createRoot(mountElement)
+  host.attentionUiReactRoot.render(<AttentionUIRoot session={null} />)
   startAttentionInference()
 }
 
-const synchronizeFocusUiRoot = async (): Promise<void> => {
+const synchronizeAttentionUiRoot = async (): Promise<void> => {
   const version = ++synchronizeVersion
   access = null
-  removeFocusUiRoot()
+  removeAttentionUiRoot()
   const result = await sendExtensionMessage({ type: "GET_PAGE_ACCESS" })
   if (version !== synchronizeVersion || !result.ok || !("access" in result)) return
   access = result.access
-  if (access.active) mountFocusUiRoot()
+  if (access.active) mountAttentionUiRoot()
 }
 const reportSynchronizationFailure = (): void => {
   access = null
-  removeFocusUiRoot()
-  console.warn("FocusUI 网站状态同步失败")
+  removeAttentionUiRoot()
+  console.warn("AttentionUI 网站状态同步失败")
 }
 const showSelection = (): boolean => {
   if (!access?.active) return false
@@ -534,15 +534,15 @@ export default defineContentScript({
   registration: "runtime",
   matches: [],
   main(ctx) {
-    const synchronize = (): void => { void synchronizeFocusUiRoot().catch(reportSynchronizationFailure) }
+    const synchronize = (): void => { void synchronizeAttentionUiRoot().catch(reportSynchronizationFailure) }
     const changed = (changes: Record<string, chrome.storage.StorageChange>, area: string): void => {
       if (area === "local" && (changes.enabled || changes.sitePoliciesV1)) synchronize()
     }
     const message = (value: unknown, sender: chrome.runtime.MessageSender, respond: (result: unknown) => void): boolean => {
       if (sender.id !== chrome.runtime.id || !value || typeof value !== "object" || !("type" in value)) return false
-      if (value.type === "FOCUSUI_SYNC") { synchronize(); respond({ ok: true }); return false }
-      if (value.type === "FOCUSUI_SHOW_SELECTION") {
-        void synchronizeFocusUiRoot().then(() => {
+      if (value.type === "ATTENTIONUI_SYNC") { synchronize(); respond({ ok: true }); return false }
+      if (value.type === "ATTENTIONUI_SHOW_SELECTION") {
+        void synchronizeAttentionUiRoot().then(() => {
           respond(showSelection() ? { ok: true } : { ok: false, code: "NO_SAFE_SELECTION", message: "请先在正文中选中文字，再唤起工具。" })
         }).catch(() => { reportSynchronizationFailure(); respond({ ok: false, code: "CONTROL_FAILED", message: "网站状态同步失败，请重试。" }) })
         return true
@@ -554,7 +554,7 @@ export default defineContentScript({
         if (showSelection()) event.preventDefault()
       }
     }
-    const hide = (): void => { ++synchronizeVersion; access = null; removeFocusUiRoot() }
+    const hide = (): void => { ++synchronizeVersion; access = null; removeAttentionUiRoot() }
     synchronize()
     chrome.storage.onChanged.addListener(changed)
     chrome.runtime.onMessage.addListener(message)

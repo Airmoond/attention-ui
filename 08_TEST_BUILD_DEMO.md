@@ -4,7 +4,7 @@
 >
 > 当前状态：已完成。团队全流程验收已由用户确认；证据范围、自动检查和交付文件校验值见 [0.1.0 Beta 验收记录](docs/releases/v0.1.0-beta.md)。下方清单保留为后续复验模板，不代表当前待办。
 >
-> 本模块完成后，FocusUI应拥有稳定的演示页面、基础自动化测试、Windows安装程序、插件构建产物和完整集成测试记录。
+> 本模块完成后，AttentionUI应拥有稳定的演示页面、基础自动化测试、Windows安装程序、插件构建产物和完整集成测试记录。
 >
 > 本模块原则上只修复验收发现的问题，不再扩展新功能。
 
@@ -183,15 +183,15 @@ electron-builder
 应用信息：
 
 ```text
-产品名称：FocusUI
-应用ID：com.focusui.desktop
+产品名称：AttentionUI
+应用ID：com.attentionui.desktop
 版本：0.1.0
 ```
 
 输出：
 
 ```text
-FocusUI-Setup-0.1.0.exe
+AttentionUI-Setup-0.1.0.exe
 ```
 
 需要检查：
@@ -230,7 +230,7 @@ FocusUI-Setup-0.1.0.exe
 输出：
 
 ```text
-focusui-extension.zip
+attentionui-extension.zip
 ```
 
 检查：
@@ -258,7 +258,7 @@ focusui-extension.zip
 
 ### 安装与配置
 
-1. 安装FocusUI Desktop。
+1. 安装AttentionUI Desktop。
 2. 启动应用。
 3. 配置API地址、API Key和模型。
 4. 测试AI连接。
@@ -350,7 +350,7 @@ AI失败不导致插件崩溃
 点击总结或解释。
 
 ```text
-FocusUI根据鼠标停留、滚动状态和文本选择推断用户当前关注的内容，并把相关操作送到内容附近。
+AttentionUI根据鼠标停留、滚动状态和文本选择推断用户当前关注的内容，并把相关操作送到内容附近。
 ```
 
 ### 35至55秒：生成图表
@@ -358,7 +358,7 @@ FocusUI根据鼠标停留、滚动状态和文本选择推断用户当前关注�
 打开财经页面，停留在数据内容，点击生成图表。
 
 ```text
-这个按钮并不存在于原网页。FocusUI理解当前内容后，从受控组件库中选择并生成了新的交互。
+这个按钮并不存在于原网页。AttentionUI理解当前内容后，从受控组件库中选择并生成了新的交互。
 ```
 
 ### 55至70秒：专注模式
@@ -366,7 +366,7 @@ FocusUI根据鼠标停留、滚动状态和文本选择推断用户当前关注�
 进入专注阅读。
 
 ```text
-FocusUI还能根据当前任务调整信息展示，降低无关内容干扰。
+AttentionUI还能根据当前任务调整信息展示，降低无关内容干扰。
 ```
 
 ### 70至90秒：桌面端和适应性
@@ -383,8 +383,8 @@ FocusUI还能根据当前任务调整信息展示，降低无关内容干扰。
 
 ```text
 release/
-├─FocusUI-Setup-0.1.0.exe
-├─focusui-extension.zip
+├─AttentionUI-Setup-0.1.0.exe
+├─attentionui-extension.zip
 ├─demo-pages/
 ├─MUST_READ.md
 ├─docs/

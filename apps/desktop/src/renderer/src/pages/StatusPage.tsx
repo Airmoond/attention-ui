@@ -1,4 +1,4 @@
-import type { AppInfo, AppSettings, PairingStatus, ServiceStatus } from "@focus-ui/shared"
+import type { AppInfo, AppSettings, PairingStatus, ServiceStatus } from "@attention-ui/shared"
 
 type StatusPageProps = {
   appInfo: AppInfo | null

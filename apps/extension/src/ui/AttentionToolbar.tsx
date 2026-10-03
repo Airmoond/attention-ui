@@ -77,9 +77,9 @@ export const AttentionToolbar = forwardRef<HTMLDivElement, AttentionToolbarProps
     return (
       <div
         ref={setToolbarRef}
-        className="focus-ui-toolbar"
+        className="attention-ui-toolbar"
         role="toolbar"
-        aria-label="FocusUI工具条"
+        aria-label="AttentionUI工具条"
         data-placement={position?.placement}
         style={{
           left: position?.left ?? 0,
@@ -90,7 +90,7 @@ export const AttentionToolbar = forwardRef<HTMLDivElement, AttentionToolbarProps
         {tools.map((tool) => (
           <button
             key={tool.id}
-            className="focus-ui-tool-button"
+            className="attention-ui-tool-button"
             type="button"
             aria-label={tool.label}
             title={tool.label}
@@ -99,11 +99,11 @@ export const AttentionToolbar = forwardRef<HTMLDivElement, AttentionToolbarProps
             {tool.label}
           </button>
         ))}
-        <span className="focus-ui-separator" aria-hidden="true" />
+        <span className="attention-ui-separator" aria-hidden="true" />
         <button
-          className="focus-ui-close-button"
+          className="attention-ui-close-button"
           type="button"
-          aria-label="关闭FocusUI工具条"
+          aria-label="关闭AttentionUI工具条"
           title="关闭"
           onClick={onClose}
         >

@@ -1,4 +1,4 @@
-import type { NumericCandidate } from "@focus-ui/shared"
+import type { NumericCandidate } from "@attention-ui/shared"
 import { normalizeVisibleText, truncateText } from "./semantic-block"
 
 const NUMERIC_PATTERN = /(?:[¥￥$€£]\s*)?[-+]?\d+(?:,\d{3})*(?:\.\d+)?%?/gu

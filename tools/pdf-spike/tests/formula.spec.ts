@@ -88,8 +88,8 @@ test("formula endpoint rejects missing token, remote origin and invalid images",
 
 test("real offline OCR on supplied lecture preserves prose and recognizes the density fraction", async ({ page }) => {
   test.setTimeout(120_000)
-  const local = process.env.FOCUSUI_TEST_PDF
-  test.skip(!local || !process.env.FOCUSUI_TEST_OCR, "Optional real local OCR acceptance; no model downloads during tests")
+  const local = process.env.ATTENTIONUI_TEST_PDF
+  test.skip(!local || !process.env.ATTENTIONUI_TEST_OCR, "Optional real local OCR acceptance; no model downloads during tests")
   await page.goto("/")
   await page.locator("#file").setInputFiles(local!)
   await expect(page.locator('.pdf-page[data-page="1"]')).toHaveAttribute("data-state", "ready")

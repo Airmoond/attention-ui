@@ -2,7 +2,7 @@
 
 > 对应总开发计划第4至7步。
 >
-> 本模块完成后，FocusUI Desktop应能运行本地HTTP服务、持久化设置、显示基础管理界面，并为浏览器插件提供安全配对机制。
+> 本模块完成后，AttentionUI Desktop应能运行本地HTTP服务、持久化设置、显示基础管理界面，并为浏览器插件提供安全配对机制。
 >
 > 本模块不创建Chrome插件，也不接入真实AI能力。
 
@@ -89,7 +89,7 @@ GET /health
 ```json
 {
   "ok": true,
-  "service": "focusui-desktop",
+  "service": "attentionui-desktop",
   "version": "0.1.0",
   "aiConfigured": false
 }
@@ -251,7 +251,7 @@ type AuthState = {
 配对令牌适合人工复制，例如：
 
 ```text
-FUI-H8K2-PQ9M
+AUI-H8K2-PQ9M
 ```
 
 客户端令牌应更长，不适合人工输入。
@@ -266,7 +266,7 @@ POST /v1/pair
 
 ```json
 {
-  "pairingToken": "FUI-H8K2-PQ9M"
+  "pairingToken": "AUI-H8K2-PQ9M"
 }
 ```
 

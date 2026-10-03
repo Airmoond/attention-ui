@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { ExtensionSettings } from "@focus-ui/shared/extension"
+import type { ExtensionSettings } from "@attention-ui/shared/extension"
 import { sendExtensionMessage } from "../../src/communication/messages"
 
 const pageStyle: React.CSSProperties = {
@@ -108,7 +108,7 @@ export const App = (): React.JSX.Element => {
 
   return (
     <main style={pageStyle}>
-      <h1>FocusUI 设置</h1>
+      <h1>AttentionUI 设置</h1>
       <label>
         桌面服务地址
         <input
@@ -143,7 +143,7 @@ export const App = (): React.JSX.Element => {
           checked={settings?.enabled ?? true}
           onChange={(event) => void updateEnabled(event.target.checked)}
         />{" "}
-        启用 FocusUI
+        启用 AttentionUI
       </label>
     </main>
   )

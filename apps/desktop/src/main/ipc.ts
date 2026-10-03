@@ -3,7 +3,7 @@ import { existsSync } from "node:fs"
 import { join } from "node:path"
 import {
   AppSettingsSchema,
-  getFocusUIErrorMessage,
+  getAttentionUIErrorMessage,
   type AiConnectionTestResult,
   type AppInfo,
   type AppSettings,
@@ -12,7 +12,7 @@ import {
   type PairingStatus,
   type PreferenceState,
   type ServiceStatus
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 import { createOpenAiCompatibleProvider, AiProviderError } from "./ai/ai-provider"
 import {
   getLocalServiceStatus,
@@ -30,24 +30,24 @@ import { resetPreferences } from "./store/preference-store"
 import { appLogger } from "./logger/logger"
 import { getOnboardingAssets } from "./onboarding"
 
-const GET_APP_INFO_CHANNEL = "focus-ui:get-app-info"
-const GET_SERVICE_STATUS_CHANNEL = "focus-ui:get-service-status"
-const START_SERVICE_CHANNEL = "focus-ui:start-service"
-const STOP_SERVICE_CHANNEL = "focus-ui:stop-service"
-const GET_SETTINGS_CHANNEL = "focus-ui:get-settings"
-const UPDATE_SETTINGS_CHANNEL = "focus-ui:update-settings"
-const RESET_SETTINGS_CHANNEL = "focus-ui:reset-settings"
-const GET_PAIRING_STATUS_CHANNEL = "focus-ui:get-pairing-status"
-const REGENERATE_PAIRING_TOKEN_CHANNEL = "focus-ui:regenerate-pairing-token"
-const DISCONNECT_PLUGIN_CHANNEL = "focus-ui:disconnect-plugin"
-const TEST_AI_CONNECTION_CHANNEL = "focus-ui:test-ai-connection"
-const RESET_PREFERENCES_CHANNEL = "focus-ui:reset-preferences"
-const GET_LOGS_CHANNEL = "focus-ui:get-logs"
-const CLEAR_LOGS_CHANNEL = "focus-ui:clear-logs"
-const OPEN_QUICK_START_CHANNEL = "focus-ui:open-quick-start"
-const PREPARE_EXTENSION_INSTALL_CHANNEL = "focus-ui:prepare-extension-install"
-const OPEN_ARTICLE_DEMO_CHANNEL = "focus-ui:open-article-demo"
-const OPEN_FINANCE_DEMO_CHANNEL = "focus-ui:open-finance-demo"
+const GET_APP_INFO_CHANNEL = "attention-ui:get-app-info"
+const GET_SERVICE_STATUS_CHANNEL = "attention-ui:get-service-status"
+const START_SERVICE_CHANNEL = "attention-ui:start-service"
+const STOP_SERVICE_CHANNEL = "attention-ui:stop-service"
+const GET_SETTINGS_CHANNEL = "attention-ui:get-settings"
+const UPDATE_SETTINGS_CHANNEL = "attention-ui:update-settings"
+const RESET_SETTINGS_CHANNEL = "attention-ui:reset-settings"
+const GET_PAIRING_STATUS_CHANNEL = "attention-ui:get-pairing-status"
+const REGENERATE_PAIRING_TOKEN_CHANNEL = "attention-ui:regenerate-pairing-token"
+const DISCONNECT_PLUGIN_CHANNEL = "attention-ui:disconnect-plugin"
+const TEST_AI_CONNECTION_CHANNEL = "attention-ui:test-ai-connection"
+const RESET_PREFERENCES_CHANNEL = "attention-ui:reset-preferences"
+const GET_LOGS_CHANNEL = "attention-ui:get-logs"
+const CLEAR_LOGS_CHANNEL = "attention-ui:clear-logs"
+const OPEN_QUICK_START_CHANNEL = "attention-ui:open-quick-start"
+const PREPARE_EXTENSION_INSTALL_CHANNEL = "attention-ui:prepare-extension-install"
+const OPEN_ARTICLE_DEMO_CHANNEL = "attention-ui:open-article-demo"
+const OPEN_FINANCE_DEMO_CHANNEL = "attention-ui:open-finance-demo"
 
 const openLocalOnboardingPage = async (path: string): Promise<OnboardingActionResult> => {
   const serviceStatus = isLocalServerRunning()
@@ -98,7 +98,7 @@ export const registerIpcHandlers = (): void => {
     const extensionDirectory = getOnboardingAssets().extensionDirectory
     const manifestPath = join(extensionDirectory, "manifest.json")
     if (!existsSync(manifestPath)) {
-      return { ok: false, message: "未找到内置Chrome插件，请重新安装FocusUI" }
+      return { ok: false, message: "未找到内置Chrome插件，请重新安装AttentionUI" }
     }
 
     clipboard.writeText(extensionDirectory)
@@ -124,7 +124,7 @@ export const registerIpcHandlers = (): void => {
       })
       try {
         await provider.complete({
-          systemPrompt: "这是FocusUI Desktop连接测试。只回复OK。",
+          systemPrompt: "这是AttentionUI Desktop连接测试。只回复OK。",
           userPrompt: "connection test"
         })
         return { ok: true, message: "AI服务连接成功" }
@@ -138,7 +138,7 @@ export const registerIpcHandlers = (): void => {
         return {
           ok: false,
           errorCode,
-          message: getFocusUIErrorMessage(errorCode)
+          message: getAttentionUIErrorMessage(errorCode)
         }
       }
     }

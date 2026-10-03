@@ -5,7 +5,7 @@ import {
   type ApiError,
   type PageContext,
   type PlanResponse
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 
 export type PlanPageContext = (pageContext: PageContext) => Promise<PlanResponse>
 

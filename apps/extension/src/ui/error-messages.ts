@@ -1,11 +1,11 @@
 import {
-  FocusUIErrorCodeSchema,
-  getFocusUIErrorMessage,
-  type FocusUIErrorCode
-} from "@focus-ui/shared"
+  AttentionUIErrorCodeSchema,
+  getAttentionUIErrorMessage,
+  type AttentionUIErrorCode
+} from "@attention-ui/shared"
 import type { BackgroundMessageResult } from "../communication/messages"
 
-const TRANSPORT_ERROR_CODES: Readonly<Record<string, FocusUIErrorCode>> = {
+const TRANSPORT_ERROR_CODES: Readonly<Record<string, AttentionUIErrorCode>> = {
   REQUEST_TIMEOUT: "DESKTOP_OFFLINE",
   AI_REQUEST_TIMEOUT: "AI_TIMEOUT",
   DESKTOP_UNREACHABLE: "DESKTOP_OFFLINE",
@@ -17,12 +17,12 @@ const TRANSPORT_ERROR_CODES: Readonly<Record<string, FocusUIErrorCode>> = {
 }
 
 const TRANSPORT_ERROR_MESSAGES: Readonly<Record<string, string>> = {
-  BACKGROUND_UNAVAILABLE: "FocusUI插件已更新，请刷新当前网页后重试",
-  BACKGROUND_REQUEST_FAILED: "FocusUI插件请求处理失败，请重试",
+  BACKGROUND_UNAVAILABLE: "AttentionUI插件已更新，请刷新当前网页后重试",
+  BACKGROUND_REQUEST_FAILED: "AttentionUI插件请求处理失败，请重试",
   DESKTOP_REQUEST_FAILED: "Desktop在线，但本次工具请求失败，请重试"
 }
 
-const RETRYABLE_ERROR_CODES = new Set<FocusUIErrorCode>([
+const RETRYABLE_ERROR_CODES = new Set<AttentionUIErrorCode>([
   "DESKTOP_OFFLINE",
   "AI_TIMEOUT",
   "AI_PROVIDER_ERROR",
@@ -32,7 +32,7 @@ const RETRYABLE_ERROR_CODES = new Set<FocusUIErrorCode>([
 
 export const getToolRequestErrorCode = (
   result: BackgroundMessageResult
-): FocusUIErrorCode => {
+): AttentionUIErrorCode => {
   if ("toolId" in result && !result.success && result.errorCode) {
     return result.errorCode
   }
@@ -40,7 +40,7 @@ export const getToolRequestErrorCode = (
     return "UNKNOWN_ERROR"
   }
 
-  const sharedCode = FocusUIErrorCodeSchema.safeParse(result.code)
+  const sharedCode = AttentionUIErrorCodeSchema.safeParse(result.code)
   if (sharedCode.success) {
     return sharedCode.data
   }
@@ -56,8 +56,8 @@ export const getToolRequestErrorMessage = (
       return transportMessage
     }
   }
-  return getFocusUIErrorMessage(getToolRequestErrorCode(result))
+  return getAttentionUIErrorMessage(getToolRequestErrorCode(result))
 }
 
-export const isRetryableFocusUIError = (code: FocusUIErrorCode): boolean =>
+export const isRetryableAttentionUIError = (code: AttentionUIErrorCode): boolean =>
   RETRYABLE_ERROR_CODES.has(code)

@@ -11,4 +11,5 @@ release/
 Thumbs.db
 
 # Local delivery archives; checksums are tracked in docs/releases.
+/AttentionUI-*-Beta.zip
 /FocusUI-*-Beta.zip

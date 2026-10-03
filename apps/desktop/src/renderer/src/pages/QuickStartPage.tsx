@@ -4,7 +4,7 @@ import type {
   OnboardingActionResult,
   PairingStatus,
   ServiceStatus
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 
 type QuickStartPageProps = {
   appInfo: AppInfo | null
@@ -40,7 +40,7 @@ const QuickStartPage = ({
 
   return (
     <section className="page-panel quick-start-page">
-      <p className="eyebrow">FOCUSUI 0.1.1 学生测试版</p>
+      <p className="eyebrow">ATTENTIONUI 0.1.1 学生测试版</p>
       <h2>5分钟快速上手</h2>
       <p className="page-intro">
         不需要命令行。按照下面四步完成Chrome插件、配对、AI配置和演示体验。
@@ -114,7 +114,7 @@ const QuickStartPage = ({
           <span className="step-number">4</span>
           <div>
             <h3>打开演示网页</h3>
-            <p>两个网页随安装包提供。用Chrome打开后，先从FocusUI弹窗启用此网站，再选字按Alt+Shift+F；自动工具条需要单独开启。</p>
+            <p>两个网页随安装包提供。用Chrome打开后，先从AttentionUI弹窗启用此网站，再选字按Alt+Shift+F；自动工具条需要单独开启。</p>
             <div className="button-row compact-row">
               <button onClick={(): void => { void runAction(onOpenArticleDemo) }} type="button">
                 打开文章Demo
@@ -130,7 +130,7 @@ const QuickStartPage = ({
       <div className="guide-footer">
         <div>
           <h3>需要更详细的说明？</h3>
-          <p>完整说明书包含安装、插件加载、配对、AI配置、演示操作和常见问题。</p>
+          <p>安装说明书按顺序介绍桌面安装、插件加载、配对和AI配置。</p>
         </div>
         <button className="secondary" onClick={(): void => { void runAction(onOpenGuide) }} type="button">
           打开完整说明书

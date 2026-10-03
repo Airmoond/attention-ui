@@ -39,7 +39,7 @@ export const ApiErrorSchema = z
 export const HealthResponseSchema = z
   .object({
     ok: z.literal(true),
-    service: z.literal("focusui-desktop"),
+    service: z.literal("attentionui-desktop"),
     version: z.string().min(1).max(50),
     aiConfigured: z.boolean()
   })

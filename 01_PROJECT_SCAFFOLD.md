@@ -30,7 +30,7 @@
 ## 三、目标目录
 
 ```text
-focus-ui/
+attention-ui/
 ├─package.json
 ├─package-lock.json
 ├─tsconfig.base.json
@@ -64,7 +64,7 @@ packages/shared/**
 
 ```json
 {
-  "name": "focus-ui",
+  "name": "attention-ui",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -163,7 +163,7 @@ webPreferences: {
 Renderer暂时显示：
 
 ```text
-FocusUI Desktop
+AttentionUI Desktop
 本地服务：尚未启动
 ```
 
@@ -190,7 +190,7 @@ FocusUI Desktop
 Preload只暴露：
 
 ```ts
-window.focusUI.getAppInfo()
+window.attentionUI.getAppInfo()
 ```
 
 返回：
@@ -214,7 +214,7 @@ contextBridge.exposeInMainWorld
 需要补充全局类型声明，使TypeScript识别：
 
 ```ts
-window.focusUI
+window.attentionUI
 ```
 
 Renderer读取并显示：

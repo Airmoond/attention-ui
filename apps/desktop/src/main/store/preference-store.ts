@@ -4,7 +4,7 @@ import {
   ToolEventSchema,
   type PreferenceState,
   type ToolEvent
-} from "@focus-ui/shared"
+} from "@attention-ui/shared"
 
 type PreferenceStoreData = {
   preferences: PreferenceState
@@ -22,7 +22,7 @@ export const createDefaultPreferenceState = (): PreferenceState => ({
 const getStore = (): Store<PreferenceStoreData> => {
   if (!preferenceStore) {
     preferenceStore = new Store<PreferenceStoreData>({
-      name: "focus-ui-preferences",
+      name: "attention-ui-preferences",
       defaults: { preferences: createDefaultPreferenceState() }
     })
   }
