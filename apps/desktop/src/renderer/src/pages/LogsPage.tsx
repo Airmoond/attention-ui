@@ -37,7 +37,7 @@ const LogsPage = (): JSX.Element => {
     <section className="page-panel">
       <p className="eyebrow">调试日志</p>
       <h2>安全诊断日志</h2>
-      <p className="page-intro">仅保留本次运行最近100条安全事件，重启后自动清空。</p>
+      <p className="page-intro">查看最近的运行事件，帮助定位连接或工具使用问题。保留本次运行最近100条记录。</p>
       <div className="button-row">
         <button disabled={isLoading} onClick={(): void => void refreshLogs()} type="button">
           {isLoading ? "刷新中…" : "刷新"}
@@ -46,7 +46,7 @@ const LogsPage = (): JSX.Element => {
           清空
         </button>
       </div>
-      {message ? <p className="notice">{message}</p> : null}
+      {message ? <p className="notice" role="status">{message}</p> : null}
       {!isLoading && logs.length === 0 ? (
         <div className="empty-state">当前没有日志。</div>
       ) : (

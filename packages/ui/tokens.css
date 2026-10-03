@@ -1,0 +1,22 @@
+/* AttentionUI visual primitives. Import in application roots; inject only inside the web Shadow DOM. */
+:root, :host {
+  --aui-font: "Segoe UI Variable", "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  --aui-bg: #f5f5f7;
+  --aui-surface: #ffffff;
+  --aui-surface-subtle: #f9f9fb;
+  --aui-text: #1d1d1f;
+  --aui-secondary: #62626b;
+  --aui-border: #e6e6eb;
+  --aui-blue: #0066d6;
+  --aui-blue-hover: #0058b8;
+  --aui-blue-soft: #edf4ff;
+  --aui-green: #23754c;
+  --aui-green-soft: #edf7f0;
+  --aui-red: #b42335;
+  --aui-red-soft: #fff0f1;
+  --aui-amber: #946200;
+  --aui-radius: 14px;
+  --aui-shadow: 0 2px 8px rgb(29 29 31 / 3%), 0 16px 48px rgb(29 29 31 / 8%);
+  --aui-focus: 0 0 0 3px rgb(0 102 214 / 22%);
+  color-scheme: light;
+}

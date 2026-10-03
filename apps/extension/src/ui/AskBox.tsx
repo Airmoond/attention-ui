@@ -35,7 +35,7 @@ export const AskBox = forwardRef<HTMLDivElement, AskBoxProps>(
             返回
           </button>
           <button
-            className="attention-ui-message-button"
+            className="attention-ui-message-button primary"
             type="button"
             disabled={!normalizedQuestion}
             onClick={() => onSubmit(normalizedQuestion)}

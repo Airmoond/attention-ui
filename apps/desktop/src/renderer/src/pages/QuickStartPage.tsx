@@ -31,19 +31,29 @@ const QuickStartPage = ({
 }: QuickStartPageProps): JSX.Element => {
   const [actionMessage, setActionMessage] = useState<string | null>(null)
   const [actionFailed, setActionFailed] = useState(false)
+  const [actionPending, setActionPending] = useState(false)
 
   const runAction = async (action: () => Promise<OnboardingActionResult>): Promise<void> => {
-    const result = await action()
-    setActionFailed(!result.ok)
-    setActionMessage(result.message)
+    setActionPending(true)
+    setActionMessage(null)
+    try {
+      const result = await action()
+      setActionFailed(!result.ok)
+      setActionMessage(result.message)
+    } catch (_error: unknown) {
+      setActionFailed(true)
+      setActionMessage("操作未完成，请稍后重试。")
+    } finally {
+      setActionPending(false)
+    }
   }
 
   return (
     <section className="page-panel quick-start-page">
-      <p className="eyebrow">ATTENTIONUI 0.1.1 学生测试版</p>
+      <p className="eyebrow">开始使用</p>
       <h2>5分钟快速上手</h2>
       <p className="page-intro">
-        不需要命令行。按照下面四步完成Chrome插件、配对、AI配置和演示体验。
+        四个简单步骤，把阅读工具带到你关注的内容旁边。
       </p>
 
       <div className="onboarding-summary">
@@ -57,7 +67,7 @@ const QuickStartPage = ({
       </div>
 
       {actionMessage ? (
-        <p className={actionFailed ? "notice error onboarding-notice" : "notice onboarding-notice"}>
+        <p role="status" className={actionFailed ? "notice error onboarding-notice" : "notice success onboarding-notice"}>
           {actionMessage}
         </p>
       ) : null}
@@ -68,13 +78,13 @@ const QuickStartPage = ({
           <div>
             <h3>安装Chrome插件</h3>
             <p>点击下面按钮会打开内置插件文件夹，并自动复制文件夹路径。</p>
-            <ol>
+            <details className="install-details" open={!pairingStatus?.paired}><summary>查看 Chrome 安装步骤</summary><ol>
               <li>在Chrome地址栏输入 <code>chrome://extensions</code></li>
               <li>打开右上角“开发者模式”</li>
               <li>点击“加载已解压的扩展程序”</li>
               <li>在文件夹窗口粘贴刚才复制的路径并选择该文件夹</li>
-            </ol>
-            <button onClick={(): void => { void runAction(onPrepareExtension) }} type="button">
+            </ol></details>
+            <button disabled={actionPending} onClick={(): void => { void runAction(onPrepareExtension) }} type="button">
               打开插件文件夹并复制路径
             </button>
           </div>
@@ -104,7 +114,7 @@ const QuickStartPage = ({
           <div>
             <h3>配置AI</h3>
             <p>准备好服务商提供的Base URL、API Key和模型名称，点击“测试连接”，成功后点击“保存设置”。</p>
-            <button className="secondary" onClick={onOpenAiSettings} type="button">
+            <button className="secondary" disabled={actionPending} onClick={onOpenAiSettings} type="button">
               前往AI设置
             </button>
           </div>
@@ -116,10 +126,10 @@ const QuickStartPage = ({
             <h3>打开演示网页</h3>
             <p>两个网页随安装包提供。用Chrome打开后，先从AttentionUI弹窗启用此网站，再选字按Alt+Shift+F；自动工具条需要单独开启。</p>
             <div className="button-row compact-row">
-              <button onClick={(): void => { void runAction(onOpenArticleDemo) }} type="button">
+              <button disabled={actionPending} onClick={(): void => { void runAction(onOpenArticleDemo) }} type="button">
                 打开文章Demo
               </button>
-              <button onClick={(): void => { void runAction(onOpenFinanceDemo) }} type="button">
+              <button className="secondary" disabled={actionPending} onClick={(): void => { void runAction(onOpenFinanceDemo) }} type="button">
                 打开财经Demo
               </button>
             </div>
@@ -132,7 +142,7 @@ const QuickStartPage = ({
           <h3>需要更详细的说明？</h3>
           <p>安装说明书按顺序介绍桌面安装、插件加载、配对和AI配置。</p>
         </div>
-        <button className="secondary" onClick={(): void => { void runAction(onOpenGuide) }} type="button">
+        <button className="secondary" disabled={actionPending} onClick={(): void => { void runAction(onOpenGuide) }} type="button">
           打开完整说明书
         </button>
       </div>

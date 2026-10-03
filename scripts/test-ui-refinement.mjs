@@ -1,0 +1,152 @@
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import assert from 'node:assert/strict';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+process.env.PLAYWRIGHT_BROWSERS_PATH ??= path.join(root, 'tools/pdf-spike/.formula-runtime/browsers');
+const { chromium } = await import(pathToFileURL(path.join(root, 'tools/pdf-spike/node_modules/playwright-core/index.mjs')).href);
+const browser = await chromium.launch({ channel: 'chromium', headless: true });
+const out = path.join(root, 'tools/ui-preview/test-results');
+await mkdir(out, { recursive: true });
+const checks = []; const errors = [];
+const page = await browser.newPage({ viewport: { width: 1100, height: 800 } });
+page.on('pageerror', error => errors.push(error.message));
+const shot = async name => {
+  await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
+  return page.screenshot({ path: path.join(out, `${name}.png`), fullPage: true, animations: 'disabled' });
+};
+const visible = async locator => assert.ok(await locator.isVisible());
+const noOverflow = async () => assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'horizontal overflow');
+try {
+  await page.goto('http://127.0.0.1:5190');
+  await page.getByRole('button', { name: 'AI设置', exact: true }).click();
+  await visible(page.getByRole('heading', { name: '模型连接配置' }));
+  await shot('desktop-ai'); await noOverflow(); checks.push('desktop AI settings renders');
+  await page.getByRole('button', { name: '测试连接', exact: true }).click();
+  await visible(page.getByText('连接测试成功（模拟预览）。', { exact: true }));
+  checks.push('connection feedback is visible');
+  await page.getByRole('button', { name: '插件弹窗', exact: true }).click();
+  await visible(page.getByRole('button', { name: '禁用此网站', exact: true }));
+  await shot('popup'); await noOverflow(); checks.push('popup site state renders');
+  await page.getByRole('button', { name: '阅读工具', exact: true }).click();
+  await page.getByRole('dialog', { name: 'AI总结' }).waitFor();
+  await shot('reading-answer'); checks.push('answer renders inside isolated Shadow DOM');
+  await page.getByRole('button', { name: '桌面端', exact: true }).click();
+  const pages = ['快速上手', '运行状态', 'AI设置', '交互设置', '调试日志'];
+  for (const viewport of [{ width: 960, height: 680 }, { width: 760, height: 520 }, { width: 1280, height: 800 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    for (const name of pages) {
+      await page.getByRole('navigation', { name: '主导航' }).getByRole('button', { name, exact: true }).click();
+      await noOverflow();
+      checks.push(`${name}: ${viewport.width}x${viewport.height} fits horizontally`);
+    }
+    if (viewport.width === 760) { await page.getByRole('button', { name: 'AI设置', exact: true }).click(); await shot('desktop-minimum'); }
+  }
+  await page.setViewportSize({ width: 960, height: 680 });
+  for (const zoom of [1.25, 1.5]) {
+    await page.evaluate(value => { document.body.style.zoom = String(value); }, zoom);
+    for (const name of pages) {
+      await page.getByRole('navigation', { name: '主导航' }).getByRole('button', { name, exact: true }).click();
+      await noOverflow();
+    }
+    checks.push(`all desktop pages fit at ${zoom * 100}% content zoom`);
+  }
+  await page.evaluate(() => { document.body.style.zoom = ''; });
+  await page.getByRole('button', { name: 'AI设置', exact: true }).click();
+  await page.getByRole('button', { name: '显示', exact: true }).click();
+  assert.equal(await page.getByPlaceholder('输入你的 API Key').getAttribute('type'), 'text');
+  await page.getByRole('button', { name: '隐藏', exact: true }).click();
+  assert.equal(await page.getByPlaceholder('输入你的 API Key').getAttribute('type'), 'password');
+  await page.getByRole('button', { name: '保存设置', exact: true }).click();
+  await visible(page.getByText('设置已保存。', { exact: true })); checks.push('key visibility and save feedback work');
+  await page.getByRole('button', { name: '交互设置', exact: true }).click();
+  await page.getByRole('spinbutton').fill('20');
+  await page.getByRole('button', { name: '保存交互设置' }).click();
+  await visible(page.getByText('鼠标停留时间必须是 300 至 3000 毫秒之间的整数。'));
+  await page.getByRole('spinbutton').fill('1200');
+  await page.getByRole('button', { name: '保存交互设置' }).click();
+  await visible(page.getByText('交互设置已保存。'));
+  await page.getByLabel('启用习惯学习', { exact: true }).press('Space');
+  assert.equal(await page.getByLabel('启用习惯学习', { exact: true }).isChecked(), false);
+  await page.getByRole('button', { name: '清除习惯数据', exact: true }).click();
+  await visible(page.getByRole('alertdialog', { name: '确认清除习惯数据' }));
+  await page.getByRole('button', { name: '取消', exact: true }).click();
+  assert.equal(await page.getByRole('alertdialog').count(), 0); checks.push('settings validation, keyboard toggle and reset cancellation work');
+  await page.getByRole('button', { name: '运行状态', exact: true }).click();
+  await page.getByRole('button', { name: '停止服务', exact: true }).click();
+  await visible(page.getByText('已停止', { exact: true }));
+  await page.getByRole('button', { name: '启动服务', exact: true }).click();
+  await visible(page.getByText('运行中', { exact: true })); checks.push('service state controls update');
+  await page.getByRole('button', { name: '快速上手', exact: true }).click();
+  await page.getByText('查看 Chrome 安装步骤', { exact: true }).click();
+  await visible(page.getByText('打开右上角“开发者模式”', { exact: true }));
+  await page.getByRole('button', { name: '打开插件文件夹并复制路径' }).click();
+  await visible(page.getByText('预览操作已完成，不会打开文件或发送请求。'));
+  await shot('desktop-quickstart'); checks.push('onboarding disclosure and action feedback work');
+  await page.getByRole('button', { name: '插件弹窗', exact: true }).click();
+  await page.getByLabel('自动 AI 工具推荐', { exact: true }).check();
+  assert.equal(await page.getByLabel('鼠标停留时自动显示工具条', { exact: true }).isChecked(), false);
+  await page.getByRole('button', { name: '暂停此标签页', exact: true }).click();
+  assert.equal(await page.getByRole('button', { name: '对选中文字使用工具', exact: true }).isDisabled(), true);
+  await page.getByRole('button', { name: '恢复此标签页', exact: true }).click();
+  await page.getByRole('button', { name: '禁用此网站', exact: true }).click();
+  assert.equal(await page.getByLabel('自动 AI 工具推荐', { exact: true }).isDisabled(), true);
+  await page.getByRole('button', { name: '启用此网站', exact: true }).click();
+  await visible(page.getByRole('button', { name: '禁用此网站', exact: true })); checks.push('popup independent preferences, pause and enable states work');
+  await page.setViewportSize({ width: 390, height: 844 }); await noOverflow(); await shot('popup-narrow');
+  await page.getByRole('button', { name: '连接设置', exact: true }).click();
+  await page.getByRole('button', { name: '保存服务地址', exact: true }).click();
+  await visible(page.getByText('服务地址已保存。'));
+  assert.equal(await page.getByRole('button', { name: '连接桌面端', exact: true }).isDisabled(), true);
+  await page.getByLabel('配对令牌', { exact: true }).fill('AUI-PREVIEW');
+  await page.getByLabel('配对令牌', { exact: true }).press('Enter');
+  await visible(page.getByText('桌面端已连接（模拟预览）', { exact: true }));
+  assert.equal(await page.getByLabel('配对令牌', { exact: true }).inputValue(), '');
+  await noOverflow(); await shot('options-narrow'); checks.push('options save and keyboard pairing work at narrow width');
+  await page.setViewportSize({ width: 1100, height: 800 });
+  await page.getByRole('button', { name: '阅读工具', exact: true }).click();
+  await page.getByRole('button', { name: '提问', exact: true }).click();
+  assert.equal(await page.getByRole('button', { name: '发送', exact: true }).isDisabled(), true);
+  await page.getByRole('textbox', { name: '问题', exact: true }).fill('如何建立知识之间的联系？');
+  await shot('reading-ask');
+  await page.getByRole('textbox', { name: '问题', exact: true }).press('Control+Enter');
+  await page.getByRole('dialog', { name: 'AI总结' }).waitFor(); checks.push('question input and keyboard send work');
+  await page.getByRole('button', { name: '图表', exact: true }).click();
+  await page.getByRole('img', { name: '每周学习时长，柱状图' }).waitFor();
+  await shot('reading-chart'); checks.push('chart renders with labelled data');
+  await page.getByRole('button', { name: '加载状态', exact: true }).click();
+  await visible(page.getByText('正在生成AI解释…', { exact: true }));
+  await page.getByRole('button', { name: '失败状态', exact: true }).click();
+  await visible(page.getByRole('button', { name: '重试', exact: true }));
+  await page.getByRole('button', { name: '重试', exact: true }).click();
+  await visible(page.getByText('正在生成AI解释…', { exact: true })); checks.push('loading, error and retry states render');
+  await page.getByRole('button', { name: '专注阅读', exact: true }).click();
+  const close = page.getByRole('button', { name: '关闭AttentionUI专注阅读', exact: true });
+  await close.waitFor();
+  await close.press('Tab');
+  assert.equal(await page.locator('.attention-ui-reader-content').evaluate(element => element.getRootNode().activeElement === element), true);
+  await page.locator('.attention-ui-reader-content').press('Tab');
+  assert.equal(await close.evaluate(element => element.getRootNode().activeElement === element), true);
+  await shot('reading-focus');
+  await close.press('Escape');
+  assert.equal(await page.getByRole('dialog').count(), 0); checks.push('focus reader traps keyboard focus and closes on Escape');
+  await page.getByRole('button', { name: '工具条', exact: true }).click();
+  await page.getByRole('toolbar').waitFor();
+  await shot('reading-toolbar');
+  for (const width of [760, 390, 320]) {
+    await page.setViewportSize({ width, height: 680 });
+    await page.getByRole('button', { name: '工具条', exact: true }).click();
+    await page.getByRole('toolbar').waitFor();
+    const box = await page.getByRole('toolbar').boundingBox();
+    assert.ok(box.x >= 0 && box.x + box.width <= width + 1); checks.push(`toolbar stays inside ${width}px viewport`);
+  }
+  await page.getByRole('button', { name: '回答卡片', exact: true }).click();
+  await page.getByRole('dialog', { name: 'AI总结' }).waitFor();
+  await noOverflow(); await shot('reading-narrow');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const animation = await page.getByRole('dialog', { name: 'AI总结' }).evaluate(element => getComputedStyle(element).animationName);
+  assert.equal(animation, 'none'); checks.push('reading adapts to narrow viewport and reduced motion');
+  assert.deepEqual(errors, []);
+  console.log(JSON.stringify({ passed: checks.length, checks, screenshots: out }, null, 2));
+  await writeFile(path.join(out, 'results.json'), JSON.stringify({ passed: checks.length, checks, errors }, null, 2));
+} finally { await browser.close(); }

@@ -13,3 +13,6 @@ Thumbs.db
 # Local delivery archives; checksums are tracked in docs/releases.
 /AttentionUI-*-Beta.zip
 /FocusUI-*-Beta.zip
+
+# Local UI preview screenshots and verification results.
+/tools/ui-preview/test-results/

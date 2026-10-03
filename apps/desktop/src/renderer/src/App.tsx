@@ -5,6 +5,7 @@ import BehaviorPage from "./pages/BehaviorPage"
 import LogsPage from "./pages/LogsPage"
 import QuickStartPage from "./pages/QuickStartPage"
 import StatusPage from "./pages/StatusPage"
+import { iconPaths } from "../../../../../packages/ui/icons"
 
 type PageId = "quickstart" | "status" | "ai" | "behavior" | "logs"
 
@@ -220,23 +221,25 @@ const App = (): JSX.Element => {
   return (
     <main className="app-shell">
       <aside className="sidebar">
-        <div>
-          <p className="eyebrow">ATTENTIONUI 0.1.1 学生测试版</p>
-          <h1>Desktop</h1>
-          <p className="sidebar-copy">本地AI服务与新手引导</p>
+        <div className="brand">
+          <span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d={iconPaths.spark} /></svg></span>
+          <div><h1>AttentionUI</h1><p className="sidebar-copy">让理解自然发生</p></div>
         </div>
         <nav aria-label="主导航">
           {navigationItems.map((item) => (
             <button
               className={activePage === item.id ? "nav-item active" : "nav-item"}
+              aria-current={activePage === item.id ? "page" : undefined}
               key={item.id}
               onClick={(): void => setActivePage(item.id)}
               type="button"
             >
+              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d={iconPaths[({ quickstart: "start", status: "status", ai: "spark", behavior: "settings", logs: "logs" } as const)[item.id]]} /></svg>
               {item.label}
             </button>
           ))}
         </nav>
+        <div className="sidebar-footer"><span className={serviceStatus?.running ? "service-dot online" : "service-dot"} /><span>{serviceStatus?.running ? "本地服务运行中" : "本地服务未运行"}</span><small>0.1.1 · 学生测试版</small></div>
       </aside>
       <section className="content-area">
         {errorMessage ? <p className="notice error">{errorMessage}</p> : null}

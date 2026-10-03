@@ -86,7 +86,7 @@ const StatusPage = ({
 
       <section className="pairing-section">
         <h3>插件配对</h3>
-        <p>将此令牌复制到后续浏览器插件中。客户端令牌不会在桌面端显示。</p>
+        <p>在 Chrome 插件的“连接与设置”中粘贴此令牌，完成配对。</p>
         <code className="pairing-token">{pairingStatus?.pairingToken ?? "读取中"}</code>
         <div className="button-row">
           <button className="secondary" disabled={!pairingStatus} onClick={onCopyPairingToken} type="button">复制配对令牌</button>

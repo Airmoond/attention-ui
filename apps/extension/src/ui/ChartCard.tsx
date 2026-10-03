@@ -18,14 +18,16 @@ export const createChartOption = (data: ChartData): EChartsCoreOption => ({
   xAxis: {
     type: "category",
     data: data.labels,
-    axisLabel: { color: "#40516d", interval: 0 }
+    axisLabel: { color: "#62626b", interval: 0 },
+    axisLine: { lineStyle: { color: "#e6e6eb" } },
+    axisTick: { show: false }
   },
   yAxis: {
     type: "value",
     name: data.unit ?? "",
-    nameTextStyle: { color: "#64748b" },
-    axisLabel: { color: "#64748b" },
-    splitLine: { lineStyle: { color: "#e5eaf2" } }
+    nameTextStyle: { color: "#62626b" },
+    axisLabel: { color: "#62626b" },
+    splitLine: { lineStyle: { color: "#e6e6eb", type: "dashed" } }
   },
   series: [
     data.chartType === "line"
@@ -34,15 +36,15 @@ export const createChartOption = (data: ChartData): EChartsCoreOption => ({
           data: data.values,
           smooth: true,
           symbolSize: 8,
-          lineStyle: { color: "#275efe", width: 3 },
-          itemStyle: { color: "#275efe" },
-          areaStyle: { color: "rgba(39, 94, 254, 0.10)" }
+          lineStyle: { color: "#0066d6", width: 3 },
+          itemStyle: { color: "#0066d6" },
+          areaStyle: { color: "rgba(0, 102, 214, 0.07)" }
         }
       : {
           type: "bar",
           data: data.values,
           barMaxWidth: 54,
-          itemStyle: { color: "#275efe", borderRadius: [5, 5, 0, 0] }
+          itemStyle: { color: "#0066d6", borderRadius: [5, 5, 0, 0] }
         }
   ]
 })

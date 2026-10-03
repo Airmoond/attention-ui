@@ -1,0 +1,13 @@
+.preview-bar { position: sticky; top: 0; z-index: 2147483640; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 24px; background: #fff; border-bottom: 1px solid #e6e6eb; font: 13px var(--aui-font, system-ui); }
+.preview-bar strong { white-space: nowrap; }
+.preview-bar strong span { font-weight: 400; color: #62626b; margin-left: 10px; }
+.preview-bar nav { display: flex; gap: 4px; }
+.preview-bar button, .preview-controls button { padding: 7px 12px; font-size: 12px; background: #f5f5f7; color: #62626b; }
+.preview-bar button[aria-pressed=true] { background: #edf4ff; color: #0066d6; }
+.preview-popup { width: max-content; max-width: 100%; margin: 50px auto; border: 1px solid #e6e6eb; border-radius: 20px; overflow: hidden; box-shadow: 0 16px 48px #1d1d1f12; }
+.preview-reading { padding: 64px 40px; }
+.preview-article { width: 520px; max-width: 48%; margin: 0 0 0 4%; }
+.preview-article h1 { font-size: 36px; letter-spacing: -.04em; }
+.preview-article p { color: #62626b; font-size: 17px; line-height: 1.9; }
+.preview-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+@media(max-width:800px) { .preview-bar { align-items: flex-start; flex-direction: column; padding: 10px; } .preview-bar nav { flex-wrap: wrap; } .preview-reading { padding: 24px; } .preview-article { max-width: 100%; margin: 0; } }

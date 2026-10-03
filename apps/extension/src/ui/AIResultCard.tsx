@@ -6,6 +6,7 @@ import {
   type ToolResult
 } from "@attention-ui/shared"
 import { ChartCard } from "./ChartCard"
+import { Icon } from "./Icon"
 
 const RESULT_TITLES: Readonly<Record<ToolId, string>> = {
   summarize: "AI总结",
@@ -163,12 +164,14 @@ export type AIResultCardProps = {
 export const AIResultCard = forwardRef<HTMLDivElement, AIResultCardProps>(
   ({ result, onBack, onClose }, ref): React.JSX.Element => (
     <div ref={ref} className="attention-ui-message-card attention-ui-result-card" role="dialog" aria-label={RESULT_TITLES[result.toolId]}>
-      <h2 className="attention-ui-result-title">{RESULT_TITLES[result.toolId]}</h2>
+      <header className="attention-ui-card-header"><span className="attention-ui-card-mark"><Icon name={result.toolId} /></span><div><h2 className="attention-ui-result-title">{RESULT_TITLES[result.toolId]}</h2><p className="attention-ui-card-subtitle">基于当前片段</p></div><button className="attention-ui-close-button" aria-label="关闭回答" title="关闭" onClick={onClose} type="button"><Icon name="close" /></button></header>
+      <div className="attention-ui-result-body">
       {result.toolId === "chart" ? <ChartDataView data={result.data} /> : null}
       {result.toolId === "extract" ? <ExtractedDataView data={result.data} /> : null}
       {result.toolId !== "chart" && result.toolId !== "extract" ? (
         <SafeMarkdownText content={result.content} />
       ) : null}
+      </div>
       <div className="attention-ui-message-actions">
         <button className="attention-ui-message-button" type="button" onClick={onBack}>
           返回

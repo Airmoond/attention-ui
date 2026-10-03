@@ -2,6 +2,7 @@ import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState }
 import type { AttentionCandidate } from "../attention/attention-engine"
 import type { LocalTool } from "../policy/local-policy"
 import { calculateToolbarPosition, type ToolbarPosition } from "../position/position-manager"
+import { Icon } from "./Icon"
 
 export type AttentionToolbarProps = {
   candidate: AttentionCandidate
@@ -96,7 +97,7 @@ export const AttentionToolbar = forwardRef<HTMLDivElement, AttentionToolbarProps
             title={tool.label}
             onClick={() => onToolSelect(tool)}
           >
-            {tool.label}
+            <Icon name={tool.id} />{tool.label}
           </button>
         ))}
         <span className="attention-ui-separator" aria-hidden="true" />
@@ -107,7 +108,7 @@ export const AttentionToolbar = forwardRef<HTMLDivElement, AttentionToolbarProps
           title="关闭"
           onClick={onClose}
         >
-          ×
+          <Icon name="close" />
         </button>
       </div>
     )

@@ -1,4 +1,6 @@
 import type { FocusReaderBlock, FocusReaderContent } from "../context/focus-content-extractor"
+import { Icon } from "./Icon"
+import { useRef } from "react"
 
 export type FocusReaderProps = {
   content: FocusReaderContent
@@ -27,28 +29,40 @@ const ReaderBlock = ({ block }: { block: FocusReaderBlock }): React.JSX.Element 
   }
 }
 
-export const FocusReader = ({ content, onClose }: FocusReaderProps): React.JSX.Element => (
-  <div className="attention-ui-reader-overlay" role="dialog" aria-modal="true" aria-labelledby="attention-ui-reader-title">
+export const FocusReader = ({ content, onClose }: FocusReaderProps): React.JSX.Element => {
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  return <div className="attention-ui-reader-overlay" role="dialog" aria-modal="true" aria-labelledby="attention-ui-reader-title" onKeyDown={event => {
+    if (event.key === "Escape") { event.stopPropagation(); onClose() }
+    if (event.key === "Tab") {
+      event.preventDefault()
+      // The dialog has two keyboard stops: close and the scrollable reading body.
+      if (event.target === closeRef.current) contentRef.current?.focus()
+      else closeRef.current?.focus()
+    }
+  }}>
     <article className="attention-ui-reader-panel">
       <header className="attention-ui-reader-header">
         <h1 id="attention-ui-reader-title" className="attention-ui-reader-title">
           {content.title}
         </h1>
         <button
+          ref={closeRef}
+          autoFocus
           className="attention-ui-reader-close"
           type="button"
           aria-label="关闭AttentionUI专注阅读"
           title="关闭"
           onClick={onClose}
         >
-          ×
+          <Icon name="close" />
         </button>
       </header>
-      <div className="attention-ui-reader-content">
+      <div ref={contentRef} tabIndex={0} aria-label="阅读正文" className="attention-ui-reader-content">
         {content.blocks.map((block, index) => (
           <ReaderBlock key={`${block.type}-${index}`} block={block} />
         ))}
       </div>
     </article>
   </div>
-)
+}
